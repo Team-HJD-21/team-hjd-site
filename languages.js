@@ -4,12 +4,12 @@ const translations = [
   ['nav a[href="#about"]', 'About us', '团队介绍'],
   ['nav a[href="#project"]', 'Projects', '项目'],
   ['.nav-contact', 'Contact', '联系我们'],
-  ['#hero-title', 'Games we create together.<br>A <em>journey</em> we share.', '一起创造游戏。<br>一起踏上开发的<em>旅程。</em>'],
-  ['.hero-description', 'We are TeamHJD — a game development team.<br>We turn ideas into playable experiences.', '我们是游戏开发团队 TeamHJD。<br>我们将创意变成可以亲身体验的游戏。'],
-  ['.actions .primary', 'Explore our project <span aria-hidden="true">↗</span>', '探索我们的项目 <span aria-hidden="true">↗</span>'],
-  ['.actions .text-link', 'Meet the team <span aria-hidden="true">→</span>', '了解我们的团队 <span aria-hidden="true">→</span>'],
+  ['#hero-title', 'Your choices.<br>Your <em>line of defense.</em>', '你的选择。<br>你的<em>防线。</em>'],
+  ['.hero-description', 'Limited power. Incoming alien hordes.<br>Manage your turrets and join the fight in this strategy defense game.', '电力有限。外星生物不断涌来。<br>在这款策略防御游戏中，部署炮塔并亲自投入战斗。'],
+  ['.actions .primary', 'View on Steam <span aria-hidden="true">↗</span>', '在 Steam 上查看 <span aria-hidden="true">↗</span>'],
+  ['.actions .text-link', 'Discover the game <span aria-hidden="true">↓</span>', '了解游戏 <span aria-hidden="true">↓</span>'],
   ['#about-title', 'Turning the joy of development<br>into games.', '将开发的乐趣<br>融入游戏。'],
-  ['.about-content > div > p:first-child', 'TeamHJD is a team of developers creating games together. We bring our ideas and skills together to build a shared play experience.', 'TeamHJD 是一个携手制作游戏的开发团队。我们汇集各自的创意与技术，共同打造游戏体验。'],
+  ['.about-content > div:last-child > p:first-child', 'TeamHJD is a team of developers creating games together. We bring our ideas and skills together to build a shared play experience.', 'TeamHJD 是一个携手制作游戏的开发团队。我们汇集各自的创意与技术，共同打造游戏体验。'],
   ['.about-content .muted', 'HJD stands for Happy Journey of Developers.<br>Our name reflects the development journey we share.', 'HJD 是 Happy Journey of Developers 的缩写。<br>我们的名字承载着共同前行的开发之旅。'],
   ['#leadership-title', 'Co-representatives', '联合负责人'],
   ['.small-note', 'Our project in development', '正在开发的项目'],
@@ -36,9 +36,9 @@ const descriptions = {
   'zh-CN': '了解游戏开发团队 TeamHJD 与正在开发的项目 THE DEVELOPER。',
 };
 const labels = {
-  ko: ['TeamHJD 홈', '주 메뉴', 'TeamHJD 로켓 로고', 'THE DEVELOPER 프로젝트 타이틀 그래픽. 게임 화면이 아닙니다.'],
-  en: ['TeamHJD home', 'Main navigation', 'TeamHJD rocket logo', 'THE DEVELOPER title graphic. Not a gameplay screenshot.'],
-  'zh-CN': ['TeamHJD 首页', '主导航', 'TeamHJD 火箭标志', 'THE DEVELOPER 项目标题图。并非游戏截图。'],
+  ko: ['TeamHJD 홈', '주 메뉴', 'THE DEVELOPER 공식 아트. Steam 스토어로 이동합니다.', 'THE DEVELOPER 공식 Steam 아트. 게임 화면이 아닙니다.'],
+  en: ['TeamHJD home', 'Main navigation', 'THE DEVELOPER official artwork. Visit the Steam store.', 'THE DEVELOPER official Steam artwork. Not a gameplay screenshot.'],
+  'zh-CN': ['TeamHJD 首页', '主导航', 'THE DEVELOPER 官方美术。前往 Steam 商店。', 'THE DEVELOPER 官方 Steam 美术。并非游戏截图。'],
 };
 const switcher = document.querySelector('#language-switcher');
 const languageButtons = [...switcher.querySelectorAll('[data-language]')];
@@ -49,7 +49,7 @@ function applyLanguage(language) {
   document.documentElement.lang = lang;
   document.querySelector('meta[name="description"]').content = descriptions[lang];
   document.querySelector('meta[property="og:description"]').content = descriptions[lang];
-  ['.header .wordmark', 'nav', '.brand-scene', '.project-art'].forEach((selector, index) => {
+  ['.header .wordmark', 'nav', '.game-visual', '.project-art'].forEach((selector, index) => {
     document.querySelector(selector).setAttribute('aria-label', labels[lang][index]);
   });
   document.querySelector('#current-language').textContent = languageNames[lang];

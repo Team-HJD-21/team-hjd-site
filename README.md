@@ -11,7 +11,11 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 - THE DEVELOPER Steam 스토어: https://store.steampowered.com/app/4336820/The_Developer/
 - 배포: main push 또는 Deploy TeamHJD website 워크플로 수동 실행
 
-공개 사이트에는 팀 소개와 사용자가 확인한 공동대표 및 프로젝트 참여자 명단과 개발 중인 THE DEVELOPER의 짧은 소개 및 업무 연락처를 포함합니다. 공동대표는 YANG HYUNSEOK과 HWANG JAEDONG입니다. THE DEVELOPER에는 두 공동대표와 KIM JINTAE 및 LEE YOUNGBIN과 JO SUNBIN이 참여합니다. 게임 스크린샷처럼 보일 수 있는 실제 에셋 대신 타이틀 그래픽을 사용하며 게임 화면으로 설명하지 않습니다. 미확정 출시 일정이나 기획은 공개하지 않습니다.
+대표 게임 THE DEVELOPER의 공식 Steam 아트를 첫 화면에 배치합니다. 메인 캡슐과 헤더 캡슐 및 우주 배경은 사용자가 제공한 공유 드라이브 원본에서 복사한 에셋입니다. 원본은 수정하지 않았으며 공식 아트를 실제 게임 플레이 화면으로 설명하지 않습니다.
+
+Treant 이스터 에그: 스크롤을 내리면 화면 아래를 10초 동안 한 번 통과합니다. 로컬 CBC의 Updated Treant 이동 시트와 `Treant_Move_Right.anim`의 오른쪽 걷기 6프레임 / 12fps 구성을 사용합니다. 장식이므로 클릭을 가로채지 않으며 접근성 트리에서 제외됩니다. 동작 줄이기 설정에서는 표시하지 않습니다. 탭이 숨겨져도 즉시 종료합니다.
+
+공개 사이트에는 팀 소개와 사용자가 확인한 공동대표 및 프로젝트 참여자 명단과 개발 중인 THE DEVELOPER의 짧은 소개 및 업무 연락처를 포함합니다. 공동대표는 YANG HYUNSEOK과 HWANG JAEDONG입니다. THE DEVELOPER에는 두 공동대표와 KIM JINTAE 및 LEE YOUNGBIN과 JO SUNBIN이 참여합니다. 미확정 출시 일정이나 기획은 공개하지 않습니다.
 
 DNS는 @ A 185.199.108.153 / 185.199.109.153 / 185.199.110.153 / 185.199.111.153과 www CNAME team-hjd-21.github.io를 유지합니다. docs CNAME team-hjd-21.github.io를 추가합니다. GitHub Pages 사용자 도메인은 이 저장소에서 teamhjd.com으로 등록합니다. Docs 저장소는 docs.teamhjd.com을 사용합니다.
 
