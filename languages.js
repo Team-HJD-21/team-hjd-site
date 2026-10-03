@@ -6,6 +6,11 @@ const translations = [
   ['.nav-contact', 'Contact', '联系我们'],
   ['nav a[href="https://docs.teamhjd.com/"]', 'Docs <span aria-hidden="true">↗</span>', '开发文档 <span aria-hidden="true">↗</span>'],
   ['footer a[href="https://docs.teamhjd.com/"]', 'Docs ↗', '开发文档 ↗'],
+  ['.footer-name-label', 'Registered business name', '登记名称'],
+  ['.footer-owner-label', 'Business representative', '负责人'],
+  ['.footer-owner-value', 'HWANG JAEDONG', 'HWANG JAEDONG'],
+  ['.footer-registration-label', 'Business registration no.', '韩国营业登记号'],
+  ['.footer-address-label', 'Business address', '营业地址'],
   ['.hero-caption', 'IN DEVELOPMENT · PC GAME', '开发中 · PC 游戏'],
   ['.project .section-label p', 'OUR GAME', '我们的游戏'],
   ['.about .section-label p', 'THE STUDIO', '工作室'],
@@ -57,9 +62,10 @@ function applyLanguage(language) {
   document.documentElement.lang = lang;
   document.querySelector('meta[name="description"]').content = descriptions[lang];
   document.querySelector('meta[property="og:description"]').content = descriptions[lang];
-  ['.header .wordmark', 'nav', '.game-visual', '.project-art'].forEach((selector, index) => {
+  ['.header .wordmark', '.header nav', '.game-visual', '.project-art'].forEach((selector, index) => {
     document.querySelector(selector).setAttribute('aria-label', labels[lang][index]);
   });
+  document.querySelector('.footer-links').setAttribute('aria-label', {ko:'하단 메뉴',en:'Footer navigation','zh-CN':'页脚导航'}[lang]);
   document.querySelector('#current-language').textContent = languageNames[lang];
   languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === lang)));
   return lang;

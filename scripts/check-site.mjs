@@ -13,6 +13,7 @@ assert.match(html, /https:\/\/store.steampowered.com\/app\/4336820\/The_Develope
 assert.match(html, /id="language-switcher"/);
 for (const name of ['YANG HYUNSEOK','HWANG JAEDONG','KIM JINTAE','LEE YOUNGBIN','JO SUBIN']) assert.ok(html.includes(name), `Missing team member ${name}`);
 assert.ok(!html.includes('JO SUNBIN'), 'Incorrect team member spelling');
+for (const value of ['팀 에이치제이디(TeamHJD)', '황재동', '622-10-17519', '경기도 수원시 영통구 태장로 71번길 19']) assert.ok(html.includes(value), `Missing registered business detail ${value}`);
 assert.match(css, /max-width:600px/);
 assert.match(css, /prefers-reduced-motion/);
 const languageSource = readFileSync('languages.js', 'utf8');

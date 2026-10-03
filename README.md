@@ -10,6 +10,7 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 - Safari의 버튼 터치 시 포커스 목적지가 없는 focusout은 목록을 닫지 않습니다. 외부 클릭·Escape·외부 요소로의 포커스 이동은 정상적으로 닫습니다. 헤더는 게임 아트와 장식보다 위의 레이어에서 터치를 받습니다.
 - 영어·중국어는 한국어 어순을 그대로 옮기지 않고 각 언어의 대외 소개 문구로 작성합니다. 사용자 지정에 따라 두 공동대표는 Co-founders / 联合创始人으로 소개합니다. 팀 이름의 뜻과 명단 및 게임의 확인된 특징은 언어별로 동일하게 유지합니다.
 - 공개 문의 주소: support@teamhjd.com
+- Footer 사업자 정보는 사용자 제공값을 사용합니다: 팀 에이치제이디(TeamHJD), 대표자 황재동, 사업자등록번호 622-10-17519, 사업장 주소 경기도 수원시 영통구 태장로 71번길 19. 소개의 공동창업자와 사업자등록증상 대표자를 구분합니다. 전화번호·약관·통신판매업 신고번호 등 미제공 정보는 추가하지 않습니다.
 - 링크 공유 미리보기는 회사 로고 assets/teamhjd-social.png를 사용합니다. 원본은 회사_Logo/TeamHJD_black.png이며 사이트 내부 게임 아트와는 별개입니다. 기존 공유 메시지에는 플랫폼 캐시로 이전 이미지가 남을 수 있습니다.
 - THE DEVELOPER Steam 스토어: https://store.steampowered.com/app/4336820/The_Developer/
 - 배포: main push 또는 Deploy TeamHJD website 워크플로 수동 실행

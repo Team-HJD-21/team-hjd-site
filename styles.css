@@ -23,4 +23,14 @@
 .slime-visitor{position:fixed;left:0;top:0;width:96px;height:96px;z-index:8;pointer-events:none;background:url("assets/slime-tentacle-walk.png") -48px var(--slime-row)/1152px 768px no-repeat;image-rendering:pixelated;filter:drop-shadow(0 3px 2px #0008);animation:slime-steps .6s steps(6) infinite;will-change:transform}
 .slime-king{background-image:url("assets/slime-king-walk.png")}
 @keyframes slime-steps{from{background-position-x:-48px}to{background-position-x:-1200px}}
+.footer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:24px 36px;padding-top:36px;padding-bottom:30px}
+.footer .footer-brand{display:block;margin:0}
+.footer .footer-tagline{display:block;margin:5px 0 0;font-size:11px;color:var(--muted)}
+.footer .footer-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px 22px;margin:0;font-size:12px;font-weight:400;max-width:100%;overflow-wrap:anywhere}
+.footer-business{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 36px;margin:0;padding-top:22px;border-top:1px solid var(--line);font-size:12px;line-height:1.7}
+.footer-business>div{display:flex;flex-wrap:wrap;gap:4px 12px;min-width:0}
+.footer-business dt{color:var(--muted)}
+.footer-business dd{margin:0;overflow-wrap:anywhere;word-break:normal}
+.footer .footer-copyright{grid-column:1/-1;margin:0;width:auto;font-size:10px;color:var(--muted)}
+@media(max-width:600px){.footer{grid-template-columns:minmax(0,1fr);gap:20px}.footer .footer-links{justify-content:flex-start;gap:12px 20px}.footer-business{grid-template-columns:minmax(0,1fr);gap:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.treant-visitor,.slime-visitor{display:none}}
