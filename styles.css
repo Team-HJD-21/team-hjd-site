@@ -32,5 +32,6 @@
 .footer-business dt{color:var(--muted)}
 .footer-business dd{margin:0;overflow-wrap:anywhere;word-break:normal}
 .footer .footer-copyright{grid-column:1/-1;margin:0;width:auto;font-size:10px;color:var(--muted)}
+.footer .footer-privacy{font-weight:650;color:var(--ink)}.contact-content .contact-privacy-note{font-size:12px;color:var(--muted);margin-top:14px}
 @media(max-width:600px){.footer{grid-template-columns:minmax(0,1fr);gap:20px}.footer .footer-links{justify-content:flex-start;gap:12px 20px}.footer-business{grid-template-columns:minmax(0,1fr);gap:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.treant-visitor,.slime-visitor{display:none}}

@@ -11,6 +11,8 @@ const translations = [
   ['.footer-owner-value', 'HWANG JAEDONG', 'HWANG JAEDONG'],
   ['.footer-registration-label', 'Business registration no.', '韩国营业登记号'],
   ['.footer-address-label', 'Business address', '营业地址'],
+  ['.footer-privacy', 'Privacy policy (Korean)', '隐私政策（韩文）'],
+  ['.contact-privacy-note', 'Review our privacy notice before opening your email app.', '请先阅读隐私说明，再打开邮件应用。'],
   ['.hero-caption', 'IN DEVELOPMENT · PC GAME', '开发中 · PC 游戏'],
   ['.project .section-label p', 'OUR GAME', '我们的游戏'],
   ['.about .section-label p', 'THE STUDIO', '工作室'],
@@ -36,7 +38,7 @@ const translations = [
   ['.project-team > div:first-child h4', 'Co-founders', '联合创始人'],
   ['.project-team > div:last-child h4', 'Team', '开发成员'],
   ['#contact-title', 'Let’s talk.', '联系我们'],
-  ['.contact-content p', 'Questions about TeamHJD or THE DEVELOPER? Get in touch by email.', '想了解 TeamHJD 或 THE DEVELOPER？欢迎通过邮件联系我们。'],
+  ['.contact-content > div > p:first-child', 'Questions about TeamHJD or THE DEVELOPER? Get in touch by email.', '想了解 TeamHJD 或 THE DEVELOPER？欢迎通过邮件联系我们。'],
 ];
 const copy = translations.map(([selector, en, zh]) => {
   const element = document.querySelector(selector);
