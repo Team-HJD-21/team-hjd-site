@@ -17,6 +17,7 @@ const translations = [
   ['.project-copy > p:not([class])', 'Manage your defenses by switching turrets on and off within a limited power budget. Decide where to focus your power and join the battle yourself to respond to threats.', '在有限的电力预算内，通过开启与关闭炮塔来部署防御。决定将电力集中在何处，并亲自参与战斗以应对威胁。'],
   ['.project-disclaimer', 'This project is in development. Details may change.', '项目正在开发中，具体内容可能有所调整。'],
   ['.project-copy .text-link', 'View the project on GitHub <span aria-hidden="true">↗</span>', '在 GitHub 上查看项目 <span aria-hidden="true">↗</span>'],
+  ['.steam-link', 'View on Steam <span aria-hidden="true">↗</span>', '在 Steam 上查看 <span aria-hidden="true">↗</span>'],
   ['#project-team-title', 'The team behind THE DEVELOPER', 'THE DEVELOPER 项目团队'],
   ['#project .team-roster > p', 'Our two co-representatives and three team members are developing the game together.', '两位联合负责人与三位团队成员共同参与游戏开发。'],
   ['.project-team > div:first-child h4', 'Co-representatives', '联合负责人'],
