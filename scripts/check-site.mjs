@@ -12,6 +12,10 @@ assert.match(html, /id="language-switcher"/);
 for (const name of ['YANG HYUNSEOK','HWANG JAEDONG','KIM JINTAE','LEE YOUNGBIN','JO SUNBIN']) assert.ok(html.includes(name), `Missing team member ${name}`);
 assert.match(css, /max-width:600px/);
 assert.match(css, /prefers-reduced-motion/);
+assert.ok(html.includes('전력을 나누고,') && html.includes('몰려오는 적을 막아라.'));
+for (const asset of ['treant-walk', 'slime-tentacle-walk', 'slime-king-walk']) {
+  assert.ok(existsSync(`assets/${asset}.png`), `Missing visitor asset ${asset}`);
+}
 const ids = [...html.matchAll(/id="([^"]+)"/g)].map(match => match[1]);
 assert.equal(ids.length, new Set(ids).size, 'Duplicate HTML IDs');
 for (const [, path] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {

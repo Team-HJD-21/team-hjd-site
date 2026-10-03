@@ -4,7 +4,7 @@ const translations = [
   ['nav a[href="#about"]', 'About us', '团队介绍'],
   ['nav a[href="#project"]', 'Projects', '项目'],
   ['.nav-contact', 'Contact', '联系我们'],
-  ['#hero-title', 'Your choices.<br>Your <em>line of defense.</em>', '你的选择。<br>你的<em>防线。</em>'],
+  ['#hero-title', 'Allocate your power.<br><em>Hold back the hordes.</em>', '分配电力，<br><em>抵御来袭的敌人。</em>'],
   ['.hero-description', 'Limited power. Incoming alien hordes.<br>Manage your turrets and join the fight in this strategy defense game.', '电力有限。外星生物不断涌来。<br>在这款策略防御游戏中，部署炮塔并亲自投入战斗。'],
   ['.actions .primary', 'View on Steam <span aria-hidden="true">↗</span>', '在 Steam 上查看 <span aria-hidden="true">↗</span>'],
   ['.actions .text-link', 'Discover the game <span aria-hidden="true">↓</span>', '了解游戏 <span aria-hidden="true">↓</span>'],
