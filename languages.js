@@ -86,5 +86,7 @@ document.addEventListener('keydown', event => {
   }
 });
 switcher.addEventListener('focusout', event => {
-  if (!switcher.contains(event.relatedTarget)) switcher.open = false;
+  // Safari may blur summary on a button tap without focusing the button.
+  // Closing on a null target removes the option before its click arrives.
+  if (event.relatedTarget && !switcher.contains(event.relatedTarget)) switcher.open = false;
 });
