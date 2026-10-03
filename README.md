@@ -20,6 +20,8 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 
 공개 사이트에는 팀 소개와 사용자가 확인한 공동대표 및 프로젝트 참여자 명단과 개발 중인 THE DEVELOPER의 짧은 소개 및 업무 연락처를 포함합니다. 공동대표는 YANG HYUNSEOK과 HWANG JAEDONG입니다. THE DEVELOPER에는 두 공동대표와 KIM JINTAE 및 LEE YOUNGBIN과 JO SUNBIN이 참여합니다. 미확정 출시 일정이나 기획은 공개하지 않습니다.
 
+첫 접속은 일반 Treant입니다. 페이지를 계속 보고 있으면 60~120초 후 Updated Infected Treant가 한 번 대신 등장하며, 이후에도 60~120초 간격으로 반복합니다. 그 사이에는 일반 Treant가 30초 간격으로 나타납니다. 두 버전이 동시에 등장하지 않으며 이동 속도는 같습니다. 감염 이미지가 로드되지 않으면 일반 Treant로 대체합니다. 숨겨진 탭에서는 방문을 중지합니다.
+
 DNS는 @ A 185.199.108.153 / 185.199.109.153 / 185.199.110.153 / 185.199.111.153과 www CNAME team-hjd-21.github.io를 유지합니다. docs CNAME team-hjd-21.github.io를 추가합니다. GitHub Pages 사용자 도메인은 이 저장소에서 teamhjd.com으로 등록합니다. Docs 저장소는 docs.teamhjd.com을 사용합니다.
 
 메일용 MX와 TXT 및 도메인 검증 설정은 수정하지 않습니다. 인증서가 유효해진 뒤 HTTPS 강제를 활성화합니다.

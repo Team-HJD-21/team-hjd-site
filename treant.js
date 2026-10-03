@@ -4,18 +4,31 @@ const visitor = document.querySelector('.treant-visitor');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let timer;
 let animation;
+let generation = 0;
+// First visit is normal; infected visitors recur during the same page session.
+let normalVisitsLeft = 2 + Math.floor(Math.random() * 3);
 function stopVisit() {
+  generation++;
   cancelAnimationFrame(animation);
   clearTimeout(timer);
   visitor.hidden = true;
 }
-function onScroll() {
+function startVisit() {
   stopVisit();
   if (reducedMotion.matches || document.hidden) return;
+  const visitGeneration = generation;
+  let infected = normalVisitsLeft === 0;
   const image = new Image();
-  image.src = 'assets/treant-walk.png';
-  image.decode().then(() => {
-    if (reducedMotion.matches || document.hidden) return;
+  image.src = infected ? 'assets/treant-infected-walk.png' : 'assets/treant-walk.png';
+  image.decode().catch(error => {
+    if (!infected) throw error;
+    infected = false;
+    image.src = 'assets/treant-walk.png';
+    return image.decode();
+  }).then(() => {
+    if (visitGeneration !== generation || reducedMotion.matches || document.hidden) return;
+    visitor.classList.toggle('treant-infected', infected);
+    normalVisitsLeft = infected ? 1 + Math.floor(Math.random() * 3) : Math.max(0, normalVisitsLeft - 1);
     visitor.hidden = false;
     const started = performance.now();
     const width = innerWidth;
@@ -27,10 +40,10 @@ function onScroll() {
       else visitor.hidden = true;
     }
     animation = requestAnimationFrame(walk);
-    timer = setTimeout(onScroll, 30000);
+    timer = setTimeout(startVisit, 30000);
   }).catch(() => { /* An unavailable decorative asset must not break the page. */ });
 }
-onScroll();
-reducedMotion.addEventListener('change', onScroll);
-document.addEventListener('visibilitychange', onScroll);
+startVisit();
+reducedMotion.addEventListener('change', startVisit);
+document.addEventListener('visibilitychange', startVisit);
 })();
