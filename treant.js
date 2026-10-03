@@ -15,7 +15,7 @@ function stopVisit() {
 }
 function startVisit() {
   stopVisit();
-  if (reducedMotion.matches || document.hidden) return;
+  if (document.hidden) return;
   const visitGeneration = generation;
   let infected = normalVisitsLeft === 0;
   const image = new Image();
@@ -26,15 +26,16 @@ function startVisit() {
     image.src = 'assets/treant-walk.png';
     return image.decode();
   }).then(() => {
-    if (visitGeneration !== generation || reducedMotion.matches || document.hidden) return;
+    if (visitGeneration !== generation || document.hidden) return;
     visitor.classList.toggle('treant-infected', infected);
     normalVisitsLeft = infected ? 1 + Math.floor(Math.random() * 3) : Math.max(0, normalVisitsLeft - 1);
     visitor.hidden = false;
     const started = performance.now();
+    const duration = reducedMotion.matches ? 20000 : 10000;
     const width = innerWidth;
     function walk(now) {
-      if (reducedMotion.matches || document.hidden) { stopVisit(); return; }
-      const progress = Math.min((now - started) / 10000, 1);
+      if (document.hidden) { stopVisit(); return; }
+      const progress = Math.min((now - started) / duration, 1);
       visitor.style.transform = `translateX(${-110 + (width + 220) * progress}px)`;
       if (progress < 1) animation = requestAnimationFrame(walk);
       else visitor.hidden = true;

@@ -16,7 +16,7 @@
   }
   function clear() { for (const actor of actors) remove(actor); }
   document.addEventListener('click', event => {
-    if (!ready || motion.matches || document.hidden || event.detail === 0 ||
+    if (!ready || document.hidden || event.detail === 0 ||
         event.target.closest('a, button, input, select, textarea, summary, [role="button"]') ||
         getSelection()?.toString()) return;
     const start = performance.now();
@@ -34,7 +34,7 @@
     document.body.append(element);
     const actor = {element, animation: null};
     actors.add(actor);
-    const speed = king ? 45 : 70;
+    const speed = motion.matches ? (king ? 20 : 30) : (king ? 45 : 70);
     function move(now) {
       const seconds = (now - start) / 1000;
       const x = event.clientX + dx * speed * seconds;
@@ -47,10 +47,10 @@
     move(start);
     // Best-effort, once per spawned slime, within the real user's click.
     // Unsupported or blocked vibration must never interrupt the animation.
-    if (event.isTrusted && typeof navigator.vibrate === 'function') {
+    if (event.isTrusted && !motion.matches && typeof navigator.vibrate === 'function') {
       try { navigator.vibrate(20); } catch { /* Device/browser policy may block it. */ }
     }
   });
-  motion.addEventListener('change', () => { if (motion.matches) clear(); });
+  motion.addEventListener('change', clear);
   document.addEventListener('visibilitychange', () => { if (document.hidden) clear(); });
 })();

@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 20
       - run: node scripts/check-site.mjs
-      - run: mkdir _site && cp index.html styles.css languages.js treant.js slimes.js 404.html _site/ && cp -r assets privacy _site/
+      - run: mkdir _site && cp index.html styles.css languages.js treant.js slimes.js astronaut.js meteors.js 404.html _site/ && cp -r assets privacy _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

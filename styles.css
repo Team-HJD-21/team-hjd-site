@@ -34,4 +34,17 @@
 .footer .footer-copyright{grid-column:1/-1;margin:0;width:auto;font-size:10px;color:var(--muted)}
 .footer .footer-privacy{font-weight:650;color:var(--ink)}.contact-content .contact-privacy-note{font-size:12px;color:var(--muted);margin-top:14px}
 @media(max-width:600px){.footer{grid-template-columns:minmax(0,1fr);gap:20px}.footer .footer-links{justify-content:flex-start;gap:12px 20px}.footer-business{grid-template-columns:minmax(0,1fr);gap:10px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.treant-visitor,.slime-visitor{display:none}}
+.astronaut-stage{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:9}
+.astronaut-stage[hidden]{display:none}
+.astronaut-peeker{position:absolute;width:65px;height:94px;pointer-events:none}
+.astronaut-peeker.from-left{left:0;transform:translateX(-110%)}
+.astronaut-peeker.from-right{right:0;transform:translateX(110%)}
+.astronaut-sprite{width:65px;height:94px;background:url("assets/astronaut-sheet.png") -39.6px -403.2px/612px 540px no-repeat;image-rendering:pixelated;filter:drop-shadow(0 2px 2px #0007)}
+.from-left .astronaut-sprite{transform:rotate(14deg) scaleX(-1)}
+.from-right .astronaut-sprite{transform:rotate(-14deg)}
+/* Full-bleed hero background, clipped to this section and behind all content. */
+.meteor-layer{position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);overflow:hidden;pointer-events:none;z-index:0;contain:strict}
+.meteor-layer[hidden]{display:none}
+.hero-copy,.hero>.game-visual{position:relative;z-index:1}
+.meteor{position:absolute;left:0;top:0;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat;image-rendering:pixelated;will-change:transform;opacity:0}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.treant-sprite,.slime-visitor{animation:none}.from-left .astronaut-sprite{transform:scaleX(-1)}.from-right .astronaut-sprite{transform:none}}

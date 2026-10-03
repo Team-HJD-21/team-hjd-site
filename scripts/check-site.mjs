@@ -22,7 +22,7 @@ assert.ok(!/co-representatives|联合负责人/i.test(languageSource), 'Outdated
 assert.ok(languageSource.includes('Co-founders') && languageSource.includes('联合创始人'), 'Missing localized founder titles');
 assert.ok(!/Co-CEOs|联席 CEO/.test(languageSource), 'Incorrect executive titles');
 assert.ok(html.includes('전력을 나누고,') && html.includes('몰려오는 적을 막아라.'));
-for (const asset of ['treant-walk', 'treant-infected-walk', 'slime-tentacle-walk', 'slime-king-walk']) {
+for (const asset of ['treant-walk', 'treant-infected-walk', 'slime-tentacle-walk', 'slime-king-walk', 'astronaut-sheet', 'meteor-big', 'meteor-small']) {
   assert.ok(existsSync(`assets/${asset}.png`), `Missing visitor asset ${asset}`);
 }
 const ids = [...html.matchAll(/id="([^"]+)"/g)].map(match => match[1]);
