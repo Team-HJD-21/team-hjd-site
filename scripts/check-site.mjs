@@ -37,4 +37,6 @@ assert.ok(!/공개 전 확인|미지정|공개 전 검토용 초안/.test(privac
 assert.ok(existsSync('privacy/privacy.css') && existsSync('privacy/privacy.js'));
 assert.ok(!/localStorage|fetch\(|XMLHttpRequest/.test(readFileSync('privacy/privacy.js','utf8')), 'Consent must not add tracking or a backend');
 assert.match(readFileSync('404.html','utf8'), /https:\/\/docs.teamhjd.com/);
+assert.ok(existsSync('scripts/build-site.mjs'), 'Missing cache-versioned build script');
+assert.match(readFileSync('.github/workflows/deploy.yml','utf8'), /node scripts\/build-site\.mjs/);
 console.log('Public website links, assets, anchors and responsive safeguards passed.');

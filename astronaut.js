@@ -3,6 +3,7 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const stage = document.createElement('div');
   stage.className = 'astronaut-stage';
+  stage.style.cssText = 'position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:9';
   stage.setAttribute('aria-hidden', 'true');
   stage.hidden = true;
   const actor = document.createElement('div');

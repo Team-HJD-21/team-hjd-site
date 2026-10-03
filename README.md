@@ -17,7 +17,7 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 - Footer 사업자 정보는 사용자 제공값을 사용합니다: 팀 에이치제이디(TeamHJD), 대표자 황재동, 사업자등록번호 622-10-17519, 사업장 주소 경기도 수원시 영통구 태장로 71번길 19. 소개의 공동창업자와 사업자등록증상 대표자를 구분합니다. 전화번호·약관·통신판매업 신고번호 등 미제공 정보는 추가하지 않습니다.
 - 링크 공유 미리보기는 회사 로고 assets/teamhjd-social.png를 사용합니다. 원본은 회사_Logo/TeamHJD_black.png이며 사이트 내부 게임 아트와는 별개입니다. 기존 공유 메시지에는 플랫폼 캐시로 이전 이미지가 남을 수 있습니다.
 - THE DEVELOPER Steam 스토어: https://store.steampowered.com/app/4336820/The_Developer/
-- 배포: main push 또는 Deploy TeamHJD website 워크플로 수동 실행
+- 배포: main push 또는 Deploy TeamHJD website 워크플로 수동 실행. scripts/build-site.mjs는 CSS·JS에 내용 해시가 포함된 파일명을 만들고 PNG 참조에도 배포 버전을 붙입니다. 공개 페이지는 해당 버전 주소만 참조하므로 이전 리소스 캐시와 섞이지 않습니다. 이메일에서 사용하는 기존 PNG 공개 주소는 유지합니다. GitHub Pages의 HTML 캐시나 이미 열린 탭을 강제로 지우지는 못하므로 전환 직후에는 재접속 또는 새로고침이 필요할 수 있습니다.
 
 대표 게임 THE DEVELOPER의 공식 Steam 아트를 첫 화면에 배치합니다. 메인 캡슐과 헤더 캡슐 및 우주 배경은 사용자가 제공한 공유 드라이브 원본에서 복사한 에셋입니다. 원본은 수정하지 않았으며 공식 아트를 실제 게임 플레이 화면으로 설명하지 않습니다.
 

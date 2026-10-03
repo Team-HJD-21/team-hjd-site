@@ -5,9 +5,15 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const layer = document.createElement('div');
   layer.className = 'meteor-layer';
+  // Prevent a cached/failed stylesheet from turning decoration into a grid cell.
+  layer.style.cssText = 'position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);overflow:hidden;pointer-events:none;z-index:0;contain:strict';
   layer.setAttribute('aria-hidden', 'true');
   layer.hidden = true;
   hero.prepend(layer);
+  for (const content of hero.querySelectorAll('.hero-copy,.game-visual')) {
+    content.style.position = 'relative';
+    content.style.zIndex = '1';
+  }
   const actors = new Set();
   let assets = [];
   let inView = false;
@@ -41,6 +47,7 @@
     const opacity = random(.32, .5);
     const element = document.createElement('div');
     element.className = 'meteor';
+    element.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat;image-rendering:pixelated;opacity:0';
     element.style.width = `${size}px`;
     element.style.height = `${spriteHeight}px`;
     element.style.backgroundImage = `url("${asset.src}")`;
