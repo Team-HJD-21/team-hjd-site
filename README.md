@@ -18,7 +18,7 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 
 이스터 에그: Treant는 접속하면 바로 등장하고 이후 30초 간격으로 화면 아래를 10초 동안 통과합니다. 화면의 일반 영역을 클릭하면 Slime Tentacle 또는 5% 확률로 Slime King이 무작위 방향으로 이동합니다. 슬라임은 최대 12마리이며 8초 후 사라집니다. CBC 원본은 수정하지 않고 이동 시트를 복사해 사용합니다. 링크와 버튼은 제외하며 장식은 클릭을 가로채지 않습니다. 동작 줄이기 설정과 숨겨진 탭에서는 애니메이션을 중지합니다.
 
-공개 사이트에는 팀 소개와 사용자가 확인한 공동대표 및 프로젝트 참여자 명단과 개발 중인 THE DEVELOPER의 짧은 소개 및 업무 연락처를 포함합니다. 공동대표는 YANG HYUNSEOK과 HWANG JAEDONG입니다. THE DEVELOPER에는 두 공동대표와 KIM JINTAE 및 LEE YOUNGBIN과 JO SUNBIN이 참여합니다. 미확정 출시 일정이나 기획은 공개하지 않습니다.
+공개 사이트에는 팀 소개와 사용자가 확인한 공동대표 및 프로젝트 참여자 명단과 개발 중인 THE DEVELOPER의 짧은 소개 및 업무 연락처를 포함합니다. 공동대표는 YANG HYUNSEOK과 HWANG JAEDONG입니다. THE DEVELOPER에는 두 공동대표와 KIM JINTAE 및 LEE YOUNGBIN과 JO SUBIN이 참여합니다. 미확정 출시 일정이나 기획은 공개하지 않습니다.
 
 첫 접속은 일반 Treant입니다. 페이지를 계속 보고 있으면 60~120초 후 Updated Infected Treant가 한 번 대신 등장하며, 이후에도 60~120초 간격으로 반복합니다. 그 사이에는 일반 Treant가 30초 간격으로 나타납니다. 두 버전이 동시에 등장하지 않으며 이동 속도는 같습니다. 감염 이미지가 로드되지 않으면 일반 Treant로 대체합니다. 숨겨진 탭에서는 방문을 중지합니다.
 
