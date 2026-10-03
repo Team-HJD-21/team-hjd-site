@@ -39,7 +39,9 @@ const labels = {
   en: ['TeamHJD home', 'Main navigation', 'TeamHJD rocket logo', 'THE DEVELOPER title graphic. Not a gameplay screenshot.'],
   'zh-CN': ['TeamHJD 首页', '主导航', 'TeamHJD 火箭标志', 'THE DEVELOPER 项目标题图。并非游戏截图。'],
 };
-const select = document.querySelector('#language-select');
+const switcher = document.querySelector('#language-switcher');
+const languageButtons = [...switcher.querySelectorAll('[data-language]')];
+const languageNames = {ko: '한국어', en: 'English', 'zh-CN': '简体中文'};
 function applyLanguage(language) {
   const lang = Object.hasOwn(descriptions, language) ? language : 'ko';
   for (const item of copy) item.element.innerHTML = item[lang];
@@ -49,16 +51,31 @@ function applyLanguage(language) {
   ['.header .wordmark', 'nav', '.brand-scene', '.project-art'].forEach((selector, index) => {
     document.querySelector(selector).setAttribute('aria-label', labels[lang][index]);
   });
-  select.value = lang;
+  document.querySelector('#current-language').textContent = languageNames[lang];
+  languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === lang)));
   return lang;
 }
 let savedLanguage;
 try { savedLanguage = localStorage.getItem('teamhjd-language'); } catch { /* Storage may be disabled. */ }
 applyLanguage(new URL(location.href).searchParams.get('lang') || savedLanguage || 'ko');
-select.addEventListener('change', () => {
-  const lang = applyLanguage(select.value);
+languageButtons.forEach(button => button.addEventListener('click', () => {
+  const lang = applyLanguage(button.dataset.language);
   try { localStorage.setItem('teamhjd-language', lang); } catch { /* Selection still works without storage. */ }
   const url = new URL(location.href);
   url.searchParams.set('lang', lang);
   history.replaceState(null, '', url);
+  switcher.open = false;
+  switcher.querySelector('summary').focus();
+}));
+document.addEventListener('click', event => {
+  if (!switcher.contains(event.target)) switcher.open = false;
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && switcher.open) {
+    switcher.open = false;
+    switcher.querySelector('summary').focus();
+  }
+});
+switcher.addEventListener('focusout', event => {
+  if (!switcher.contains(event.relatedTarget)) switcher.open = false;
 });

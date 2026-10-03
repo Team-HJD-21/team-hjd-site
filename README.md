@@ -6,6 +6,8 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 - 문서 사이트: https://docs.teamhjd.com/ (별도 저장소 Team-HJD-21/team-hjd-docs)
 - 검증: `node scripts/check-site.mjs`
 - 언어: 오른쪽 위 목록에서 한국어 / English / 简体中文 선택. 선택을 브라우저에 저장하며 `?lang=en` 및 `?lang=zh-CN` 링크로도 열 수 있습니다. Docs 사이트는 별도이며 이 언어 선택은 대표 홈페이지에만 적용됩니다.
+- 언어 UI: 사이트 색상에 맞춘 드롭다운 목록. 현재 언어 강조와 키보드 접근 및 Escape 닫기 지원.
+- 공개 문의 주소: support@teamhjd.com
 - 배포: main push 또는 Deploy TeamHJD website 워크플로 수동 실행
 
 공개 사이트에는 팀 소개와 사용자가 확인한 공동대표 및 프로젝트 참여자 명단과 개발 중인 THE DEVELOPER의 짧은 소개 및 업무 연락처를 포함합니다. 공동대표는 YANG HYUNSEOK과 HWANG JAEDONG입니다. THE DEVELOPER에는 두 공동대표와 KIM JINTAE 및 LEE YOUNGBIN과 JO SUNBIN이 참여합니다. 게임 스크린샷처럼 보일 수 있는 실제 에셋 대신 타이틀 그래픽을 사용하며 게임 화면으로 설명하지 않습니다. 미확정 출시 일정이나 기획은 공개하지 않습니다.

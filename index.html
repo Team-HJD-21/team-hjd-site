@@ -25,11 +25,18 @@
       <a href="https://docs.teamhjd.com/">Docs <span aria-hidden="true">↗</span></a>
       <a class="nav-contact" href="#contact">연락하기</a>
     </nav>
-    <select id="language-select" class="language-select" aria-label="Language / 언어 / 语言">
-      <option value="ko" lang="ko">한국어</option>
-      <option value="en" lang="en">English</option>
-      <option value="zh-CN" lang="zh-CN">简体中文</option>
-    </select>
+    <details id="language-switcher" class="language-switcher">
+      <summary aria-label="Language / 언어 / 语言">
+        <svg class="language-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></svg>
+        <span id="current-language">한국어</span>
+        <svg class="language-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+      </summary>
+      <ul class="language-list" aria-label="Language / 언어 / 语言">
+        <li><button type="button" data-language="ko" lang="ko" aria-pressed="true"><span>한국어</span><small>KO</small></button></li>
+        <li><button type="button" data-language="en" lang="en" aria-pressed="false"><span>English</span><small>EN</small></button></li>
+        <li><button type="button" data-language="zh-CN" lang="zh-CN" aria-pressed="false"><span>简体中文</span><small>ZH</small></button></li>
+      </ul>
+    </details>
   </header>
   <main id="main">
     <section class="hero shell" id="home" aria-labelledby="hero-title">
@@ -67,7 +74,7 @@
         <div class="project-team"><div><h4>공동대표</h4><ul class="people"><li>YANG HYUNSEOK</li><li>HWANG JAEDONG</li></ul></div><div><h4>팀원</h4><ul class="people"><li>KIM JINTAE</li><li>LEE YOUNGBIN</li><li>JO SUNBIN</li></ul></div></div>
       </div>
     </section>
-    <section class="contact shell section" id="contact" aria-labelledby="contact-title"><div class="section-label"><span>03</span><p>GET IN TOUCH</p></div><div class="contact-content"><h2 id="contact-title">새로운 이야기를<br>기다립니다.</h2><div><p>팀과 프로젝트에 관한 문의는 이메일로 보내주세요.</p><a class="email" href="mailto:jdhwang@teamhjd.com">jdhwang@teamhjd.com <span aria-hidden="true">↗</span></a></div></div></section>
+    <section class="contact shell section" id="contact" aria-labelledby="contact-title"><div class="section-label"><span>03</span><p>GET IN TOUCH</p></div><div class="contact-content"><h2 id="contact-title">새로운 이야기를<br>기다립니다.</h2><div><p>팀과 프로젝트에 관한 문의는 이메일로 보내주세요.</p><a class="email" href="mailto:support@teamhjd.com">support@teamhjd.com <span aria-hidden="true">↗</span></a></div></div></section>
   </main>
   <footer class="shell footer"><a class="wordmark" href="#home">Team<span>HJD</span></a><p>Happy Journey of Developers.</p><div><a href="https://docs.teamhjd.com/">Docs ↗</a><a href="https://github.com/Team-HJD-21">GitHub ↗</a></div><small>© TeamHJD</small></footer>
   <script src="languages.js" defer></script>

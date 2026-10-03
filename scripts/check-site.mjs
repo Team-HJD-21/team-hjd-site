@@ -6,6 +6,8 @@ assert.match(html, /<html lang="ko">/);
 assert.match(html, /https:\/\/teamhjd.com\//);
 assert.match(html, /https:\/\/docs.teamhjd.com\//);
 assert.match(html, /개발 중/);
+assert.match(html, /mailto:support@teamhjd.com/);
+assert.match(html, /id="language-switcher"/);
 for (const name of ['YANG HYUNSEOK','HWANG JAEDONG','KIM JINTAE','LEE YOUNGBIN','JO SUNBIN']) assert.ok(html.includes(name), `Missing team member ${name}`);
 assert.match(css, /max-width:600px/);
 assert.match(css, /prefers-reduced-motion/);
