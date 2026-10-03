@@ -45,6 +45,11 @@
       else actor.animation = requestAnimationFrame(move);
     }
     move(start);
+    // Best-effort, once per spawned slime, within the real user's click.
+    // Unsupported or blocked vibration must never interrupt the animation.
+    if (event.isTrusted && typeof navigator.vibrate === 'function') {
+      try { navigator.vibrate(20); } catch { /* Device/browser policy may block it. */ }
+    }
   });
   motion.addEventListener('change', () => { if (motion.matches) clear(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) clear(); });
