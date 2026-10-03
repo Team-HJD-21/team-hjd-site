@@ -7,7 +7,9 @@ TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 - 검증: `node scripts/check-site.mjs`
 - 언어: 오른쪽 위 목록에서 한국어 / English / 简体中文 선택. 선택을 브라우저에 저장하며 `?lang=en` 및 `?lang=zh-CN` 링크로도 열 수 있습니다. Docs 사이트는 별도이며 이 언어 선택은 대표 홈페이지에만 적용됩니다.
 - 언어 UI: 사이트 색상에 맞춘 드롭다운 목록. 현재 언어 강조와 키보드 접근 및 Escape 닫기 지원.
+- 영어·중국어는 한국어 어순을 그대로 옮기지 않고 각 언어의 대외 소개 문구로 작성합니다. 사용자 지정에 따라 두 공동대표는 Co-founders / 联合创始人으로 소개합니다. 팀 이름의 뜻과 명단 및 게임의 확인된 특징은 언어별로 동일하게 유지합니다.
 - 공개 문의 주소: support@teamhjd.com
+- 링크 공유 미리보기는 회사 로고 assets/teamhjd-social.png를 사용합니다. 원본은 회사_Logo/TeamHJD_black.png이며 사이트 내부 게임 아트와는 별개입니다. 기존 공유 메시지에는 플랫폼 캐시로 이전 이미지가 남을 수 있습니다.
 - THE DEVELOPER Steam 스토어: https://store.steampowered.com/app/4336820/The_Developer/
 - 배포: main push 또는 Deploy TeamHJD website 워크플로 수동 실행
 
