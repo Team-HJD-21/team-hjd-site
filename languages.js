@@ -64,6 +64,19 @@ const languageNames = {ko: '한국어', en: 'English', 'zh-CN': '简体中文'};
 function applyLanguage(language) {
   const lang = Object.hasOwn(descriptions, language) ? language : 'ko';
   for (const item of copy) item.element.innerHTML = item[lang];
+  for (const element of document.querySelectorAll('.hero-game-name, #project-title, #project-team-title, .project-links .game-details-link')) {
+    for (const node of [...element.childNodes]) {
+      if (node.nodeType !== Node.TEXT_NODE || !/The Developer/i.test(node.textContent)) continue;
+      const fragment = document.createDocumentFragment();
+      for (const part of node.textContent.split(/(The Developer)/gi)) {
+        if (!/^The Developer$/i.test(part)) { fragment.append(document.createTextNode(part)); continue; }
+        const brand = document.createElement('span'); brand.className = 'brand-game';
+        const image = document.createElement('img'); image.src = 'assets/the-developer-logo.png'; image.width = 1280; image.height = 714; image.alt = 'The Developer';
+        brand.append(image); fragment.append(brand);
+      }
+      node.replaceWith(fragment);
+    }
+  }
   document.documentElement.lang = lang;
   document.querySelector('meta[name="description"]').content = descriptions[lang];
   document.querySelector('meta[property="og:description"]').content = descriptions[lang];

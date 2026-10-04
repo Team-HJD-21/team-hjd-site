@@ -60,6 +60,19 @@ function applyPageLanguage(language) {
     item.element.textContent = lang === 'ko' ? item.ko : publicCopy[item.key][lang === 'en' ? 0 : 1];
   }
   document.documentElement.lang = lang;
+  for (const element of document.querySelectorAll('.public-page h2, .public-page h3, .public-page a.text-link')) {
+    for (const node of [...element.childNodes]) {
+      if (node.nodeType !== Node.TEXT_NODE || !/The Developer/i.test(node.textContent)) continue;
+      const fragment = document.createDocumentFragment();
+      for (const part of node.textContent.split(/(The Developer)/gi)) {
+        if (!/^The Developer$/i.test(part)) { fragment.append(document.createTextNode(part)); continue; }
+        const brand = document.createElement('span'); brand.className = 'brand-game';
+        const image = document.createElement('img'); image.src = new URL('the-developer-logo.png', document.querySelector('.wordmark img').src).href; image.width = 1280; image.height = 714; image.alt = 'The Developer';
+        brand.append(image); fragment.append(brand);
+      }
+      node.replaceWith(fragment);
+    }
+  }
   document.querySelector('#page-current-language').textContent = names[lang];
   for (const button of switcher.querySelectorAll('[data-page-language]')) button.setAttribute('aria-pressed', String(button.dataset.pageLanguage === lang));
   for (const link of document.querySelectorAll('a')) {
