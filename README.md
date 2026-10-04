@@ -2,6 +2,12 @@
 
 TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 
+## 게임 저장소 비공개 전환 준비
+
+회사 사이트는 이 저장소의 HTML·CSS·JS·`assets`만 사용하며 게임 저장소의 checkout, raw 파일 또는 API 접근을 사용하지 않습니다. 홈페이지의 게임 소스 레포 링크는 제거했습니다. GitHub 조직 링크와 문서 사이트 링크는 유지합니다.
+
+문서 사이트는 별도 `team-hjd-docs` 저장소의 커밋된 문서로 배포합니다. 게임 소스·원본 게임 에셋·미공개 기획은 옮기지 않았고 기존 파일과 게임 저장소 공개 상태도 변경하지 않았습니다. 이관한 홍보 이미지와 문서는 여전히 공개입니다.
+
 - 대표 사이트: https://teamhjd.com/
 - 문서 사이트: https://docs.teamhjd.com/ (별도 저장소 Team-HJD-21/team-hjd-docs)
 - 검증: `node scripts/check-site.mjs`

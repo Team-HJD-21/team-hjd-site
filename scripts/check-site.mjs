@@ -15,6 +15,7 @@ assert.match(html, /href="privacy\/index.html#email"/);
 assert.match(html, /class="footer-privacy"/);
 assert.match(html, /https:\/\/store.steampowered.com\/app\/4336820\/The_Developer\//);
 assert.match(html, /id="language-switcher"/);
+assert.ok(!html.includes('unity-6-the-developer'), 'Public homepage must not depend on the private game repository');
 assert.ok(html.indexOf('id="about"') < html.indexOf('id="project"'), 'Section order must match the main navigation');
 assert.match(html, /<span>01<\/span><p>THE STUDIO<\/p>/);
 assert.match(html, /<span>02<\/span><p>OUR GAME<\/p>/);

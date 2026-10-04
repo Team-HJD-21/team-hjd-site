@@ -31,7 +31,6 @@ const translations = [
   ['.project-genre', 'Strategic defense', '策略防守'],
   ['.project-copy > p:not([class])', 'Every turret draws power, and there is only so much to go around. Switch turrets on and off to keep your defenses running, decide where power matters most, and take the fight into your own hands.', '每座炮塔都需要电力，而可用电力有限。灵活开关炮塔，把电力留给最需要的地方，再亲自上阵抵御来袭的敌人。'],
   ['.project-disclaimer', 'In development. Features and content are subject to change.', '游戏正在开发中，玩法与内容可能调整。'],
-  ['.project-copy .text-link', 'Explore the code on GitHub <span aria-hidden="true">↗</span>', '在 GitHub 上查看源代码 <span aria-hidden="true">↗</span>'],
   ['.steam-link', 'View on Steam <span aria-hidden="true">↗</span>', '在 Steam 上查看 <span aria-hidden="true">↗</span>'],
   ['#project-team-title', 'The team behind THE DEVELOPER', 'THE DEVELOPER 开发团队'],
   ['#project .team-roster > p', 'A five-person team, including both co-founders, is bringing THE DEVELOPER to life.', 'THE DEVELOPER 由五人团队共同开发，两位联合创始人也参与其中。'],
