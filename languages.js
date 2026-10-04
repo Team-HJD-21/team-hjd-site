@@ -4,8 +4,8 @@ const translations = [
   ['nav a[href="#about"]', 'About', '关于我们'],
   ['nav a[href="#project"]', 'Games', '游戏'],
   ['.nav-contact', 'Contact', '联系我们'],
-  ['nav a[href="https://docs.teamhjd.com/"]', 'Docs <span aria-hidden="true">↗</span>', '开发文档 <span aria-hidden="true">↗</span>'],
-  ['footer a[href="https://docs.teamhjd.com/"]', 'Docs ↗', '开发文档 ↗'],
+  ['.related-sites-label', 'Related sites', '相关网站'],
+  ['.team-docs-link', 'Team documentation <span aria-hidden="true">↗</span>', '团队开发文档 <span aria-hidden="true">↗</span>'],
   ['.footer-name-label', 'Registered business name', '登记名称'],
   ['.footer-owner-label', 'Business representative', '负责人'],
   ['.footer-owner-value', 'HWANG JAEDONG', 'HWANG JAEDONG'],
@@ -97,4 +97,17 @@ switcher.addEventListener('focusout', event => {
   // Safari may blur summary on a button tap without focusing the button.
   // Closing on a null target removes the option before its click arrives.
   if (event.relatedTarget && !switcher.contains(event.relatedTarget)) switcher.open = false;
+});
+const relatedSites = document.querySelector('#related-sites');
+document.addEventListener('click', event => {
+  if (!relatedSites.contains(event.target)) relatedSites.open = false;
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && relatedSites.open) {
+    relatedSites.open = false;
+    relatedSites.querySelector('summary').focus();
+  }
+});
+relatedSites.addEventListener('focusout', event => {
+  if (event.relatedTarget && !relatedSites.contains(event.relatedTarget)) relatedSites.open = false;
 });
