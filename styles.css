@@ -51,4 +51,5 @@
 .meteor-layer[hidden]{display:none}
 .hero-copy,.hero>.game-visual{position:relative;z-index:1}
 .meteor{position:absolute;left:0;top:0;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat;image-rendering:pixelated;will-change:transform;opacity:0}
+.wordmark{flex-shrink:0}.wordmark img{display:block;width:158px;height:auto}.footer .wordmark img{width:140px}@media(max-width:600px){.wordmark img{width:132px}.public-header .wordmark{order:0}.policy-header .wordmark{order:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.treant-sprite,.treant-idle .treant-sprite,.slime-visitor{animation:none}.from-left .astronaut-sprite{transform:scaleX(-1)}.from-right .astronaut-sprite{transform:none}}
