@@ -8,14 +8,18 @@ const output = path.resolve(process.argv[2] || path.join(root, '_site'));
 if (output === root || path.parse(output).root === output) throw new Error('Build output must be a separate directory');
 if (existsSync(output) && readdirSync(output).length) throw new Error('Choose an empty build directory; existing files are never deleted');
 mkdirSync(output, {recursive:true});
-const pages = ['index.html', '404.html', 'privacy/index.html'];
-const resources = ['styles.css', 'languages.js', 'treant.js', 'slimes.js', 'astronaut.js', 'meteors.js', 'privacy/privacy.css', 'privacy/privacy.js'];
+const pages = ['index.html', '404.html', 'privacy/index.html', 'press/index.html', 'content-policy/index.html'];
+const resources = ['styles.css', 'languages.js', 'treant.js', 'slimes.js', 'astronaut.js', 'meteors.js', 'privacy/privacy.css', 'privacy/privacy.js', 'public-pages.css', 'public-pages.js'];
 const hash = content => createHash('sha256').update(content).digest('hex').slice(0, 16);
-const images = readdirSync(path.join(root, 'assets')).filter(name => name.endsWith('.png')).sort();
-const version = hash(Buffer.concat([...pages, ...resources, ...images.map(name=>'assets/'+name)].map(name=>Buffer.concat([Buffer.from(name), readFileSync(path.join(root,name))]))));
+function assetFiles(directory, prefix = 'assets/') {
+  return readdirSync(directory, {withFileTypes:true}).flatMap(entry => entry.isDirectory() ? assetFiles(path.join(directory, entry.name), prefix + entry.name + '/') : [prefix + entry.name]).sort();
+}
+const version = hash(Buffer.concat([...pages, ...resources, ...assetFiles(path.join(root, 'assets')), 'robots.txt'].map(name=>Buffer.concat([Buffer.from(name), readFileSync(path.join(root,name))]))));
 // Keep original asset URLs usable by email clients and old HTML during rollout.
 cpSync(path.join(root, 'assets'), path.join(output, 'assets'), {recursive:true});
 mkdirSync(path.join(output, 'privacy'), {recursive:true});
+for (const name of pages) mkdirSync(path.dirname(path.join(output, name)), {recursive:true});
+cpSync(path.join(root, 'robots.txt'), path.join(output, 'robots.txt'));
 const fingerprinted = new Map();
 function versionImages(source) {
   // Includes literal and template-string sprite URLs such as slime-${kind}.

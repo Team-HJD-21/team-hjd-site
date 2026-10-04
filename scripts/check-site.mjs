@@ -36,7 +36,7 @@ const ids = [...html.matchAll(/id="([^"]+)"/g)].map(match => match[1]);
 assert.equal(ids.length, new Set(ids).size, 'Duplicate HTML IDs');
 for (const [, path] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
   if (path.startsWith('#')) assert.ok(ids.includes(path.slice(1)), `Missing anchor ${path}`);
-  else if (!/^(?:https?:|mailto:)/.test(path)) assert.ok(existsSync(path.split('#')[0]), `Missing file ${path}`);
+  else if (!/^(?:https?:|mailto:)/.test(path)) assert.ok(existsSync(path.split(/[?#]/)[0]), `Missing file ${path}`);
 }
 const privacy = readFileSync('privacy/index.html', 'utf8');
 for (const value of ['문의 처리 완료 후 6개월', '황재동', '양현석', 'Google Asia Pacific Pte. Ltd.', '2026-10-04', 'id="collection-consent"', 'id="transfer-consent"']) assert.ok(privacy.includes(value), `Missing privacy detail ${value}`);
@@ -47,3 +47,12 @@ assert.match(readFileSync('404.html','utf8'), /https:\/\/docs.teamhjd.com/);
 assert.ok(existsSync('scripts/build-site.mjs'), 'Missing cache-versioned build script');
 assert.match(readFileSync('.github/workflows/deploy.yml','utf8'), /node scripts\/build-site\.mjs/);
 console.log('Public website links, assets, anchors and responsive safeguards passed.');
+for (const value of ['Windows', 'macOS', '2027년 2월', '중국어', 'type=bug', 'press/index.html', 'content-policy/index.html']) assert.ok(html.includes(value), `Missing confirmed public information: ${value}`);
+assert.ok(!/데모|테스트|demo|playtest/i.test(html), 'Do not publish demo/test information');
+const press = readFileSync('press/index.html', 'utf8');
+for (const value of ['wm4V9DZsgH8', '출처', '변형', '학습', '권장 사항']) assert.ok(press.includes(value));
+for (let index=1; index<=5; index++) assert.ok(existsSync(`assets/press/Gameplay_Example${index}.png`));
+const robots = readFileSync('robots.txt','utf8');
+for (const bot of ['GPTBot', 'ClaudeBot', 'Google-Extended']) assert.ok(robots.includes(`User-agent: ${bot}\nDisallow: /`));
+assert.ok(robots.includes('User-agent: OAI-SearchBot') && robots.includes('User-agent: Claude-SearchBot'));
+assert.ok(existsSync('content-policy/index.html') && existsSync('public-pages.js'));

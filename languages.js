@@ -1,5 +1,26 @@
 // Korean remains available without JavaScript. Translations contain only trusted site copy.
 const translations = [
+  ['#faq-title', 'Get to know the game', '了解游戏'],
+  ['.faq-note', 'Currently in development. Release plans and features may change.', '游戏正在开发中，发行计划与具体内容可能调整。'],
+  ['.faq-game-q', 'What kind of game is it?', '这是一款什么样的游戏？'],
+  ['.faq-game-a', 'A strategic defense game where you distribute limited power across your turrets and fight alongside them to repel alien attacks.', '这是一款策略防守游戏：调配有限电力，让炮塔发挥作用，同时亲自上阵抵御外星生物。'],
+  ['.faq-platform-q', 'Which platforms are planned?', '计划支持哪些平台？'],
+  ['.faq-platform-a', 'Planned for Windows and macOS.', '计划支持 Windows 和 macOS。'],
+  ['.faq-language-q', 'Which languages will the game support?', '游戏支持哪些语言？'],
+  ['.faq-language-a', 'Korean and English, with Chinese planned for a later update. Website language options are separate from in-game language support.', '支持韩语和英语，后续计划加入中文。网站的语言选项不代表游戏内已支持的语言。'],
+  ['.faq-release-q', 'When is the release planned?', '计划什么时候发行？'],
+  ['.faq-release-a', 'We are targeting February 2027. Any changes to the release plan will be announced through our official channels.', '目前以 2027 年 2 月发行为目标。如有调整，我们会通过官方渠道公布。'],
+  ['.support-title', 'Questions & bug reports', '咨询与问题反馈'],
+  ['.support-description', 'Email support@teamhjd.com with the game version, operating system, steps to reproduce, and the expected and actual results. Relevant screenshots help us investigate.', '请发送邮件至 support@teamhjd.com，注明游戏版本、操作系统、复现步骤、预期结果和实际结果。相关截图有助于我们排查问题。'],
+  ['.support-safety', 'Hide email addresses and account details in screenshots. Never include passwords or payment details.', '请遮盖截图中的邮箱和账号信息，不要发送密码或支付信息。'],
+  ['.bug-link', 'Prepare a bug report ↗', '准备问题反馈邮件 ↗'],
+  ['.press-title', 'The Developer press kit', 'The Developer 媒体资料包'],
+  ['.press-description', 'Company and game information, logos, official artwork, gameplay screenshots, and a trailer—along with the terms for use in articles and reviews.', '公司与游戏介绍、标志、官方宣传图、实机截图及预告片，以及报道和评测使用这些素材的条件。'],
+  ['.press-link', 'View press kit ↗', '查看媒体资料包 ↗'],
+  ['.trailer-link', 'Watch the trailer ↗', '观看预告片 ↗'],
+  ['.footer-press', 'Press kit', '媒体资料包'],
+  ['.footer-content-policy', 'Content use & AI training policy', '内容使用与 AI 训练政策'],
+  ['.ai-policy-short', 'AI search and information retrieval are permitted. Use of our content for AI training is prohibited.', '允许 AI 搜索和信息查询；禁止将本站内容用于 AI 训练。'],
   ['.skip-link', 'Skip to content', '跳转到正文'],
   ['nav a[href="#about"]', 'About', '关于我们'],
   ['nav a[href="#project"]', 'Games', '游戏'],
@@ -68,6 +89,11 @@ function applyLanguage(language) {
   });
   document.querySelector('.footer-links').setAttribute('aria-label', {ko:'하단 메뉴',en:'Footer navigation','zh-CN':'页脚导航'}[lang]);
   document.querySelector('#current-language').textContent = languageNames[lang];
+  for (const link of document.querySelectorAll('.press-link, .footer-press, .footer-content-policy, .bug-link')) {
+    const url = new URL(link.getAttribute('href'), location.href);
+    url.searchParams.set('lang', lang);
+    link.href = url.pathname + url.search + url.hash;
+  }
   languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === lang)));
   return lang;
 }
