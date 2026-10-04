@@ -26,7 +26,7 @@ const translations = [
   ['#hero-title', 'Power your defenses.<br><em>Stand your ground.</em>', '部署防御，<br><em>迎战来敌。</em>'],
   ['.hero-description', 'Power is limited. The aliens keep coming.<br>Manage your turrets and fight alongside them in a strategic defense game.', '电力有限，外星生物却源源不断。<br>调配炮塔电力，亲自加入战斗，守住防线。'],
   ['.actions .primary', 'View on Steam <span aria-hidden="true">↗</span>', '在 Steam 上查看 <span aria-hidden="true">↗</span>'],
-  ['.actions .text-link', 'Explore the game <span aria-hidden="true">↓</span>', '了解游戏 <span aria-hidden="true">↓</span>'],
+  ['.actions .text-link', 'Explore the game <span aria-hidden="true">→</span>', '了解游戏 <span aria-hidden="true">→</span>'],
   ['#about-title', 'Built on a love<br>of making games.', '热爱开发，<br>用心做游戏。'],
   ['.about-content > div:last-child > p:first-child', 'We are TeamHJD, a game development team. We combine our ideas and skills to bring our games to life.', '我们是 TeamHJD，一支游戏开发团队。我们将创意与技术相结合，一起把想法做成游戏。'],
   ['.about-content .muted', 'HJD stands for Happy Journey of Developers.<br>For us, making games is a journey we share.', 'HJD 是 Happy Journey of Developers 的缩写。<br>对我们而言，游戏开发是一段共同探索的旅程。'],

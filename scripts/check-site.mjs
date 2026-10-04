@@ -48,6 +48,8 @@ assert.ok(existsSync('scripts/build-site.mjs'), 'Missing cache-versioned build s
 assert.match(readFileSync('.github/workflows/deploy.yml','utf8'), /node scripts\/build-site\.mjs/);
 console.log('Public website links, assets, anchors and responsive safeguards passed.');
 const game = readFileSync('games/the-developer/index.html', 'utf8');
+assert.match(html, /게임 알아보기 <span aria-hidden="true">→<\/span>/);
+assert.ok(game.indexOf('id="screenshots"') < game.indexOf('id="trailer"') && game.indexOf('id="trailer"') < game.indexOf('class="public-resources"'), 'Support and press must follow screenshots and trailer');
 assert.ok(!html.includes('class="game-faq"'), 'Detailed game FAQ belongs on the game page');
 assert.ok(html.includes('games/the-developer/index.html'), 'Missing game details entry');
 for (const value of ['Windows', 'macOS', '2027년 2월', '중국어', '싱글플레이', '멀티플레이', 'type=bug', 'press/index.html', 'content-policy/index.html']) assert.ok(game.includes(value), `Missing confirmed public information: ${value}`);
