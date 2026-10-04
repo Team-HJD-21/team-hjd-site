@@ -6,6 +6,8 @@ const translations = [
   ['.faq-game-a', 'A strategic defense game where you distribute limited power across your turrets and fight alongside them to repel alien attacks.', '这是一款策略防守游戏：调配有限电力，让炮塔发挥作用，同时亲自上阵抵御外星生物。'],
   ['.faq-platform-q', 'Which platforms are planned?', '计划支持哪些平台？'],
   ['.faq-platform-a', 'Planned for Windows and macOS.', '计划支持 Windows 和 macOS。'],
+  ['.faq-mode-q', 'Can I play solo or with others?', '可以单人游玩，也可以和其他玩家一起玩吗？'],
+  ['.faq-mode-a', 'Both single-player and multiplayer are supported.', '支持单人和多人游玩。'],
   ['.faq-language-q', 'Which languages will the game support?', '游戏支持哪些语言？'],
   ['.faq-language-a', 'Korean and English, with Chinese planned for a later update. Website language options are separate from in-game language support.', '支持韩语和英语，后续计划加入中文。网站的语言选项不代表游戏内已支持的语言。'],
   ['.faq-release-q', 'When is the release planned?', '计划什么时候发行？'],
