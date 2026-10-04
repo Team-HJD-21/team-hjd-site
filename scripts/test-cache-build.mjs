@@ -9,7 +9,7 @@ const {chromium}=require(process.env.TEAMHJD_PLAYWRIGHT || 'playwright');
 const root=process.cwd();
 const testRoot=mkdtempSync(path.resolve(root,'../.codex/cache-build-'));
 const fixture=path.join(testRoot,'fixture');mkdirSync(path.join(fixture,'scripts'),{recursive:true});
-for(const name of ['index.html','404.html','styles.css','languages.js','treant.js','slimes.js','astronaut.js','meteors.js','assets','privacy','press','content-policy','public-pages.css','public-pages.js','robots.txt','scripts/build-site.mjs']) cpSync(path.join(root,name),path.join(fixture,name),{recursive:true});
+for(const name of ['index.html','404.html','styles.css','languages.js','treant.js','slimes.js','astronaut.js','meteors.js','assets','privacy','press','content-policy','games','public-pages.css','public-pages.js','robots.txt','scripts/build-site.mjs']) cpSync(path.join(root,name),path.join(fixture,name),{recursive:true});
 const build=output=>execFileSync(process.execPath,[path.join(fixture,'scripts/build-site.mjs'),output],{encoding:'utf8'});
 const first=path.join(testRoot,'first'),second=path.join(testRoot,'second'),changed=path.join(testRoot,'changed');
 build(first);build(second);
@@ -22,7 +22,7 @@ assert.notEqual(manifest(first).version,manifest(changed).version);
 for(const folder of [first,changed]){
   assert.ok(!existsSync(path.join(folder,'drafts')));
   assert.ok(!existsSync(path.join(folder,'scripts/privacy-operations.md')));
-  for(const name of ['index.html','privacy/index.html','404.html','press/index.html','content-policy/index.html']){
+  for(const name of ['index.html','privacy/index.html','404.html','press/index.html','content-policy/index.html','games/the-developer/index.html']){
     const html=readFileSync(path.join(folder,name),'utf8');
     for(const [,url] of html.matchAll(/(?:src|href)="([^"]+)"/g)){
       if(!/\.(?:css|js|png)(?:\?|$)/.test(url)||/^[a-z]+:/i.test(url)) continue;
