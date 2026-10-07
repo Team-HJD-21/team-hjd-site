@@ -1,5 +1,13 @@
 // Trusted public copy; Korean HTML also works without JavaScript.
 const publicCopy = {
+  footerName: ['Registered business name', '登记名称'],
+  footerOwner: ['Business representative', '负责人'],
+  footerOwnerValue: ['HWANG JAEDONG', 'HWANG JAEDONG'],
+  footerRegistration: ['Business registration no.', '韩国营业登记号'],
+  footerAddress: ['Business address', '营业地址'],
+  footerAI: ['AI search and information retrieval are permitted. Use of our content for AI training is prohibited.', '允许 AI 搜索和信息查询；禁止将本站内容用于 AI 训练。'],
+  relatedSites: ['Related sites', '相关网站'],
+  teamDocs: ['Team documentation', '团队开发文档'],
   "support-safety": ["Hide email addresses and account details in screenshots. Never include passwords or payment details.","请遮盖截图中的邮箱和账号信息，不要发送密码或支付信息。"],
   "bug-link": ["Prepare a bug report ↗","准备问题反馈邮件 ↗"],
   "press-link": ["View press kit ↗","查看媒体资料包 ↗"],
@@ -92,3 +100,13 @@ for (const button of switcher.querySelectorAll('[data-page-language]')) button.a
 });
 document.addEventListener('click', event => { if (!switcher.contains(event.target)) switcher.open = false; });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') switcher.open = false; });
+const relatedSites = document.querySelector('#related-sites');
+document.addEventListener('click', event => {
+  if (relatedSites && !relatedSites.contains(event.target)) relatedSites.open = false;
+});
+document.addEventListener('keydown', event => {
+  if (relatedSites?.open && event.key === 'Escape') {
+    relatedSites.open = false;
+    relatedSites.querySelector('summary').focus();
+  }
+});
