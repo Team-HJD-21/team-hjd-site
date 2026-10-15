@@ -2,14 +2,15 @@ import {createHash} from 'node:crypto';
 import {cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {generateTeamPages} from './render-team.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.resolve(process.argv[2] || path.join(root, '_site'));
 if (output === root || path.parse(output).root === output) throw new Error('Build output must be a separate directory');
 if (existsSync(output) && readdirSync(output).length) throw new Error('Choose an empty build directory; existing files are never deleted');
 mkdirSync(output, {recursive:true});
-const pages = ['index.html', '404.html', 'privacy/index.html', 'press/index.html', 'content-policy/index.html', 'games/the-developer/index.html'];
-const resources = ['styles.css', 'languages.js', 'treant.js', 'slimes.js', 'astronaut.js', 'meteors.js', 'privacy/privacy.css', 'privacy/privacy.js', 'public-pages.css', 'public-pages.js'];
+const pages = ['index.html', '404.html', 'privacy/index.html', 'press/index.html', 'content-policy/index.html', 'games/the-developer/index.html', ...generateTeamPages()];
+const resources = ['styles.css', 'languages.js', 'treant.js', 'slimes.js', 'astronaut.js', 'meteors.js', 'privacy/privacy.css', 'privacy/privacy.js', 'public-pages.css', 'public-pages.js', 'profile.css', 'profile.js'];
 const hash = content => createHash('sha256').update(content).digest('hex').slice(0, 16);
 function assetFiles(directory, prefix = 'assets/') {
   return readdirSync(directory, {withFileTypes:true}).flatMap(entry => entry.isDirectory() ? assetFiles(path.join(directory, entry.name), prefix + entry.name + '/') : [prefix + entry.name]).sort();

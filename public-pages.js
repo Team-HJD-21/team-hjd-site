@@ -4,6 +4,16 @@ const publicCopy = {
   footerOwner: ['Business representative', '负责人'],
   footerOwnerValue: ['HWANG JAEDONG', 'HWANG JAEDONG'],
   footerRegistration: ['Business registration no.', '韩国营业登记号'],
+  footerBusinessCheck: ['(Business information)', '(查看商家信息)'],
+  footerCommerce: ['Mail-order business registration no.', '韩国网络销售备案号'],
+  profileSkip: ['Skip to content', '跳转到正文'],
+  profileAbout: ['About', '关于我们'],
+  profileGames: ['Games', '游戏'],
+  profileContact: ['Contact', '联系我们'],
+  profileBack: ['The people behind the game', '一起打造游戏的伙伴们'],
+  profileInterests: ['Interests', '关注领域'],
+  profileConnect: ['Explore & get in touch', '了解更多与联系'],
+  profilePress: ['Press kit', '媒体资料包'],
   footerAddress: ['Business address', '营业地址'],
   footerAI: ['AI search and information retrieval are permitted. Use of our content for AI training is prohibited.', '允许 AI 搜索和信息查询；禁止将本站内容用于 AI 训练。'],
   relatedSites: ['Related sites', '相关网站'],
@@ -61,6 +71,7 @@ const publicCopy = {
 const pageItems = [...document.querySelectorAll('[data-copy]')].map(element => ({element, key:element.dataset.copy, ko:element.textContent}));
 const switcher = document.querySelector('#page-language');
 const names = {ko:'한국어', en:'English', 'zh-CN':'简体中文'};
+if (new URL(location.href).searchParams.get('from') === 'studio') document.querySelector('.profile-back')?.setAttribute('href', '../../index.html#studio-leadership');
 function applyPageLanguage(language) {
   const lang = Object.hasOwn(names, language) ? language : 'ko';
   for (const item of pageItems) {
@@ -68,6 +79,10 @@ function applyPageLanguage(language) {
     item.element.textContent = lang === 'ko' ? item.ko : publicCopy[item.key][lang === 'en' ? 0 : 1];
   }
   document.documentElement.lang = lang;
+  const navigationLabels = {ko:['TeamHJD 홈','주 메뉴','하단 메뉴'],en:['TeamHJD home','Main navigation','Footer navigation'],'zh-CN':['TeamHJD 首页','主导航','页脚导航']}[lang];
+  for (const [index, selector] of ['.header .wordmark','.header nav','.footer-links'].entries()) document.querySelector(selector)?.setAttribute('aria-label', navigationLabels[index]);
+  const profileName = document.querySelector('#member-name');
+  if (profileName) document.title = profileName.textContent + ' — TeamHJD';
   for (const element of document.querySelectorAll('.public-page h2, .public-page h3, .public-page a.text-link')) {
     for (const node of [...element.childNodes]) {
       if (node.nodeType !== Node.TEXT_NODE || !/The Developer/i.test(node.textContent)) continue;

@@ -26,7 +26,8 @@ assert.match(css, /max-width:600px/);
 assert.match(css, /prefers-reduced-motion/);
 const languageSource = readFileSync('languages.js', 'utf8');
 assert.ok(!/co-representatives|联合负责人/i.test(languageSource), 'Outdated literal leadership titles');
-assert.ok(languageSource.includes('Co-founders') && languageSource.includes('联合创始人'), 'Missing localized founder titles');
+const teamSource = readFileSync('data/team.mjs', 'utf8');
+assert.ok(teamSource.includes('Co-founder') && teamSource.includes('联合创始人'), 'Missing localized founder titles');
 assert.ok(!/Co-CEOs|联席 CEO/.test(languageSource), 'Incorrect executive titles');
 assert.ok(html.includes('전력을 나누고,') && html.includes('몰려오는 적을 막아라.'));
 for (const asset of ['treant-walk', 'treant-infected-walk', 'treant-idle', 'treant-infected-idle', 'slime-tentacle-walk', 'slime-king-walk', 'astronaut-sheet', 'meteor-big', 'meteor-small']) {
@@ -58,7 +59,7 @@ assert.ok(!/데모|테스트|demo|playtest/i.test(html), 'Do not publish demo/te
 const press = readFileSync('press/index.html', 'utf8');
 for (const value of ['wm4V9DZsgH8', '출처', '변형', '학습', '권장 사항']) assert.ok(press.includes(value));
 for (let index=1; index<=5; index++) assert.ok(existsSync(`assets/press/Gameplay_Example${index}.png`));
-const robots = readFileSync('robots.txt','utf8');
+const robots = readFileSync('robots.txt','utf8').replace(/\r\n/g, '\n');
 for (const bot of ['GPTBot', 'ClaudeBot', 'Google-Extended']) assert.ok(robots.includes(`User-agent: ${bot}\nDisallow: /`));
 assert.ok(robots.includes('User-agent: OAI-SearchBot') && robots.includes('User-agent: Claude-SearchBot'));
 assert.ok(existsSync('content-policy/index.html') && existsSync('public-pages.js'));

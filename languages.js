@@ -14,6 +14,8 @@ const translations = [
   ['.footer-owner-label', 'Business representative', '负责人'],
   ['.footer-owner-value', 'HWANG JAEDONG', 'HWANG JAEDONG'],
   ['.footer-registration-label', 'Business registration no.', '韩国营业登记号'],
+  ['.business-info-link', '(Business information)', '(查看商家信息)'],
+  ['.footer-commerce-label', 'Mail-order business registration no.', '韩国网络销售备案号'],
   ['.footer-address-label', 'Business address', '营业地址'],
   ['.footer-privacy', 'Privacy policy (Korean)', '隐私政策（韩文）'],
   ['.contact-privacy-note', 'Review our privacy notice before opening your email app.', '请先阅读隐私说明，再打开邮件应用。'],
@@ -37,9 +39,7 @@ const translations = [
   ['.project-disclaimer', 'In development. Features and content are subject to change.', '游戏正在开发中，玩法与内容可能调整。'],
   ['.steam-link', 'View on Steam <span aria-hidden="true">↗</span>', '在 Steam 上查看 <span aria-hidden="true">↗</span>'],
   ['#project-team-title', 'The team behind THE DEVELOPER', 'THE DEVELOPER 开发团队'],
-  ['#project .team-roster > p', 'A five-person team, including both co-founders, is bringing THE DEVELOPER to life.', 'THE DEVELOPER 由五人团队共同开发，两位联合创始人也参与其中。'],
-  ['.project-team > div:first-child h4', 'Co-founders', '联合创始人'],
-  ['.project-team > div:last-child h4', 'Team', '开发成员'],
+  ['#project .team-roster > p', 'The people bringing this project to life.', '一起打造这款游戏的伙伴们。'],
   ['#contact-title', 'Let’s talk.', '联系我们'],
   ['.contact-content > div > p:first-child', 'Questions about TeamHJD or THE DEVELOPER? Get in touch by email.', '想了解 TeamHJD 或 THE DEVELOPER？欢迎通过邮件联系我们。'],
 ];
@@ -85,7 +85,7 @@ function applyLanguage(language) {
   });
   document.querySelector('.footer-links').setAttribute('aria-label', {ko:'하단 메뉴',en:'Footer navigation','zh-CN':'页脚导航'}[lang]);
   document.querySelector('#current-language').textContent = languageNames[lang];
-  for (const link of document.querySelectorAll('.game-details-link, .footer-press, .footer-content-policy')) {
+  for (const link of document.querySelectorAll('.game-details-link, .footer-press, .footer-content-policy, .member-profile-link')) {
     const url = new URL(link.getAttribute('href'), location.href);
     url.searchParams.set('lang', lang);
     link.href = url.pathname + url.search + url.hash;

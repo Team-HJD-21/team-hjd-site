@@ -23,6 +23,7 @@
   <link rel="canonical" href="https://teamhjd.com/">
   <link rel="icon" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="profile.css">
 </head>
 <body>
   <a class="skip-link" href="#main">본문으로 이동</a>
@@ -63,9 +64,11 @@
     <section class="about shell section" id="about" aria-labelledby="about-title">
       <div class="section-label"><span>01</span><p>THE STUDIO</p></div>
       <div class="about-content"><div><img class="studio-logo" src="assets/teamhjd-logo.png" width="650" height="650" loading="lazy" alt="Team HJD — Happy Journey of Developers"><h2 id="about-title">개발의 즐거움을<br>게임으로 이어갑니다.</h2></div><div><p>TeamHJD는 함께 게임을 만드는 개발팀입니다. 각자의 아이디어와 기술을 모아 하나의 플레이 경험을 완성해갑니다.</p><p class="muted">HJD는 Happy Journey of Developers의 약자입니다.<br>우리의 이름에는 함께 이어가는 개발의 여정이 담겨 있습니다.</p></div></div>
-      <div class="team-roster" aria-labelledby="leadership-title">
+      <div class="team-roster" id="studio-leadership" aria-labelledby="leadership-title">
         <h3 id="leadership-title">공동대표</h3>
-        <ul class="people"><li>YANG HYUNSEOK</li><li>HWANG JAEDONG</li></ul>
+        <!-- studio-leadership:start -->
+<ul class="people studio-leaders"><li><a class="member-profile-link" href="team/yang-hyunseok/index.html?from=studio">YANG HYUNSEOK</a></li><li><a class="member-profile-link" href="team/hwang-jaedong/index.html?from=studio">HWANG JAEDONG</a></li></ul>
+        <!-- studio-leadership:end -->
       </div>
     </section>
     <section class="project shell section" id="project" aria-labelledby="project-title">
@@ -74,10 +77,12 @@
         <div class="project-art" aria-label="THE DEVELOPER 공식 Steam 아트. 게임 화면이 아닙니다."><img src="assets/the-developer-header.png" width="920" height="430" loading="lazy" alt="THE DEVELOPER"><p class="art-caption">STRATEGY. DEFENSE. SURVIVAL.</p></div>
         <div class="project-copy"><p class="project-status"><span class="status-dot" aria-hidden="true"></span> IN DEVELOPMENT</p><h2 id="project-title">THE DEVELOPER</h2><p class="project-genre">전략 디펜스 게임</p><p>제한된 전력 안에서 터렛을 켜고 끄며 방어를 운영하는 게임입니다. 어디에 전력을 집중할지 판단하고 직접 전투에 참여하며 위협에 대응합니다.</p><p class="muted project-disclaimer">개발 중인 프로젝트로 세부 내용은 변경될 수 있습니다.</p><div class="project-links"><a class="text-link game-details-link" href="games/the-developer/index.html">The Developer 자세히 보기 <span aria-hidden="true">↗</span></a><a class="button primary steam-link" href="https://store.steampowered.com/app/4336820/The_Developer/">Steam에서 보기 <span aria-hidden="true">↗</span></a></div></div>
       </article>
-      <div class="team-roster" aria-labelledby="project-team-title">
+      <div class="team-roster" id="project-team" aria-labelledby="project-team-title">
         <h3 id="project-team-title">THE DEVELOPER 참여 팀</h3>
-        <p class="muted">두 공동대표와 세 명의 팀원이 함께 개발하고 있습니다.</p>
-        <div class="project-team"><div><h4>공동대표</h4><ul class="people"><li>YANG HYUNSEOK</li><li>HWANG JAEDONG</li></ul></div><div><h4>팀원</h4><ul class="people"><li>KIM JINTAE</li><li>LEE YOUNGBIN</li><li>JO SUBIN</li></ul></div></div>
+        <p class="muted">이 프로젝트를 함께 만들고 있는 사람들입니다.</p>
+        <!-- team-roster:start -->
+<ul class="people participant-list"><li><a class="member-profile-link" href="team/yang-hyunseok/index.html?from=the-developer">YANG HYUNSEOK <span aria-hidden="true">↗</span></a><span class="participant-meta" lang="en"><span>Lead</span><span>Core Systems</span><span>UI</span></span></li><li><a class="member-profile-link" href="team/hwang-jaedong/index.html?from=the-developer">HWANG JAEDONG <span aria-hidden="true">↗</span></a><span class="participant-meta" lang="en"><span>Defense</span><span>Progression</span><span>Balance</span></span></li><li><a class="member-profile-link" href="team/kim-jintae/index.html?from=the-developer">KIM JINTAE <span aria-hidden="true">↗</span></a><span class="participant-meta" lang="en"><span>World</span><span>Missions</span><span>Ally Agent</span></span></li><li><a class="member-profile-link" href="team/lee-youngbin/index.html?from=the-developer">LEE YOUNGBIN <span aria-hidden="true">↗</span></a><span class="participant-meta" lang="en"><span>Player</span><span>Combat/Co-op</span><span>Cinematics</span></span></li><li><a class="member-profile-link" href="team/jo-subin/index.html?from=the-developer">JO SUBIN <span aria-hidden="true">↗</span></a><span class="participant-meta" lang="en"><span>Enemy</span><span>Encounter</span><span>AI</span></span></li></ul>
+      <!-- team-roster:end -->
       </div>
     </section>
     <section class="contact shell section" id="contact" aria-labelledby="contact-title"><div class="section-label"><span>03</span><p>GET IN TOUCH</p></div><div class="contact-content"><h2 id="contact-title">새로운 이야기를<br>기다립니다.</h2><div><p>팀과 프로젝트에 관한 문의는 이메일로 보내주세요.</p><a class="email" href="privacy/index.html#email">support@teamhjd.com <span aria-hidden="true">↗</span></a><p class="contact-privacy-note">개인정보 안내를 확인한 뒤 메일 작성창을 열 수 있습니다.</p></div></div></section>
@@ -88,7 +93,8 @@
     <dl class="footer-business">
       <div><dt class="footer-name-label">상호</dt><dd lang="ko">팀 에이치제이디(TeamHJD)</dd></div>
       <div><dt class="footer-owner-label">대표자</dt><dd class="footer-owner-value">황재동</dd></div>
-      <div><dt class="footer-registration-label">사업자등록번호</dt><dd>622-10-17519</dd></div>
+      <div><dt class="footer-registration-label">사업자등록번호</dt><dd>622-10-17519 <a class="business-info-link" href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=6221017519" target="_blank" rel="noopener noreferrer">(사업자정보확인)</a></dd></div>
+      <div><dt class="footer-commerce-label">통신판매업 신고번호</dt><dd>2026-수원영통-1221호</dd></div>
       <div><dt class="footer-address-label">사업장 주소</dt><dd lang="ko">경기도 수원시 영통구 태장로 71번길 19</dd></div>
     </dl>
     <div class="footer-policy"><a class="footer-press" href="press/index.html">프레스킷</a><a class="footer-content-policy" href="content-policy/index.html">콘텐츠 이용 · AI 학습 정책</a><p class="ai-policy-short">AI 검색·정보 조회는 허용하며, 콘텐츠의 AI 학습 이용은 금지합니다.</p></div>

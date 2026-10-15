@@ -1,5 +1,8 @@
 # TeamHJD public website
 
+- 팀 프로필 및 관리: [scripts/team-profiles.md](scripts/team-profiles.md). 양현석·황재동·김진태·이영빈·조수빈 프로필을 연결하며, 데이터 수정 후 `node scripts/render-team.mjs`로 생성합니다.
+- Footer 통신판매업 신고번호: `2026-수원영통-1221호` (사용자 제공, 2026-10-16).
+
 TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 
 ## 게임 안내와 프레스킷 (2026-10-05)
