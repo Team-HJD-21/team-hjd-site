@@ -77,3 +77,12 @@ node scripts/preview-site.mjs _site 4173
 - 2026-10-16 사용자 배포 승인 후 정적/프로필/모션 검사와 전체 빌드를 다시 통과했습니다. 배포용 빌드 버전은 `d94fe0a1c71263e9`입니다.
 - 신규 생성 페이지를 Git에 추가한 뒤 발견한 빈 줄의 공백은 공통 템플릿에서 제거했습니다. 이후 생성되는 선택 항목 없는 프로필에도 같은 문제가 생기지 않도록 했으며 Git의 공백 검사를 완화하지 않았습니다.
 - GitHub Pages 워크플로에 `node scripts/test-team.mjs`를 추가해 배포 전에도 해당 검사를 실행합니다.
+
+### 모바일 카드 뒷면 비침 수정 (2026-10-16)
+
+- 사용자 보고 환경: 아이폰 Chrome. 간헐적으로 진입 회전의 뒷면에도 사진이 표시됨. 실제 아이폰에서 직접 재현한 것은 아니며, 내부 요소가 독립적인 3D 층을 갖는 기존 구성을 원인 후보로 확인했습니다.
+- 회전 컨테이너만 `preserve-3d`로 유지하고 각 면은 `flat` + 클리핑/격리로 합성합니다. 사진·이름·빛 효과가 각 면의 한 표면으로 숨겨지도록 하고, 자식의 backface 숨김도 상속합니다. 앞뒷면은 1px씩 분리해 같은 평면의 겹침을 피합니다. 이름의 Z 이동을 제거하고 사진 시차는 2D 이동으로 유지합니다.
+- 참고: [WebKit 3D transforms](https://webkit.org/blog/386/3d-transforms/), [Apple Safari visual effects guide](https://developer.apple.com/library/archive/documentation/InternetWeb/Conceptual/SafariVisualEffectsProgGuide/Using2Dand3DTransforms/Using2Dand3DTransforms.html).
+- 로컬 회귀 화면 생성: 빌드 후 `node scripts/render-profile-face-check.mjs <빌드 출력 폴더>`. 해당 폴더의 `/qa/mobile-backfaces/`에서 다섯 프로필 각각의 0°·60°·120°·180°를 확인합니다. 0°·60°는 사진/null, 120°·180°는 로켓만 보여야 합니다. 이 QA HTML과 생성 스크립트는 공개 빌드에 복사하지 않습니다.
+- 실제 확인: Windows Chrome 및 Codex in-app Chromium의 20개 각도 사례에서 뒷면에 로켓만 표시. Chrome 320/375/390/412/430/768px에서 가로 넘침 없음. 사진/문구의 backface 숨김과 각 면의 평면 합성, 실제 진입 애니메이션도 확인했습니다. 정적 검사·프로필/모션 검사·빌드 통과.
+- 검증 한계: 연결 가능한 실행 환경에 Safari/WebKit/Firefox 및 아이폰·갤럭시 실물 기기가 없습니다. 따라서 Safari, iOS Chrome, Android Chrome, Samsung Internet의 실기기 통과를 주장하지 않습니다. 화면 폭 변경 검사는 해당 기기의 엔진/터치 환경 검증을 대신하지 않습니다.

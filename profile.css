@@ -10,11 +10,14 @@
 .portrait-card{--rx:0deg;--ry:0deg;--mx:50%;--my:50%;--px:0px;--py:0px;position:relative;width:100%;aspect-ratio:3/4;max-width:370px;margin:auto;border-radius:14px;transform:rotateX(var(--rx)) rotateY(var(--ry));transform-style:preserve-3d}
 .portrait-card.is-tracking,.portrait-card.is-settling{will-change:transform}
 .portrait-flipper{position:absolute;inset:0;transform-style:preserve-3d}
-.portrait-front,.portrait-back{position:absolute;inset:0;border:1px solid #c8d8c955;border-radius:14px;background:#172833;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:preserve-3d;box-shadow:0 28px 60px #0007,0 0 0 7px #d9eea604}
-.portrait-front{transform:rotateY(0deg)}
-.portrait-front::after{content:"";position:absolute;inset:0;border-radius:13px;border:1px solid #e5f8c3;opacity:0;transition:opacity .35s;pointer-events:none;transform:translateZ(1px)}
+/* Keep 3D on the turning containers, not inside faces. WebKit should cull the photo,
+   name and highlights as one surface instead of leaking promoted child layers. */
+.portrait-front,.portrait-back{position:absolute;inset:0;border:1px solid #c8d8c955;border-radius:14px;background:#172833;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-transform-style:flat;transform-style:flat;overflow:hidden;isolation:isolate;box-shadow:0 28px 60px #0007,0 0 0 7px #d9eea604}
+.portrait-front *,.portrait-back *{-webkit-backface-visibility:inherit;backface-visibility:inherit}
+.portrait-front{transform:translateZ(1px)}
+.portrait-front::after{content:"";position:absolute;inset:0;border-radius:13px;border:1px solid #e5f8c3;opacity:0;transition:opacity .35s;pointer-events:none}
 .is-tracking .portrait-front::after{opacity:.38}
-.portrait-back{transform:rotateY(180deg);display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#d9eea614,transparent 70%),repeating-linear-gradient(0deg,transparent 0 35px,#d9eea606 35px 36px),#111f2a}
+.portrait-back{transform:rotateY(180deg) translateZ(1px);display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#d9eea614,transparent 70%),repeating-linear-gradient(0deg,transparent 0 35px,#d9eea606 35px 36px),#111f2a}
 .portrait-back::before{content:"";position:absolute;inset:18px;border:1px solid #d9eea62b;border-radius:8px;pointer-events:none}
 /* Crop only the existing logo's rocket through a CSS window; the original PNG is unchanged. */
 .rocket-mark{position:relative;display:block;width:40px;aspect-ratio:240/280;overflow:hidden}
@@ -27,10 +30,10 @@
 .portrait-image{position:absolute;inset:0;border-radius:13px;overflow:hidden}
 .portrait-image::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#08111b70,transparent 26%,transparent 58%,#08111bee)}
 .portrait-image img{display:block;width:100%;height:100%;object-fit:cover}
-.portrait-image img{transform:translate3d(var(--px),var(--py),0) scale(1.035)}
+.portrait-image img{transform:translate(var(--px),var(--py)) scale(1.035)}
 .portrait-placeholder{position:absolute;inset:0;display:grid;place-items:center;border-radius:13px;background:radial-gradient(ellipse at 50% 40%,#d9eea60b,transparent 65%),#111f2a}
 .portrait-placeholder>span{font-family:Consolas,monospace;font-size:clamp(38px,5vw,58px);font-weight:400;color:var(--muted);letter-spacing:-2px}
-.portrait-topline,.portrait-caption{position:absolute;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center;gap:14px;transform:translateZ(28px);text-shadow:0 1px 10px #0005;pointer-events:none}
+.portrait-topline,.portrait-caption{position:absolute;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center;gap:14px;text-shadow:0 1px 10px #0005;pointer-events:none}
 .portrait-topline{top:20px}
 .portrait-caption{bottom:24px;align-items:end}.portrait-caption>span{font-size:21px;font-weight:550;letter-spacing:-.5px;line-height:1.3}
 .portrait-shine{position:absolute;inset:0;border-radius:13px;background:radial-gradient(ellipse at var(--mx) var(--my),#fff5,transparent 65%),linear-gradient(115deg,transparent 20%,#d9eea619 45%,transparent 65%);opacity:0;transition:opacity .35s;pointer-events:none;mix-blend-mode:soft-light}
