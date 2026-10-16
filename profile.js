@@ -74,7 +74,7 @@
     current.y += (target.y - current.y) * follow;
     const settled = Math.abs(target.x - current.x) < 0.001 && Math.abs(target.y - current.y) < 0.001;
     if (settled) { current.x = target.x; current.y = target.y; }
-    const tiltScale = sensorEnabled ? 3 : 1;
+    const tiltScale = sensorEnabled ? 2 : 1;
     card.style.setProperty('--rx', `${(-current.y * 6 * tiltScale).toFixed(3)}deg`);
     card.style.setProperty('--ry', `${(current.x * 8 * tiltScale).toFixed(3)}deg`);
     card.style.setProperty('--mx', `${((current.x + 1) * 50).toFixed(2)}%`);
