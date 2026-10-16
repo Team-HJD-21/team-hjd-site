@@ -11,16 +11,21 @@ window.matchMedia = query => {
   return originalMatchMedia(query);
 };
 const permissionScenario = new URL(location.href).searchParams.get('permission') || 'granted';
-window.DeviceOrientationEvent = {requestPermission: () => Promise.resolve(permissionScenario === 'pregranted' ? 'granted' : permissionScenario)};
+let simulatedTap = false;
+document.addEventListener('click', () => {simulatedTap=true;setTimeout(()=>{simulatedTap=false;},0);},true);
+const request = () => !simulatedTap && permissionScenario !== 'pregranted' ? Promise.reject(new Error('NotAllowedError')) : Promise.resolve(permissionScenario === 'pregranted' ? 'granted' : permissionScenario);
+window.DeviceOrientationEvent = permissionScenario === 'motion-only' || permissionScenario === 'unsupported' ? undefined : {requestPermission:request};
+window.DeviceMotionEvent = permissionScenario === 'motion-only' ? {requestPermission:()=>!simulatedTap?Promise.reject(new Error('NotAllowedError')):Promise.resolve('granted')} : undefined;
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.querySelector('#qa-roll');
   function sample() {
-    const event = new Event('deviceorientation');
-    Object.assign(event, {alpha:0,beta:40,gamma:Number(input.value)});
+    const motionOnly = permissionScenario === 'motion-only';
+    const event = new Event(motionOnly ? 'devicemotion' : 'deviceorientation');
+    Object.assign(event, motionOnly ? {accelerationIncludingGravity:{x:-Math.sin(Number(input.value)*Math.PI/180)*9.8,y:6.5,z:6.5}} : {alpha:0,beta:40,gamma:Number(input.value)});
     window.dispatchEvent(event);
   }
   input.addEventListener('input', sample);
-  document.querySelector('[data-tilt]').addEventListener('click', () => setTimeout(sample,0));
+  document.querySelector('[data-tilt]').addEventListener('click', () => {if(permissionScenario!=='unsupported')setTimeout(sample,0);});
   if (permissionScenario === 'pregranted') sample();
 });
 </script>`;

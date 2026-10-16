@@ -15,19 +15,22 @@
   let revealing = Boolean(intro && intro.playState === 'running') && !reduced.matches;
   const current = {x: 0, y: 0}, target = {x: 0, y: 0};
   let sensorEnabled = false, sensorWanted = false, sensorGranted = false, permissionDenied = false;
+  let permissionChecked = false, accessTimer = 0, orientationSeen = false;
   let baseline = null, sensorTimer = 0, permissionPending = false, generation = 0;
   let dragging = null, message = '', flipped = false, tapOrigin = null, suppressTap = false;
   let steadyAnchor = null, latestAttitude = null, steadyTimer = 0, steadyCalibrated = false, recentering = false;
   const Orientation = window.DeviceOrientationEvent;
-  const canSense = Boolean(Orientation) && window.isSecureContext !== false;
-  const needsPermission = typeof Orientation?.requestPermission === 'function';
+  const Motion = window.DeviceMotionEvent;
+  const permissionAPIs = [Orientation,Motion].filter(api => typeof api?.requestPermission === 'function');
+  const canSense = Boolean(Orientation || Motion) && window.isSecureContext !== false;
+  const needsPermission = permissionAPIs.length > 0;
   const copy = {
-    ko: {activate:'카드를 터치해 기울기 효과 활성화',back:'카드 뒷면 보기',front:'카드 앞면 보기',denied:'센서 권한이 없어 카드 드래그로 사용할 수 있습니다.',missing:'기울기 정보를 받지 못했습니다. 카드를 드래그해 주세요.'},
-    en: {activate:'Touch the card to enable device tilt',back:'Show card back',front:'Show card front',denied:'Motion access is unavailable. You can drag the card instead.',missing:'No orientation data received. Drag the card instead.'},
-    'zh-CN': {activate:'轻触卡片以开启倾斜效果',back:'查看卡片背面',front:'查看卡片正面',denied:'无法访问传感器，可拖动卡片。',missing:'未收到倾斜数据，请拖动卡片。'},
+    ko: {activate:'카드를 터치해 기울기 효과 활성화',back:'카드 뒷면 보기',front:'카드 앞면 보기',denied:'센서 권한이 없어 카드 드래그로 사용할 수 있습니다.',missing:'기울기 정보를 받지 못했습니다. 카드를 드래그해 주세요.',unsupported:'이 브라우저에서는 기울기 센서를 사용할 수 없습니다. 카드를 드래그해 주세요.'},
+    en: {activate:'Touch the card to enable device tilt',back:'Show card back',front:'Show card front',denied:'Motion access is unavailable. You can drag the card instead.',missing:'No orientation data received. Drag the card instead.',unsupported:'Device tilt is unavailable in this browser. Drag the card instead.'},
+    'zh-CN': {activate:'轻触卡片以开启倾斜效果',back:'查看卡片背面',front:'查看卡片正面',denied:'无法访问传感器，可拖动卡片。',missing:'未收到倾斜数据，请拖动卡片。',unsupported:'此浏览器无法使用倾斜传感器，请拖动卡片。'},
   };
   function awaitingActivation() {
-    return mobile.matches && !reduced.matches && canSense && needsPermission && !sensorGranted && !permissionDenied;
+    return mobile.matches && !reduced.matches && !sensorGranted && !permissionDenied;
   }
   function renderControls() {
     const words = copy[document.documentElement.lang] || copy.ko;
@@ -38,7 +41,7 @@
     stage.classList.toggle('awaiting-motion',awaiting);
     stage.classList.toggle('is-motion-ready',mobile.matches && sensorEnabled && Boolean(sensorGranted || baseline));
     if (hint) {
-      hint.hidden = !awaiting;
+      hint.hidden = !awaiting || !permissionChecked;
       hint.textContent = permissionPending ? 'ONE MOMENT…' : 'TOUCH ME!';
     }
     if (status) {
@@ -153,10 +156,23 @@
   }
   function onOrientation(event) {
     if (!sensorEnabled || !mobile.matches || reduced.matches || document.hidden || !Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
+    orientationSeen = true;
+    applyAttitude(attitude(event));
+  }
+  function onMotion(event) {
+    if (!sensorEnabled || orientationSeen || !mobile.matches || reduced.matches || document.hidden) return;
+    const g = event.accelerationIncludingGravity;
+    if (!g || ![g.x,g.y,g.z].every(Number.isFinite)) return;
+    const length = Math.hypot(g.x,g.y,g.z);
+    if (length < 5 || length > 15) return;
+    // Gravity provides a pitch/roll fallback where orientation data is unavailable.
+    applyAttitude(attitude({alpha:0,beta:Math.atan2(g.y,g.z)*180/Math.PI,gamma:Math.atan2(-g.x,Math.hypot(g.y,g.z))*180/Math.PI}));
+  }
+  function applyAttitude(q) {
     clearTimeout(sensorTimer);
-    const q = attitude(event);
     // Receiving real data is proof of access, including an already granted iOS session.
     sensorGranted = true;
+    permissionChecked = true;
     latestAttitude = q;
     if (!baseline) { baseline = q; message = ''; renderControls(); }
     trackSteadiness(q);
@@ -190,8 +206,9 @@
   }
   function detachSensor() {
     window.removeEventListener('deviceorientation', onOrientation);
+    window.removeEventListener('devicemotion', onMotion);
     clearTimeout(sensorTimer);
-    sensorTimer = 0; sensorEnabled = false; baseline = null;
+    sensorTimer = 0; sensorEnabled = false; baseline = null; orientationSeen = false;
     clearSteadiness();
   }
   function attachSensor(userInitiated = false) {
@@ -199,6 +216,7 @@
     detachSensor(); reset();
     sensorEnabled = true;
     window.addEventListener('deviceorientation', onOrientation, {passive:true});
+    window.addEventListener('devicemotion', onMotion, {passive:true});
     message = '';
     sensorTimer = setTimeout(() => {
       if (baseline) return;
@@ -208,14 +226,20 @@
     renderControls();
   }
   async function enableSensor() {
-    if (permissionPending || !canSense || !mobile.matches || reduced.matches) return;
+    if (permissionPending || !mobile.matches || reduced.matches) return;
+    permissionChecked = true;
+    if (!canSense) { denySensor(); message = 'unsupported'; renderControls(); return; }
     const attempt = ++generation;
     permissionPending = true; message = ''; renderControls();
     try {
       // This call stays directly inside the click handler to preserve iOS user activation.
-      const permission = needsPermission && !sensorGranted ? await Orientation.requestPermission() : 'granted';
+      // Start both requests before awaiting either: each must retain the same tap's activation.
+      const requests = needsPermission && !sensorGranted
+        ? permissionAPIs.map(api => {try {return Promise.resolve(api.requestPermission());} catch(error) {return Promise.reject(error);}})
+        : [Promise.resolve('granted')];
+      const results = await Promise.allSettled(requests);
       if (attempt !== generation || !mobile.matches || reduced.matches) return;
-      if (permission !== 'granted') { denySensor(); return; }
+      if (!results.some(result => result.status === 'fulfilled' && result.value === 'granted')) { denySensor(); return; }
       sensorGranted = true; sensorWanted = true;
       attachSensor(true);
     } catch { if (attempt === generation) denySensor(); }
@@ -229,6 +253,7 @@
     // A native permission sheet may temporarily hide the page. Keep that request
     // alive, but do not subscribe until the page is visible again.
     if (cancelPermission) { ++generation; permissionPending = false; }
+    clearTimeout(accessTimer);
     detachSensor(); reset(); renderControls();
   }
   function mobileMode() {
@@ -240,6 +265,32 @@
       sensorWanted = true; attachSensor();
     }
     renderControls();
+    checkExistingAccess();
+  }
+  async function checkExistingAccess() {
+    if (!mobile.matches || reduced.matches || sensorGranted || permissionDenied || permissionPending || document.hidden) return;
+    const attempt = generation;
+    clearTimeout(accessTimer);
+    // Keep the invitation hidden while checking, so an existing grant never flashes it.
+    // Without transient activation the standard API resolves an existing decision,
+    // or rejects when a new prompt would be required; it cannot open a new prompt.
+    if (needsPermission && !window.navigator?.userActivation?.isActive) {
+      const results = await Promise.allSettled(permissionAPIs.map(api => {
+        try { return Promise.resolve(api.requestPermission()); } catch(error) { return Promise.reject(error); }
+      }));
+      if (attempt !== generation || reduced.matches || !mobile.matches) return;
+      if (results.some(result => result.status === 'fulfilled' && result.value === 'granted')) {
+        clearTimeout(accessTimer);
+        sensorGranted = true; sensorWanted = true; permissionChecked = true;
+        if (!baseline) attachSensor();
+        renderControls(); return;
+      }
+      permissionChecked = true; renderControls(); return;
+    }
+    accessTimer = setTimeout(() => {
+      if (attempt !== generation || sensorGranted) return;
+      permissionChecked = true; renderControls();
+    }, 500);
   }
   function activateCard(event) {
     if (event?.detail !== 0 && suppressTap) { suppressTap = false; return; }
@@ -266,7 +317,7 @@
   reduced.addEventListener('change', () => { revealing = false; mobileMode(); });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) suspend();
-    else if (sensorWanted) attachSensor();
+    else { if (sensorWanted) attachSensor(); checkExistingAccess(); }
   });
   window.addEventListener('pagehide', () => suspend());
   window.addEventListener('pageshow', () => { if (sensorWanted) attachSensor(); });

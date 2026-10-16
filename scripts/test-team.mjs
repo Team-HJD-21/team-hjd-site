@@ -59,6 +59,11 @@ function motionHarness(introRunning = false, options = {}) {
   const events = new Map(), styles = new Map(), classes = new Set(), frames = new Map(), timers = new Map();
   let serial = 0, clock = 0, reduced = false, allowed = true;
   let mobileEnabled = Boolean(options.mobile);
+  let userActivation = false;
+  const sensorAPI = (enabled,permission) => !enabled ? undefined : !permission ? {} : {requestPermission:()=>{
+    if (!userActivation) return options.probe ? options.probe() : options.pregranted ? Promise.resolve('granted') : Promise.reject(new Error('NotAllowedError'));
+    return permission();
+  }};
   const status = {hidden:true,textContent:''}, hint = {hidden:true,textContent:''}, attributes = new Map(), stageClasses = new Set();
   const screenOrientation = {angle:0,addEventListener:(name,fn)=>events.set('screenchange',fn)};
   const flipper = {getAnimations:() => introRunning ? [{animationName:'portrait-arrive',playState:'running'}] : [],addEventListener:(name,fn) => events.set(name,fn)};
@@ -66,7 +71,7 @@ function motionHarness(introRunning = false, options = {}) {
   const card = {closest:() => stage,querySelector:() => flipper,setAttribute:(key,value)=>attributes.set(key,value),addEventListener:(name,fn)=>events.set(name,fn),classList:{add:name => classes.add(name),remove:name => classes.delete(name),toggle:(name,value)=>value?classes.add(name):classes.delete(name)},style:{setProperty:(key,value) => styles.set(key,value),removeProperty:key => styles.delete(key)}};
   const documentMock = {hidden:false,documentElement:{lang:'ko'},querySelector:() => card,addEventListener:(name,fn) => events.set(name,fn)};
   vm.runInNewContext(readFileSync('profile.js','utf8'), {
-    document:documentMock,window:{isSecureContext:true,DeviceOrientationEvent:options.sensor ? (options.permission ? {requestPermission:options.permission} : {}) : undefined,screen:{orientation:screenOrientation},addEventListener:(name,fn) => events.set(name,fn),removeEventListener:(name,fn)=>{if(events.get(name)===fn)events.delete(name);}},
+    document:documentMock,window:{isSecureContext:true,navigator:{userActivation:{get isActive(){return userActivation;}}},DeviceOrientationEvent:sensorAPI(options.sensor,options.permission),DeviceMotionEvent:sensorAPI(options.motion,options.motionPermission),screen:{orientation:screenOrientation},addEventListener:(name,fn) => events.set(name,fn),removeEventListener:(name,fn)=>{if(events.get(name)===fn)events.delete(name);}},
     matchMedia:query => query.includes('pointer: coarse') ? {get matches(){return mobileEnabled;},addEventListener:(name,fn)=>events.set('mobilechange',fn)} : query.includes(': reduce)')
       ? {get matches(){return reduced;},addEventListener:(name,fn) => events.set('reducedchange',fn)}
       : {get matches(){return allowed && !reduced && !mobileEnabled;},addEventListener:(name,fn) => events.set('motionchange',fn)},
@@ -78,7 +83,9 @@ function motionHarness(introRunning = false, options = {}) {
     step:(count,interval=1000/60) => {for(let index=0;index<count;index++){clock+=interval;const queued=[...frames.values()];frames.clear();for(const fn of queued)fn(clock);}},
     reduce:() => {reduced=true;events.get('reducedchange')();},
     disableHover:() => {allowed=false;events.get('motionchange')();},
-    click:()=>events.get('click')({detail:1}),
+    click:()=>{userActivation=true;const result=events.get('click')({detail:1});userActivation=false;return result;},
+    flush:async()=>{for(let index=0;index<5;index++)await Promise.resolve();},
+    gravity:(x,y,z)=>events.get('devicemotion')?.({accelerationIncludingGravity:{x,y,z}}),
     orient:(beta,gamma,alpha=0)=>events.get('deviceorientation')?.({beta,gamma,alpha}),
     rotate:angle=>{screenOrientation.angle=angle;events.get('screenchange')();},
     hide:()=>{documentMock.hidden=true;events.get('visibilitychange')();},
@@ -143,6 +150,8 @@ let permissions = 0;
 const iphone = motionHarness(false,{mobile:true,sensor:true,permission:()=>{permissions++;return Promise.resolve('granted');}});
 assert.equal(permissions,0,'Never prompt for sensor permission on page load');
 assert.equal(iphone.events.has('deviceorientation'),true,'Passively detect already granted permission without prompting');
+assert.equal(iphone.hint.hidden,true,'Do not flash TOUCH ME while the existing permission is being checked');
+await iphone.flush(); iphone.advance(500);
 assert.equal(iphone.hint.hidden,false); assert.equal(iphone.hint.textContent,'TOUCH ME!');
 await iphone.click(); assert.equal(permissions,1); iphone.orient(70,0); iphone.orient(80,0); iphone.step(90);
 assert.ok(Math.abs(Number.parseFloat(iphone.styles.get('--rx')) + 9)<0.1,'Amplify the same phone pitch by three');
@@ -151,10 +160,15 @@ assert.equal(iphone.hint.hidden,true); assert.equal(iphone.stageClasses.has('is-
 await iphone.click(); assert.equal(iphone.events.has('deviceorientation'),true,'Flipping the card must keep sensors active');
 assert.equal(iphone.attributes.get('aria-pressed'),'true'); assert.equal(permissions,1,'Do not prompt again on each flip');
 let priorPermissionCalls = 0;
-const prior = motionHarness(false,{mobile:true,sensor:true,permission:()=>{priorPermissionCalls++;return Promise.resolve('granted');}});
-prior.orient(45,0);
+const prior = motionHarness(false,{mobile:true,sensor:true,pregranted:true,permission:()=>{priorPermissionCalls++;return Promise.resolve('granted');}});
+assert.equal(prior.hint.hidden,true,'An existing grant starts with the invitation hidden');
+await prior.flush();
 assert.equal(prior.hint.hidden,true); assert.equal(prior.stageClasses.has('is-motion-ready'),true,'Previously granted data activates the halo on page load');
 await prior.click(); assert.equal(prior.attributes.get('aria-pressed'),'true'); assert.equal(priorPermissionCalls,0,'Already granted users can flip immediately');
+let slowPermission;
+const slowGrant = motionHarness(false,{mobile:true,sensor:true,permission:()=>Promise.resolve('granted'),probe:()=>new Promise(resolve=>{slowPermission=resolve;})});
+slowGrant.advance(1000); assert.equal(slowGrant.hint.hidden,true,'A slow existing-permission check must never flash TOUCH ME');
+slowPermission('granted'); await slowGrant.flush(); assert.equal(slowGrant.hint.hidden,true); assert.equal(slowGrant.stageClasses.has('is-motion-ready'),true);
 const denied = motionHarness(false,{mobile:true,sensor:true,permission:()=>Promise.resolve('denied')});
 await denied.click(); assert.equal(denied.events.has('deviceorientation'),false); assert.equal(denied.status.hidden,false);
 denied.events.get('pointerdown')({pointerType:'touch',pointerId:1,clientX:100,clientY:100});
@@ -163,6 +177,22 @@ assert.equal(Number.parseFloat(denied.styles.get('--ry')),8,'Denied permissions 
 denied.events.get('pointerup')({pointerId:1}); denied.step(90); assert.equal(denied.styles.size,0);
 await denied.click(); assert.equal(denied.attributes.get('aria-pressed'),'false','Dragging must not accidentally flip the card');
 await denied.click(); assert.equal(denied.attributes.get('aria-pressed'),'true','Denied users retain normal flips after the initial permission tap');
+let motionRequests = 0;
+const motionOnlyPermission = motionHarness(false,{mobile:true,sensor:true,motion:true,motionPermission:()=>{motionRequests++;return Promise.resolve('granted');}});
+await motionOnlyPermission.flush(); motionOnlyPermission.advance(500);
+assert.equal(motionOnlyPermission.hint.hidden,false,'A missing orientation permission method must not hide the invitation');
+await motionOnlyPermission.click();
+assert.equal(motionRequests,1); assert.equal(motionOnlyPermission.attributes.get('aria-pressed'),'false','Request motion permission before flipping');
+motionOnlyPermission.gravity(0,6.94,6.94); motionOnlyPermission.gravity(-3,6.6,6.6); motionOnlyPermission.step(90);
+assert.ok(Number.parseFloat(motionOnlyPermission.styles.get('--ry'))>10,'Use gravity when orientation data is absent');
+motionOnlyPermission.orient(45,0); motionOnlyPermission.step(90);
+const orientationTilt = motionOnlyPermission.styles.get('--ry');
+motionOnlyPermission.gravity(-6,5,5); motionOnlyPermission.step(90);
+assert.equal(motionOnlyPermission.styles.get('--ry'),orientationTilt,'Prefer orientation data once it is available');
+const unsupported = motionHarness(false,{mobile:true}); unsupported.advance(500);
+assert.equal(unsupported.hint.hidden,false,'Do not hide the initial touch path just because sensor APIs are absent');
+await unsupported.click(); assert.equal(unsupported.attributes.get('aria-pressed'),'false');
+assert.ok(unsupported.status.textContent.includes('브라우저'),'Explain unavailable sensors instead of silently flipping');
 const absent = motionHarness(false,{mobile:true,sensor:true}); absent.orient(null,null); absent.expire();
 assert.equal(absent.events.has('deviceorientation'),false,'No-data fallback must remove its listener');
 let grant;
