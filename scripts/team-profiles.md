@@ -133,3 +133,4 @@ node scripts/preview-site.mjs _site 4173
 - 서버 검증: HTTP/HTTPS 프로필 모두 200을 반환했고 HTTP→HTTPS 전환이 없었습니다. GitHub Pages API의 https_enforced=false, html_url=http://teamhjd.com/을 확인했습니다. HTTPS 인증서는 approved 상태이고 teamhjd.com 및 www.teamhjd.com에 유효했습니다. 센서 API의 secure-context 요구와 현재 코드의 isSecureContext 검사 때문에 HTTP 접속이 증상을 설명하는 유력 원인입니다. 베타 OS 자체의 결함은 확인하지 않았습니다.
 - 수정: 저장소의 Pages 설정만 PUT해 https_enforced=true로 변경했습니다. 재조회에서 https_enforced=true, html_url=https://teamhjd.com/, 인증서 approved를 확인했습니다. DNS·인증서·브라우저 보안 설정은 변경하지 않았습니다.
 - 변경 직후 일부 HTTP 응답은 기존 200 캐시를 제공했습니다. 설정의 전파와 실제 301 전환은 별도 확인이 필요하며, 사용자에게 명시적인 HTTPS 프로필 링크로 재접속하도록 안내합니다. HTTPS 경로는 정상 TLS 검증 및 HTTP 200으로 확인했습니다. 기기 재검증 전까지 iPhone Chrome 문제가 완전히 해결됐다고 주장하지 않습니다.
+- 후속 성공 증거: 운영 기록 배포 완료 후 HTTP 프로필 요청이 `301 Moved Permanently`, `Location: https://teamhjd.com/team/yang-hyunseok/`를 반환하는 것을 확인했습니다. 따라서 서버의 자동 HTTPS 전환 적용까지 검증했습니다. iPhone Chrome의 실제 센서 허용 결과는 사용자 재확인이 남습니다.
