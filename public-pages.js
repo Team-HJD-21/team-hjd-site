@@ -103,6 +103,7 @@ function applyPageLanguage(language) {
     if (url.origin !== location.origin || /\.(png|webp)$/i.test(url.pathname) || link.getAttribute('href').startsWith('#')) continue;
     url.searchParams.set('lang', lang); link.href = url.pathname + url.search + url.hash;
   }
+  document.dispatchEvent(new CustomEvent('teamhjd:languagechange', {detail:{language:lang}}));
   return lang;
 }
 let storedLanguage; try { storedLanguage = localStorage.getItem('teamhjd-language'); } catch {}
