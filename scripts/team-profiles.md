@@ -126,3 +126,10 @@ node scripts/preview-site.mjs _site 4173
 - 기존 권한 확인 동안 초대를 숨겨 허용된 사용자의 문구 깜박임을 방지합니다. 기존 결정 조회가 1초 늦어지는 경우에도 TOUCH ME가 나타나지 않는 회귀 검사를 추가했습니다.
 - 자동 검사: 기존 허용/미허용, 모션 권한만 있는 경우의 첫 터치, 중력 대체 회전과 방향 입력 우선, API 전부 부재 시 안내, 권한 중복 터치/숨김/복귀/동작 줄이기와 기존 모션 검사를 통과했습니다. 390px Chromium 모의 환경에서도 모션 전용 최초 활성화 후 앞면 유지·기울기·다음 터치 뒤집기, 기존 허용 진입 시 초대 숨김과 후광을 확인했습니다. 실제 iPhone Chrome 통과를 주장하지 않습니다.
 - 참고: [W3C Device Orientation and Motion 권한 절차](https://www.w3.org/TR/orientation-event/), [Apple 방향 이벤트와 중력 대체 안내](https://developer.apple.com/documentation/webkitjs/deviceorientationevent), [WebKit WKWebView 권한 위임 이슈](https://bugs.webkit.org/show_bug.cgi?id=203287). 해당 이슈가 사용자의 현재 Chrome 원인이라고 확정한 것은 아닙니다.
+
+### HTTP 접속과 HTTPS 강제 설정 수정 (2026-10-16)
+
+- 추가 사용자 증거: iPhone 개발자 베타, Chrome 155.0.8059.37 스크린샷에서 주소창 경고 아이콘 및 센서 사용 불가 안내. 화면에는 전체 프로토콜이 표시되지 않으므로 해당 탭이 HTTP였다고 직접 확정하지는 않습니다. Safari는 사용자가 정상 작동을 확인했습니다.
+- 서버 검증: HTTP/HTTPS 프로필 모두 200을 반환했고 HTTP→HTTPS 전환이 없었습니다. GitHub Pages API의 https_enforced=false, html_url=http://teamhjd.com/을 확인했습니다. HTTPS 인증서는 approved 상태이고 teamhjd.com 및 www.teamhjd.com에 유효했습니다. 센서 API의 secure-context 요구와 현재 코드의 isSecureContext 검사 때문에 HTTP 접속이 증상을 설명하는 유력 원인입니다. 베타 OS 자체의 결함은 확인하지 않았습니다.
+- 수정: 저장소의 Pages 설정만 PUT해 https_enforced=true로 변경했습니다. 재조회에서 https_enforced=true, html_url=https://teamhjd.com/, 인증서 approved를 확인했습니다. DNS·인증서·브라우저 보안 설정은 변경하지 않았습니다.
+- 변경 직후 일부 HTTP 응답은 기존 200 캐시를 제공했습니다. 설정의 전파와 실제 301 전환은 별도 확인이 필요하며, 사용자에게 명시적인 HTTPS 프로필 링크로 재접속하도록 안내합니다. HTTPS 경로는 정상 TLS 검증 및 HTTP 200으로 확인했습니다. 기기 재검증 전까지 iPhone Chrome 문제가 완전히 해결됐다고 주장하지 않습니다.
