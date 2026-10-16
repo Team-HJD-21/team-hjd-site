@@ -8,7 +8,8 @@
   const mobile = matchMedia('(hover: none), (pointer: coarse)');
   const flipper = card.querySelector('.portrait-flipper');
   const status = stage.querySelector?.('[data-motion-status]');
-  const properties = ['--rx', '--ry', '--mx', '--my', '--px', '--py', '--glare-angle', '--reflect'];
+  const hint = stage.querySelector?.('[data-motion-hint]');
+  const properties = ['--rx', '--ry', '--mx', '--my', '--px', '--py', '--glare-angle', '--reflect', '--halo'];
   let frame = 0, lastTime, inside = false;
   const intro = flipper?.getAnimations?.().find(animation => animation.animationName === 'portrait-arrive');
   let revealing = Boolean(intro && intro.playState === 'running') && !reduced.matches;
@@ -21,14 +22,25 @@
   const canSense = Boolean(Orientation) && window.isSecureContext !== false;
   const needsPermission = typeof Orientation?.requestPermission === 'function';
   const copy = {
-    ko: {back:'카드 뒷면 보기',front:'카드 앞면 보기',denied:'센서 권한이 없어 카드 드래그로 사용할 수 있습니다.',missing:'기울기 정보를 받지 못했습니다. 카드를 드래그해 주세요.'},
-    en: {back:'Show card back',front:'Show card front',denied:'Motion access is unavailable. You can drag the card instead.',missing:'No orientation data received. Drag the card instead.'},
-    'zh-CN': {back:'查看卡片背面',front:'查看卡片正面',denied:'无法访问传感器，可拖动卡片。',missing:'未收到倾斜数据，请拖动卡片。'},
+    ko: {activate:'카드를 터치해 기울기 효과 활성화',back:'카드 뒷면 보기',front:'카드 앞면 보기',denied:'센서 권한이 없어 카드 드래그로 사용할 수 있습니다.',missing:'기울기 정보를 받지 못했습니다. 카드를 드래그해 주세요.'},
+    en: {activate:'Touch the card to enable device tilt',back:'Show card back',front:'Show card front',denied:'Motion access is unavailable. You can drag the card instead.',missing:'No orientation data received. Drag the card instead.'},
+    'zh-CN': {activate:'轻触卡片以开启倾斜效果',back:'查看卡片背面',front:'查看卡片正面',denied:'无法访问传感器，可拖动卡片。',missing:'未收到倾斜数据，请拖动卡片。'},
   };
+  function awaitingActivation() {
+    return mobile.matches && !reduced.matches && canSense && needsPermission && !sensorGranted && !permissionDenied;
+  }
   function renderControls() {
     const words = copy[document.documentElement.lang] || copy.ko;
-    card.setAttribute('aria-label', words[flipped ? 'front' : 'back']);
+    const awaiting = awaitingActivation();
+    card.setAttribute('aria-label', words[awaiting ? 'activate' : flipped ? 'front' : 'back']);
     card.setAttribute('aria-pressed', String(flipped));
+    card.setAttribute('aria-busy', String(permissionPending));
+    stage.classList.toggle('awaiting-motion',awaiting);
+    stage.classList.toggle('is-motion-ready',mobile.matches && sensorEnabled && Boolean(sensorGranted || baseline));
+    if (hint) {
+      hint.hidden = !awaiting;
+      hint.textContent = permissionPending ? 'ONE MOMENT…' : 'TOUCH ME!';
+    }
     if (status) {
       status.textContent = words[message] || '';
       status.hidden = !status.textContent;
@@ -68,6 +80,7 @@
     card.style.setProperty('--py', `${(-current.y * 3).toFixed(3)}px`);
     card.style.setProperty('--glare-angle', `${(115 + current.x * 35 - current.y * 20).toFixed(2)}deg`);
     card.style.setProperty('--reflect', `${(0.2 + Math.min(1, Math.hypot(current.x,current.y)) * 0.35).toFixed(3)}`);
+    card.style.setProperty('--halo', `${(0.48 + Math.min(1,Math.hypot(current.x,current.y))*0.25).toFixed(3)}`);
     if (!settled) frame = requestAnimationFrame(tick);
     else {
       lastTime = undefined;
@@ -142,6 +155,8 @@
     if (!sensorEnabled || !mobile.matches || reduced.matches || document.hidden || !Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
     clearTimeout(sensorTimer);
     const q = attitude(event);
+    // Receiving real data is proof of access, including an already granted iOS session.
+    sensorGranted = true;
     latestAttitude = q;
     if (!baseline) { baseline = q; message = ''; renderControls(); }
     trackSteadiness(q);
@@ -157,7 +172,7 @@
   }
   function trackSteadiness(q) {
     const dot = steadyAnchor ? Math.abs(q.x*steadyAnchor.x+q.y*steadyAnchor.y+q.z*steadyAnchor.z+q.w*steadyAnchor.w) : 0;
-    // Stay within a three-degree cone for three seconds; jitter cannot restart calibration.
+    // Stay within a three-degree cone for 1.5 seconds; jitter cannot restart calibration.
     if (steadyAnchor && 2*Math.acos(Math.min(1,dot))*180/Math.PI <= 3) return;
     clearTimeout(steadyTimer);
     steadyAnchor = q; steadyCalibrated = false;
@@ -167,7 +182,7 @@
       baseline = latestAttitude; steadyCalibrated = true;
       recentering = true;
       aim(0,0);
-    }, 3000);
+    }, 1500);
   }
   function clearSteadiness() {
     clearTimeout(steadyTimer); steadyTimer = 0;
@@ -200,11 +215,15 @@
       // This call stays directly inside the click handler to preserve iOS user activation.
       const permission = needsPermission && !sensorGranted ? await Orientation.requestPermission() : 'granted';
       if (attempt !== generation || !mobile.matches || reduced.matches) return;
-      if (permission !== 'granted') { permissionDenied = true; message = 'denied'; return; }
+      if (permission !== 'granted') { denySensor(); return; }
       sensorGranted = true; sensorWanted = true;
       attachSensor(true);
-    } catch { if (attempt === generation) { permissionDenied = true; message = 'denied'; } }
+    } catch { if (attempt === generation) denySensor(); }
     finally { if (attempt === generation) { permissionPending = false; renderControls(); } }
+  }
+  function denySensor() {
+    permissionDenied = true; sensorWanted = false;
+    detachSensor(); reset(); message = 'denied';
   }
   function suspend(cancelPermission = false) {
     // A native permission sheet may temporarily hide the page. Keep that request
@@ -215,13 +234,19 @@
   function mobileMode() {
     suspend(true);
     stage.classList.toggle('sensor-mobile', mobile.matches && !reduced.matches);
-    if (mobile.matches && !reduced.matches && canSense && !permissionDenied && (!needsPermission || sensorGranted)) {
+    // Listen without prompting: WebKit can deliver an existing session's granted data.
+    // If access is still undecided, the invitation stays visible until a real card tap.
+    if (mobile.matches && !reduced.matches && canSense && !permissionDenied) {
       sensorWanted = true; attachSensor();
     }
     renderControls();
   }
   function activateCard(event) {
     if (event?.detail !== 0 && suppressTap) { suppressTap = false; return; }
+    if (permissionPending) return;
+    // The first activation unlocks motion and leaves the portrait facing forward.
+    // Subsequent activations flip the card once permission has been resolved.
+    if (awaitingActivation()) return enableSensor();
     flipped = !flipped;
     card.classList.toggle('is-flipped',flipped);
     renderControls();

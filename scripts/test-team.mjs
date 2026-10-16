@@ -59,10 +59,10 @@ function motionHarness(introRunning = false, options = {}) {
   const events = new Map(), styles = new Map(), classes = new Set(), frames = new Map(), timers = new Map();
   let serial = 0, clock = 0, reduced = false, allowed = true;
   let mobileEnabled = Boolean(options.mobile);
-  const status = {hidden:true,textContent:''}, attributes = new Map();
+  const status = {hidden:true,textContent:''}, hint = {hidden:true,textContent:''}, attributes = new Map(), stageClasses = new Set();
   const screenOrientation = {angle:0,addEventListener:(name,fn)=>events.set('screenchange',fn)};
   const flipper = {getAnimations:() => introRunning ? [{animationName:'portrait-arrive',playState:'running'}] : [],addEventListener:(name,fn) => events.set(name,fn)};
-  const stage = {classList:{toggle:()=>{}},querySelector:()=>status,setPointerCapture:()=>{},addEventListener:(name,fn) => events.set(name,fn),getBoundingClientRect:() => ({left:0,top:0,width:400,height:500})};
+  const stage = {classList:{toggle:(name,value)=>value?stageClasses.add(name):stageClasses.delete(name)},querySelector:selector=>selector==='[data-motion-hint]'?hint:status,setPointerCapture:()=>{},addEventListener:(name,fn) => events.set(name,fn),getBoundingClientRect:() => ({left:0,top:0,width:400,height:500})};
   const card = {closest:() => stage,querySelector:() => flipper,setAttribute:(key,value)=>attributes.set(key,value),addEventListener:(name,fn)=>events.set(name,fn),classList:{add:name => classes.add(name),remove:name => classes.delete(name),toggle:(name,value)=>value?classes.add(name):classes.delete(name)},style:{setProperty:(key,value) => styles.set(key,value),removeProperty:key => styles.delete(key)}};
   const documentMock = {hidden:false,documentElement:{lang:'ko'},querySelector:() => card,addEventListener:(name,fn) => events.set(name,fn)};
   vm.runInNewContext(readFileSync('profile.js','utf8'), {
@@ -73,7 +73,7 @@ function motionHarness(introRunning = false, options = {}) {
     requestAnimationFrame:fn => {const id=++serial;frames.set(id,fn);return id;},cancelAnimationFrame:id => frames.delete(id),
     setTimeout:(fn,delay)=>{const id=++serial;timers.set(id,{fn,at:clock+delay});return id;},clearTimeout:id=>timers.delete(id),
   });
-  return {events,styles,classes,frames,status,timers,attributes,
+  return {events,styles,classes,frames,status,hint,timers,attributes,stageClasses,
     point:(pointerType='mouse') => events.get('pointermove')({clientX:400,clientY:0,pointerType}),
     step:(count,interval=1000/60) => {for(let index=0;index<count;index++){clock+=interval;const queued=[...frames.values()];frames.clear();for(const fn of queued)fn(clock);}},
     reduce:() => {reduced=true;events.get('reducedchange')();},
@@ -84,7 +84,7 @@ function motionHarness(introRunning = false, options = {}) {
     hide:()=>{documentMock.hidden=true;events.get('visibilitychange')();},
     show:()=>{documentMock.hidden=false;events.get('visibilitychange')();},
     expire:()=>{const queued=[...timers.values()];timers.clear();for(const {fn} of queued)fn();},
-    advance:ms=>{clock+=ms;for(const [id,timer] of [...timers])if(timer.at<=clock){timers.delete(id);timer.fn();}},
+    advance:ms=>{clock+=ms;for(const [id,timer] of [...timers])if(timer.at<=clock+1e-6){timers.delete(id);timer.fn();}},
     mobile:value=>{mobileEnabled=value;events.get('mobilechange')();},
   };
 }
@@ -112,19 +112,19 @@ assert.ok(low.styles.has('--glare-angle') && Number(low.styles.get('--reflect'))
 await low.click(); assert.equal(low.classes.has('is-flipped'),true,'Click reveals the logo back');
 low.events.get('keydown')({key:'Enter',preventDefault(){}}); assert.equal(low.classes.has('is-flipped'),false,'Keyboard returns to the photo');
 const stable = motionHarness(false,{mobile:true,sensor:true});
-stable.orient(45,0); stable.advance(2000); stable.orient(45,12); stable.step(60);
+stable.orient(45,0); stable.advance(1000); stable.orient(45,12); stable.step(30);
 const heldTilt = Number.parseFloat(stable.styles.get('--ry'));
-stable.advance(1000); stable.orient(45,13); stable.advance(999);
-stable.step(1); assert.ok(Number.parseFloat(stable.styles.get('--ry'))>=heldTilt,'Moving outside the cone restarts the three-second wait');
+stable.advance(500); stable.orient(45,13); stable.advance(499);
+assert.equal(Number.parseFloat(stable.styles.get('--ry')),heldTilt,'Moving outside the cone restarts the 1.5-second wait');
 stable.advance(1); stable.step(180);
 assert.equal(Number.parseFloat(stable.styles.get('--ry')),0,'Small jitter stays inside the stable cone and recalibrates');
 const android = motionHarness(false,{mobile:true,sensor:true});
 assert.ok(android.events.has('deviceorientation'),'Auto-listen where no permission API is required');
-android.orient(45,0); android.orient(45,20); android.step(90);
+android.orient(45,0); android.orient(45,20); android.step(60);
 assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Device tilt should have three times the desktop rotation range');
 assert.ok(Math.abs(Number.parseFloat(android.styles.get('--rx')))<0.1);
-android.advance(1499);
-assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Do not recalibrate before three stable seconds');
+android.advance(499);
+assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Do not recalibrate before 1.5 stable seconds');
 android.advance(1);
 assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Recalibration must not snap the current transform');
 android.step(1);
@@ -142,24 +142,35 @@ android.reduce(); assert.equal(android.events.has('deviceorientation'),false); a
 let permissions = 0;
 const iphone = motionHarness(false,{mobile:true,sensor:true,permission:()=>{permissions++;return Promise.resolve('granted');}});
 assert.equal(permissions,0,'Never prompt for sensor permission on page load');
-assert.equal(iphone.events.has('deviceorientation'),false);
+assert.equal(iphone.events.has('deviceorientation'),true,'Passively detect already granted permission without prompting');
+assert.equal(iphone.hint.hidden,false); assert.equal(iphone.hint.textContent,'TOUCH ME!');
 await iphone.click(); assert.equal(permissions,1); iphone.orient(70,0); iphone.orient(80,0); iphone.step(90);
 assert.ok(Math.abs(Number.parseFloat(iphone.styles.get('--rx')) + 9)<0.1,'Amplify the same phone pitch by three');
-assert.equal(iphone.attributes.get('aria-pressed'),'true');
+assert.equal(iphone.attributes.get('aria-pressed'),'false','The permission-unlock tap must keep the photo facing forward');
+assert.equal(iphone.hint.hidden,true); assert.equal(iphone.stageClasses.has('is-motion-ready'),true,'Permission grant activates the halo');
 await iphone.click(); assert.equal(iphone.events.has('deviceorientation'),true,'Flipping the card must keep sensors active');
-assert.equal(iphone.attributes.get('aria-pressed'),'false'); assert.equal(permissions,1,'Do not prompt again on each flip');
+assert.equal(iphone.attributes.get('aria-pressed'),'true'); assert.equal(permissions,1,'Do not prompt again on each flip');
+let priorPermissionCalls = 0;
+const prior = motionHarness(false,{mobile:true,sensor:true,permission:()=>{priorPermissionCalls++;return Promise.resolve('granted');}});
+prior.orient(45,0);
+assert.equal(prior.hint.hidden,true); assert.equal(prior.stageClasses.has('is-motion-ready'),true,'Previously granted data activates the halo on page load');
+await prior.click(); assert.equal(prior.attributes.get('aria-pressed'),'true'); assert.equal(priorPermissionCalls,0,'Already granted users can flip immediately');
 const denied = motionHarness(false,{mobile:true,sensor:true,permission:()=>Promise.resolve('denied')});
 await denied.click(); assert.equal(denied.events.has('deviceorientation'),false); assert.equal(denied.status.hidden,false);
 denied.events.get('pointerdown')({pointerType:'touch',pointerId:1,clientX:100,clientY:100});
 denied.events.get('pointermove')({pointerType:'touch',pointerId:1,clientX:240,clientY:100}); denied.step(90);
 assert.equal(Number.parseFloat(denied.styles.get('--ry')),8,'Denied permissions must retain the drag fallback');
 denied.events.get('pointerup')({pointerId:1}); denied.step(90); assert.equal(denied.styles.size,0);
-await denied.click(); assert.equal(denied.attributes.get('aria-pressed'),'true','Dragging must not accidentally flip the card');
+await denied.click(); assert.equal(denied.attributes.get('aria-pressed'),'false','Dragging must not accidentally flip the card');
+await denied.click(); assert.equal(denied.attributes.get('aria-pressed'),'true','Denied users retain normal flips after the initial permission tap');
 const absent = motionHarness(false,{mobile:true,sensor:true}); absent.orient(null,null); absent.expire();
 assert.equal(absent.events.has('deviceorientation'),false,'No-data fallback must remove its listener');
 let grant;
 const pending = motionHarness(false,{mobile:true,sensor:true,permission:()=>new Promise(resolve=>{grant=resolve;})});
-const pendingRequest = pending.click(); pending.hide(); grant('granted'); await pendingRequest;
+const pendingRequest = pending.click();
+assert.equal(pending.hint.textContent,'ONE MOMENT…');
+await pending.click(); assert.equal(pending.attributes.get('aria-pressed'),'false','Repeated taps during permission must not flip');
+pending.hide(); grant('granted'); await pendingRequest;
 assert.equal(pending.events.has('deviceorientation'),false,'A late permission response must not restart a hidden page');
 pending.show();
 assert.equal(pending.events.has('deviceorientation'),true,'Resume granted sensor access when returning from a permission prompt');

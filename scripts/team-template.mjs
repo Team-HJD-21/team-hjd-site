@@ -40,6 +40,7 @@ export function renderProfileCard(member) {
       <div class="portrait-sheen" aria-hidden="true"></div>
       ${hasImage ? '<div class="portrait-topline" aria-hidden="true"><span class="rocket-mark"><img src="../../assets/teamhjd-logo.png" width="650" height="650" alt=""></span></div>' : ''}
       <div class="portrait-caption" aria-hidden="true"><span>${escape(hasImage ? member.englishName || member.name : member.name)}</span></div>
+      <div class="portrait-touch-hint" data-motion-hint aria-hidden="true" hidden><span>TOUCH ME!</span></div>
       </div>
       <div class="portrait-back" aria-hidden="true"><span class="rocket-mark"><img src="../../assets/teamhjd-logo.png" width="650" height="650" alt=""></span><div class="portrait-shine" aria-hidden="true"></div></div>
       </div></div>

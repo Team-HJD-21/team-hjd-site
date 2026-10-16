@@ -10,7 +10,8 @@ window.matchMedia = query => {
   if (query.includes('pointer: fine')) return {matches:false,addEventListener(){}};
   return originalMatchMedia(query);
 };
-window.DeviceOrientationEvent = {requestPermission: () => Promise.resolve(new URL(location.href).searchParams.get('permission') || 'granted')};
+const permissionScenario = new URL(location.href).searchParams.get('permission') || 'granted';
+window.DeviceOrientationEvent = {requestPermission: () => Promise.resolve(permissionScenario === 'pregranted' ? 'granted' : permissionScenario)};
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.querySelector('#qa-roll');
   function sample() {
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   input.addEventListener('input', sample);
   document.querySelector('[data-tilt]').addEventListener('click', () => setTimeout(sample,0));
+  if (permissionScenario === 'pregranted') sample();
 });
 </script>`;
 html = html.replace('<head>', '<head>' + mock).replace(/(<body[^>]*>)/, '$1<div style="padding:12px 20px;background:#253523;color:#d9eea6;font:12px system-ui"><strong>LOCAL SIMULATED SENSOR</strong> — no real iPhone/Android sensor is being tested.<br><label for="qa-roll">Simulated roll</label> <input id="qa-roll" type="range" min="-40" max="40" value="0" step="10"></div>');

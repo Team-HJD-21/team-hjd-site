@@ -29,6 +29,13 @@
 .rocket-mark img{position:absolute;display:block;width:270.833333%;max-width:none;height:auto;left:-89.583333%;top:-33.928571%}
 .portrait-back .rocket-mark{width:145px;max-width:48%;filter:drop-shadow(0 0 20px #d9eea633)}
 .portrait-card::before{content:"";position:absolute;inset:-18px;border-radius:32px;background:radial-gradient(ellipse,#d9eea64d,transparent 72%);filter:blur(22px);transform:translateZ(-65px);opacity:.23;pointer-events:none}
+.portrait-card::before{transition:opacity .8s ease}
+.awaiting-motion .portrait-card::before{animation:none;opacity:.1}
+.is-motion-ready .portrait-card::before{animation:none;inset:-34px;background:radial-gradient(ellipse at var(--mx) var(--my),#d9eea6aa,#75cbbb66 58%,transparent 80%);opacity:var(--halo,.62)}
+.portrait-touch-hint{position:absolute;top:65%;left:50%;transform:translateX(-50%);padding:12px 18px;border:1px solid #d9eea680;border-radius:30px;background:#0a151fdb;box-shadow:0 0 24px #d9eea61f,inset 0 1px #ffffff18;backdrop-filter:blur(8px);color:#e8f6cd;font:600 10px/1.2 system-ui;letter-spacing:2.5px;white-space:nowrap;pointer-events:none}
+.portrait-touch-hint[hidden]{display:none}
+@media(prefers-reduced-motion:no-preference){.portrait-touch-hint{animation:touch-invite 2.4s ease-in-out infinite}}
+@keyframes touch-invite{0%,100%{box-shadow:0 0 15px #d9eea614,inset 0 1px #ffffff18}50%{box-shadow:0 0 28px #d9eea647,inset 0 1px #ffffff30}}
 @keyframes portrait-arrive{0%,12%{transform:rotateY(180deg) rotateZ(-2deg)}76%{transform:rotateY(-3deg) rotateZ(.15deg)}100%{transform:rotateY(0deg) rotateZ(0deg)}}
 @keyframes portrait-reveal-glow{0%,60%{opacity:0}82%{opacity:.8}100%{opacity:.23}}
 @media(prefers-reduced-motion:no-preference){.portrait-flipper{animation:portrait-arrive 1.8s cubic-bezier(.22,.68,.22,1) both}.portrait-card::before{animation:portrait-reveal-glow 2.65s ease-out both}}
