@@ -7,37 +7,32 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const mobile = matchMedia('(hover: none), (pointer: coarse)');
   const flipper = card.querySelector('.portrait-flipper');
-  const controls = stage.querySelector?.('[data-motion-controls]');
-  const toggle = controls?.querySelector('[data-sensor-toggle]');
-  const center = controls?.querySelector('[data-sensor-center]');
-  const status = controls?.querySelector('[data-motion-status]');
-  const properties = ['--rx', '--ry', '--mx', '--my', '--px', '--py'];
+  const status = stage.querySelector?.('[data-motion-status]');
+  const properties = ['--rx', '--ry', '--mx', '--my', '--px', '--py', '--glare-angle', '--reflect'];
   let frame = 0, lastTime, inside = false;
   const intro = flipper?.getAnimations?.().find(animation => animation.animationName === 'portrait-arrive');
   let revealing = Boolean(intro && intro.playState === 'running') && !reduced.matches;
   const current = {x: 0, y: 0}, target = {x: 0, y: 0};
-  let sensorEnabled = false, sensorWanted = false, sensorGranted = false, userStopped = false;
+  let sensorEnabled = false, sensorWanted = false, sensorGranted = false, permissionDenied = false;
   let baseline = null, sensorTimer = 0, permissionPending = false, generation = 0;
-  let dragging = null, message = '';
+  let dragging = null, message = '', flipped = false, tapOrigin = null, suppressTap = false;
+  let steadyAnchor = null, latestAttitude = null, steadyTimer = 0, steadyCalibrated = false, recentering = false;
   const Orientation = window.DeviceOrientationEvent;
   const canSense = Boolean(Orientation) && window.isSecureContext !== false;
   const needsPermission = typeof Orientation?.requestPermission === 'function';
   const copy = {
-    ko: {on:'기울기 효과 켜기',off:'기울기 끄기',center:'기준 재설정',waiting:'휴대폰을 살짝 기울여 주세요.',denied:'센서 권한이 없어 카드 드래그로 사용할 수 있습니다.',missing:'기울기 정보를 받지 못했습니다. 카드를 드래그해 주세요.'},
-    en: {on:'Enable device tilt',off:'Turn off tilt',center:'Recenter',waiting:'Gently tilt your phone.',denied:'Motion access is unavailable. You can drag the card instead.',missing:'No orientation data received. Drag the card instead.'},
-    'zh-CN': {on:'开启倾斜效果',off:'关闭倾斜',center:'重设基准',waiting:'请轻轻倾斜手机。',denied:'无法访问传感器，可拖动卡片。',missing:'未收到倾斜数据，请拖动卡片。'},
+    ko: {back:'카드 뒷면 보기',front:'카드 앞면 보기',denied:'센서 권한이 없어 카드 드래그로 사용할 수 있습니다.',missing:'기울기 정보를 받지 못했습니다. 카드를 드래그해 주세요.'},
+    en: {back:'Show card back',front:'Show card front',denied:'Motion access is unavailable. You can drag the card instead.',missing:'No orientation data received. Drag the card instead.'},
+    'zh-CN': {back:'查看卡片背面',front:'查看卡片正面',denied:'无法访问传感器，可拖动卡片。',missing:'未收到倾斜数据，请拖动卡片。'},
   };
   function renderControls() {
-    if (!controls) return;
     const words = copy[document.documentElement.lang] || copy.ko;
-    controls.hidden = !mobile.matches || reduced.matches || !canSense;
-    toggle.textContent = sensorWanted ? words.off : words.on;
-    toggle.disabled = permissionPending;
-    toggle.setAttribute('aria-pressed', String(sensorWanted));
-    center.textContent = words.center;
-    center.hidden = !sensorEnabled || !baseline;
-    status.textContent = words[message] || '';
-    status.hidden = !status.textContent;
+    card.setAttribute('aria-label', words[flipped ? 'front' : 'back']);
+    card.setAttribute('aria-pressed', String(flipped));
+    if (status) {
+      status.textContent = words[message] || '';
+      status.hidden = !status.textContent;
+    }
   }
   function aim(x, y) {
     target.x = Math.max(-1, Math.min(1, x));
@@ -59,7 +54,7 @@
     // Time-based damping keeps the same weight on 60 Hz and high-refresh screens.
     const dt = Math.min((time - (lastTime ?? time - 1000 / 60)) / 1000, 0.05);
     lastTime = time;
-    const follow = 1 - Math.exp(-(inside ? 16 : 10) * dt);
+    const follow = 1 - Math.exp(-(recentering ? 4 : inside ? 16 : 10) * dt);
     current.x += (target.x - current.x) * follow;
     current.y += (target.y - current.y) * follow;
     const settled = Math.abs(target.x - current.x) < 0.001 && Math.abs(target.y - current.y) < 0.001;
@@ -71,9 +66,12 @@
     card.style.setProperty('--my', `${((current.y + 1) * 50).toFixed(2)}%`);
     card.style.setProperty('--px', `${(-current.x * 3).toFixed(3)}px`);
     card.style.setProperty('--py', `${(-current.y * 3).toFixed(3)}px`);
+    card.style.setProperty('--glare-angle', `${(115 + current.x * 35 - current.y * 20).toFixed(2)}deg`);
+    card.style.setProperty('--reflect', `${(0.2 + Math.min(1, Math.hypot(current.x,current.y)) * 0.35).toFixed(3)}`);
     if (!settled) frame = requestAnimationFrame(tick);
     else {
       lastTime = undefined;
+      recentering = false;
       if (!inside) clearStyles();
     }
   }
@@ -84,6 +82,7 @@
     cancelAnimationFrame(frame);
     frame = 0; lastTime = undefined; inside = false; dragging = null;
     current.x = current.y = target.x = target.y = 0;
+    recentering = false;
     card.classList.remove('is-tracking');
     clearStyles();
   }
@@ -98,6 +97,7 @@
     } else reset();
   }
   stage.addEventListener('pointermove', event => {
+    if (tapOrigin && Math.hypot(event.clientX-tapOrigin.x,event.clientY-tapOrigin.y)>8) suppressTap = true;
     if (dragging && event.pointerId === dragging.id) {
       aim((event.clientX - dragging.x) / 140, (event.clientY - dragging.y) / 140);
       return;
@@ -109,10 +109,10 @@
     aim((event.clientX - bounds.left) / bounds.width * 2 - 1, (event.clientY - bounds.top) / bounds.height * 2 - 1);
   });
   stage.addEventListener('pointerdown', event => {
-    if (!mobile.matches || reduced.matches || sensorEnabled || event.pointerType === 'mouse' || event.target?.closest('button')) return;
-    reset();
+    tapOrigin = {x:event.clientX,y:event.clientY}; suppressTap = false;
+    if (!mobile.matches || reduced.matches || sensorEnabled || event.pointerType === 'mouse' || (event.target && !event.target.closest('[data-tilt]'))) return;
     dragging = {id:event.pointerId,x:event.clientX,y:event.clientY};
-    stage.setPointerCapture?.(event.pointerId);
+    card.setPointerCapture?.(event.pointerId);
   });
   stage.addEventListener('pointerup', event => {
     if (dragging && event.pointerId === dragging.id) { dragging = null; leave(); }
@@ -123,7 +123,10 @@
     if (inside && (motion.matches || sensorEnabled || dragging)) { card.classList.add('is-tracking'); start(); }
   });
   stage.addEventListener('pointerleave', leave);
-  stage.addEventListener('pointercancel', reset);
+  stage.addEventListener('pointercancel', () => {
+    suppressTap = true; tapOrigin = null; dragging = null;
+    if (!sensorEnabled) leave();
+  });
   window.addEventListener('blur', reset);
   motion.addEventListener('change', reset);
   // Z-X-Y attitude quaternion. Relative rotation avoids compass-heading dependence
@@ -139,7 +142,9 @@
     if (!sensorEnabled || !mobile.matches || reduced.matches || document.hidden || !Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
     clearTimeout(sensorTimer);
     const q = attitude(event);
+    latestAttitude = q;
     if (!baseline) { baseline = q; message = ''; renderControls(); }
+    trackSteadiness(q);
     const b = baseline;
     const x=b.w*q.x-b.x*q.w-b.y*q.z+b.z*q.y;
     const y=b.w*q.y+b.x*q.z-b.y*q.w-b.z*q.x;
@@ -150,17 +155,36 @@
     const angle = (window.screen?.orientation?.angle ?? window.orientation ?? 0) * Math.PI / 180;
     aim((roll*Math.cos(angle)+pitch*Math.sin(angle))/20, (pitch*Math.cos(angle)-roll*Math.sin(angle))/20);
   }
+  function trackSteadiness(q) {
+    const dot = steadyAnchor ? Math.abs(q.x*steadyAnchor.x+q.y*steadyAnchor.y+q.z*steadyAnchor.z+q.w*steadyAnchor.w) : 0;
+    // Stay within a three-degree cone for three seconds; jitter cannot restart calibration.
+    if (steadyAnchor && 2*Math.acos(Math.min(1,dot))*180/Math.PI <= 3) return;
+    clearTimeout(steadyTimer);
+    steadyAnchor = q; steadyCalibrated = false;
+    steadyTimer = setTimeout(() => {
+      steadyTimer = 0;
+      if (!sensorEnabled || document.hidden || reduced.matches || steadyCalibrated) return;
+      baseline = latestAttitude; steadyCalibrated = true;
+      recentering = true;
+      aim(0,0);
+    }, 3000);
+  }
+  function clearSteadiness() {
+    clearTimeout(steadyTimer); steadyTimer = 0;
+    steadyAnchor = latestAttitude = null; steadyCalibrated = false;
+  }
   function detachSensor() {
     window.removeEventListener('deviceorientation', onOrientation);
     clearTimeout(sensorTimer);
     sensorTimer = 0; sensorEnabled = false; baseline = null;
+    clearSteadiness();
   }
   function attachSensor(userInitiated = false) {
     if (!sensorWanted || !mobile.matches || reduced.matches || document.hidden) return;
     detachSensor(); reset();
     sensorEnabled = true;
     window.addEventListener('deviceorientation', onOrientation, {passive:true});
-    message = userInitiated ? 'waiting' : '';
+    message = '';
     sensorTimer = setTimeout(() => {
       if (baseline) return;
       detachSensor(); sensorWanted = false; message = userInitiated ? 'missing' : '';
@@ -176,10 +200,10 @@
       // This call stays directly inside the click handler to preserve iOS user activation.
       const permission = needsPermission && !sensorGranted ? await Orientation.requestPermission() : 'granted';
       if (attempt !== generation || !mobile.matches || reduced.matches) return;
-      if (permission !== 'granted') { message = 'denied'; return; }
-      sensorGranted = true; sensorWanted = true; userStopped = false;
+      if (permission !== 'granted') { permissionDenied = true; message = 'denied'; return; }
+      sensorGranted = true; sensorWanted = true;
       attachSensor(true);
-    } catch { if (attempt === generation) message = 'denied'; }
+    } catch { if (attempt === generation) { permissionDenied = true; message = 'denied'; } }
     finally { if (attempt === generation) { permissionPending = false; renderControls(); } }
   }
   function suspend(cancelPermission = false) {
@@ -191,27 +215,36 @@
   function mobileMode() {
     suspend(true);
     stage.classList.toggle('sensor-mobile', mobile.matches && !reduced.matches);
-    if (mobile.matches && !reduced.matches && canSense && !userStopped && (!needsPermission || sensorGranted)) {
+    if (mobile.matches && !reduced.matches && canSense && !permissionDenied && (!needsPermission || sensorGranted)) {
       sensorWanted = true; attachSensor();
     }
     renderControls();
   }
-  toggle?.addEventListener('click', () => {
-    if (sensorWanted) { sensorWanted = false; userStopped = true; message = ''; suspend(true); }
-    else return enableSensor();
+  function activateCard(event) {
+    if (event?.detail !== 0 && suppressTap) { suppressTap = false; return; }
+    flipped = !flipped;
+    card.classList.toggle('is-flipped',flipped);
+    renderControls();
+    // Card activation is also the user gesture required by iOS. No separate controls.
+    if (!sensorWanted && !permissionDenied) return enableSensor();
+  }
+  card.addEventListener('click', activateCard);
+  card.addEventListener('keydown', event => {
+    if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) {
+      event.preventDefault(); activateCard({detail:0});
+    }
   });
-  center?.addEventListener('click', () => { baseline = null; reset(); renderControls(); });
-  function recenter() { baseline = null; reset(); renderControls(); }
+  function recenter() { baseline = null; clearSteadiness(); recentering = true; aim(0,0); }
   window.screen?.orientation?.addEventListener('change', recenter);
   window.addEventListener('orientationchange', recenter);
   mobile.addEventListener('change', mobileMode);
   reduced.addEventListener('change', () => { revealing = false; mobileMode(); });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) suspend();
-    else if (sensorWanted && !userStopped) attachSensor();
+    else if (sensorWanted) attachSensor();
   });
   window.addEventListener('pagehide', () => suspend());
-  window.addEventListener('pageshow', () => { if (sensorWanted && !userStopped) attachSensor(); });
+  window.addEventListener('pageshow', () => { if (sensorWanted) attachSensor(); });
   document.addEventListener('teamhjd:languagechange', renderControls);
   mobileMode();
 })();

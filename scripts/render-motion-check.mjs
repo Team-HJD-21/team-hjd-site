@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.dispatchEvent(event);
   }
   input.addEventListener('input', sample);
-  for (const button of document.querySelectorAll('[data-sensor-toggle],[data-sensor-center]')) button.addEventListener('click', () => setTimeout(sample,0));
+  document.querySelector('[data-tilt]').addEventListener('click', () => setTimeout(sample,0));
 });
 </script>`;
 html = html.replace('<head>', '<head>' + mock).replace(/(<body[^>]*>)/, '$1<div style="padding:12px 20px;background:#253523;color:#d9eea6;font:12px system-ui"><strong>LOCAL SIMULATED SENSOR</strong> — no real iPhone/Android sensor is being tested.<br><label for="qa-roll">Simulated roll</label> <input id="qa-roll" type="range" min="-40" max="40" value="0" step="10"></div>');

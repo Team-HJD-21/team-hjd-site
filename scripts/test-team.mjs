@@ -20,6 +20,8 @@ for (const person of members.filter(person => person.profileEnabled)) {
   for (const link of person.links || []) assert.ok(page.includes(link.href.replaceAll('&', '&amp;')), `Missing personal link: ${person.id}`);
 }
 const kimProfile = readFileSync('team/kim-jintae/index.html', 'utf8');
+assert.ok(!profile.includes('data-sensor-toggle') && !profile.includes('data-sensor-center'),'Remove standalone mobile sensor controls');
+assert.ok(profile.includes('class="portrait-turner"') && profile.includes('role="button" tabindex="0"'),'The card itself must support activation');
 assert.ok(kimProfile.includes('<div class="portrait-placeholder"><span>null</span></div>'));
 assert.ok(!kimProfile.includes('class="portrait-image"') && !kimProfile.includes('class="member-bio"'), 'Do not fabricate a photo or bio');
 assert.ok(home.includes(renderRoster(projects[0])), 'Generated roster is stale');
@@ -57,13 +59,11 @@ function motionHarness(introRunning = false, options = {}) {
   const events = new Map(), styles = new Map(), classes = new Set(), frames = new Map(), timers = new Map();
   let serial = 0, clock = 0, reduced = false, allowed = true;
   let mobileEnabled = Boolean(options.mobile);
-  const control = name => ({hidden:false,textContent:'',disabled:false,setAttribute:(key,value)=>events.set(`${name}:${key}`,value),addEventListener:(event,fn)=>events.set(name,fn)});
-  const toggle = control('toggle'), center = control('center'), status = control('status');
-  const controls = {hidden:true,querySelector:selector=>selector.includes('toggle')?toggle:selector.includes('center')?center:status};
+  const status = {hidden:true,textContent:''}, attributes = new Map();
   const screenOrientation = {angle:0,addEventListener:(name,fn)=>events.set('screenchange',fn)};
   const flipper = {getAnimations:() => introRunning ? [{animationName:'portrait-arrive',playState:'running'}] : [],addEventListener:(name,fn) => events.set(name,fn)};
-  const stage = {classList:{toggle:()=>{}},querySelector:()=>controls,setPointerCapture:()=>{},addEventListener:(name,fn) => events.set(name,fn),getBoundingClientRect:() => ({left:0,top:0,width:400,height:500})};
-  const card = {closest:() => stage,querySelector:() => flipper,classList:{add:name => classes.add(name),remove:name => classes.delete(name)},style:{setProperty:(key,value) => styles.set(key,value),removeProperty:key => styles.delete(key)}};
+  const stage = {classList:{toggle:()=>{}},querySelector:()=>status,setPointerCapture:()=>{},addEventListener:(name,fn) => events.set(name,fn),getBoundingClientRect:() => ({left:0,top:0,width:400,height:500})};
+  const card = {closest:() => stage,querySelector:() => flipper,setAttribute:(key,value)=>attributes.set(key,value),addEventListener:(name,fn)=>events.set(name,fn),classList:{add:name => classes.add(name),remove:name => classes.delete(name),toggle:(name,value)=>value?classes.add(name):classes.delete(name)},style:{setProperty:(key,value) => styles.set(key,value),removeProperty:key => styles.delete(key)}};
   const documentMock = {hidden:false,documentElement:{lang:'ko'},querySelector:() => card,addEventListener:(name,fn) => events.set(name,fn)};
   vm.runInNewContext(readFileSync('profile.js','utf8'), {
     document:documentMock,window:{isSecureContext:true,DeviceOrientationEvent:options.sensor ? (options.permission ? {requestPermission:options.permission} : {}) : undefined,screen:{orientation:screenOrientation},addEventListener:(name,fn) => events.set(name,fn),removeEventListener:(name,fn)=>{if(events.get(name)===fn)events.delete(name);}},
@@ -71,19 +71,20 @@ function motionHarness(introRunning = false, options = {}) {
       ? {get matches(){return reduced;},addEventListener:(name,fn) => events.set('reducedchange',fn)}
       : {get matches(){return allowed && !reduced && !mobileEnabled;},addEventListener:(name,fn) => events.set('motionchange',fn)},
     requestAnimationFrame:fn => {const id=++serial;frames.set(id,fn);return id;},cancelAnimationFrame:id => frames.delete(id),
-    setTimeout:fn=>{const id=++serial;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id),
+    setTimeout:(fn,delay)=>{const id=++serial;timers.set(id,{fn,at:clock+delay});return id;},clearTimeout:id=>timers.delete(id),
   });
-  return {events,styles,classes,frames,controls,toggle,center,status,timers,
+  return {events,styles,classes,frames,status,timers,attributes,
     point:(pointerType='mouse') => events.get('pointermove')({clientX:400,clientY:0,pointerType}),
     step:(count,interval=1000/60) => {for(let index=0;index<count;index++){clock+=interval;const queued=[...frames.values()];frames.clear();for(const fn of queued)fn(clock);}},
     reduce:() => {reduced=true;events.get('reducedchange')();},
     disableHover:() => {allowed=false;events.get('motionchange')();},
-    click:()=>events.get('toggle')(),
+    click:()=>events.get('click')({detail:1}),
     orient:(beta,gamma,alpha=0)=>events.get('deviceorientation')?.({beta,gamma,alpha}),
     rotate:angle=>{screenOrientation.angle=angle;events.get('screenchange')();},
     hide:()=>{documentMock.hidden=true;events.get('visibilitychange')();},
     show:()=>{documentMock.hidden=false;events.get('visibilitychange')();},
-    expire:()=>{const queued=[...timers.values()];timers.clear();for(const fn of queued)fn();},
+    expire:()=>{const queued=[...timers.values()];timers.clear();for(const {fn} of queued)fn();},
+    advance:ms=>{clock+=ms;for(const [id,timer] of [...timers])if(timer.at<=clock){timers.delete(id);timer.fn();}},
     mobile:value=>{mobileEnabled=value;events.get('mobilechange')();},
   };
 }
@@ -107,34 +108,53 @@ assert.equal(Number.parseFloat(entering.styles.get('--ry')),8);
 entering.events.get('blur')(); assert.equal(entering.styles.size,0); assert.equal(entering.frames.size,0);
 const low = motionHarness(), high = motionHarness(); low.point(); high.point(); low.step(18); high.step(36,1000/120);
 assert.ok(Math.abs(Number.parseFloat(low.styles.get('--ry')) - Number.parseFloat(high.styles.get('--ry'))) < 0.04, 'Damping must be refresh-rate independent');
+assert.ok(low.styles.has('--glare-angle') && Number(low.styles.get('--reflect'))>0.4,'Tilt should move and strengthen the material reflection');
+await low.click(); assert.equal(low.classes.has('is-flipped'),true,'Click reveals the logo back');
+low.events.get('keydown')({key:'Enter',preventDefault(){}}); assert.equal(low.classes.has('is-flipped'),false,'Keyboard returns to the photo');
+const stable = motionHarness(false,{mobile:true,sensor:true});
+stable.orient(45,0); stable.advance(2000); stable.orient(45,12); stable.step(60);
+const heldTilt = Number.parseFloat(stable.styles.get('--ry'));
+stable.advance(1000); stable.orient(45,13); stable.advance(999);
+stable.step(1); assert.ok(Number.parseFloat(stable.styles.get('--ry'))>=heldTilt,'Moving outside the cone restarts the three-second wait');
+stable.advance(1); stable.step(180);
+assert.equal(Number.parseFloat(stable.styles.get('--ry')),0,'Small jitter stays inside the stable cone and recalibrates');
 const android = motionHarness(false,{mobile:true,sensor:true});
-assert.equal(android.controls.hidden,false); assert.ok(android.events.has('deviceorientation'),'Auto-listen where no permission API is required');
+assert.ok(android.events.has('deviceorientation'),'Auto-listen where no permission API is required');
 android.orient(45,0); android.orient(45,20); android.step(90);
 assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Device tilt should have three times the desktop rotation range');
 assert.ok(Math.abs(Number.parseFloat(android.styles.get('--rx')))<0.1);
-android.events.get('center')(); android.orient(45,20); android.step(90);
-assert.equal(Number.parseFloat(android.styles.get('--ry')),0,'Recenter at the current attitude');
-android.rotate(90); android.orient(45,0); android.orient(45,20); android.step(90);
+android.advance(1499);
+assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Do not recalibrate before three stable seconds');
+android.advance(1);
+assert.equal(Number.parseFloat(android.styles.get('--ry')),24,'Recalibration must not snap the current transform');
+android.step(1);
+assert.ok(Number.parseFloat(android.styles.get('--ry'))>20 && Number.parseFloat(android.styles.get('--ry'))<24,'Interpolate slowly toward the new baseline');
+android.orient(45,20); android.step(180);
+assert.equal(Number.parseFloat(android.styles.get('--ry')),0,'Automatically recenter at the stable current attitude');
+android.rotate(90); android.orient(45,0); android.orient(45,20); android.step(180);
 assert.ok(Math.abs(Number.parseFloat(android.styles.get('--ry')))<0.1);
 assert.equal(Number.parseFloat(android.styles.get('--rx')),18,'Keep the amplified tilt after landscape rotation');
 android.hide(); assert.equal(android.events.has('deviceorientation'),false); assert.equal(android.frames.size,0);
 android.show(); assert.equal(android.events.has('deviceorientation'),true);
 android.orient(179,0); android.orient(-179,0); android.step(90);
 assert.ok(Math.abs(Number.parseFloat(android.styles.get('--ry'))-2.4)<0.1,'Treat the +/-180 degree boundary as a two-degree change with threefold tilt');
-android.reduce(); assert.equal(android.events.has('deviceorientation'),false); assert.equal(android.controls.hidden,true);
+android.reduce(); assert.equal(android.events.has('deviceorientation'),false); assert.equal(android.timers.size,0);
 let permissions = 0;
 const iphone = motionHarness(false,{mobile:true,sensor:true,permission:()=>{permissions++;return Promise.resolve('granted');}});
 assert.equal(permissions,0,'Never prompt for sensor permission on page load');
 assert.equal(iphone.events.has('deviceorientation'),false);
 await iphone.click(); assert.equal(permissions,1); iphone.orient(70,0); iphone.orient(80,0); iphone.step(90);
 assert.ok(Math.abs(Number.parseFloat(iphone.styles.get('--rx')) + 9)<0.1,'Amplify the same phone pitch by three');
-await iphone.click(); assert.equal(iphone.events.has('deviceorientation'),false,'Toggle sensors off');
+assert.equal(iphone.attributes.get('aria-pressed'),'true');
+await iphone.click(); assert.equal(iphone.events.has('deviceorientation'),true,'Flipping the card must keep sensors active');
+assert.equal(iphone.attributes.get('aria-pressed'),'false'); assert.equal(permissions,1,'Do not prompt again on each flip');
 const denied = motionHarness(false,{mobile:true,sensor:true,permission:()=>Promise.resolve('denied')});
 await denied.click(); assert.equal(denied.events.has('deviceorientation'),false); assert.equal(denied.status.hidden,false);
 denied.events.get('pointerdown')({pointerType:'touch',pointerId:1,clientX:100,clientY:100});
 denied.events.get('pointermove')({pointerType:'touch',pointerId:1,clientX:240,clientY:100}); denied.step(90);
 assert.equal(Number.parseFloat(denied.styles.get('--ry')),8,'Denied permissions must retain the drag fallback');
 denied.events.get('pointerup')({pointerId:1}); denied.step(90); assert.equal(denied.styles.size,0);
+await denied.click(); assert.equal(denied.attributes.get('aria-pressed'),'true','Dragging must not accidentally flip the card');
 const absent = motionHarness(false,{mobile:true,sensor:true}); absent.orient(null,null); absent.expire();
 assert.equal(absent.events.has('deviceorientation'),false,'No-data fallback must remove its listener');
 let grant;
@@ -151,4 +171,4 @@ let reducedGrant;
 const cancelled = motionHarness(false,{mobile:true,sensor:true,permission:()=>new Promise(resolve=>{reducedGrant=resolve;})});
 const cancelledRequest = cancelled.click(); cancelled.reduce(); reducedGrant('granted'); await cancelledRequest;
 assert.equal(cancelled.events.has('deviceorientation'),false,'Reduced motion still cancels a pending request');
-console.log('PASS: profiles, roles, links, damped cursor input, orientation calibration/rotation/wrap, iOS permission lifecycle, drag fallback, reduced motion and hidden-page cleanup.');
+console.log('PASS: profiles, roles, links, card flips/keyboard/drag suppression, material reflection, stable-pose auto-calibration and interpolation, cursor/device tilt, permission lifecycle, reduced motion and hidden-page cleanup.');

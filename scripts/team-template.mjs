@@ -32,8 +32,8 @@ export function renderProfileCard(member) {
   const interests = (member.interests || []).filter(provided);
   const email = provided(member.contactEmail) ? member.contactEmail : '';
   return `<article class="member-profile${hasPortrait ? '' : ' without-photo'}" aria-labelledby="member-name">
-    ${hasPortrait ? `<div class="portrait-stage"><div class="portrait-orbit" aria-hidden="true"></div><div class="portrait-card" data-tilt>
-      <div class="portrait-flipper">
+    ${hasPortrait ? `<div class="portrait-stage"><div class="portrait-orbit" aria-hidden="true"></div><div class="portrait-card" data-tilt role="button" tabindex="0" aria-label="카드 뒷면 보기" aria-pressed="false">
+      <div class="portrait-flipper"><div class="portrait-turner">
       <div class="portrait-front">
       ${hasImage ? `<div class="portrait-image"><img src="../../${escape(member.image.src)}" width="${escape(member.image.width || 1608)}" height="${escape(member.image.height || 2145)}" alt="${escape(member.image.alt || member.name)}" style="object-position:${escape(member.image.position || '50% 50%')}" fetchpriority="high"></div>` : `<div class="portrait-placeholder"><span>${escape(member.portraitPlaceholder)}</span></div>`}
       <div class="portrait-shine" aria-hidden="true"></div>
@@ -41,9 +41,9 @@ export function renderProfileCard(member) {
       ${hasImage ? '<div class="portrait-topline" aria-hidden="true"><span class="rocket-mark"><img src="../../assets/teamhjd-logo.png" width="650" height="650" alt=""></span></div>' : ''}
       <div class="portrait-caption" aria-hidden="true"><span>${escape(hasImage ? member.englishName || member.name : member.name)}</span></div>
       </div>
-      <div class="portrait-back" aria-hidden="true"><span class="rocket-mark"><img src="../../assets/teamhjd-logo.png" width="650" height="650" alt=""></span></div>
-      </div>
-    </div><div class="motion-controls" data-motion-controls hidden><button type="button" data-sensor-toggle aria-pressed="false">기울기 효과 켜기</button><button type="button" data-sensor-center hidden>기준 재설정</button><p class="motion-status" data-motion-status role="status" aria-live="polite" hidden></p></div></div>` : ''}
+      <div class="portrait-back" aria-hidden="true"><span class="rocket-mark"><img src="../../assets/teamhjd-logo.png" width="650" height="650" alt=""></span><div class="portrait-shine" aria-hidden="true"></div></div>
+      </div></div>
+    </div><p class="motion-status" data-motion-status role="status" aria-live="polite" hidden></p></div>` : ''}
     <div class="member-copy">
       <p class="eyebrow profile-eyebrow"><span class="status-dot" aria-hidden="true"></span> THE PEOPLE AT TEAMHJD</p>
       <h1 id="member-name">${escape(member.name)}</h1>
