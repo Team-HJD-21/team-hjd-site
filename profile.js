@@ -174,19 +174,21 @@
     try {
       // This call stays directly inside the click handler to preserve iOS user activation.
       const permission = needsPermission && !sensorGranted ? await Orientation.requestPermission() : 'granted';
-      if (attempt !== generation || !mobile.matches || reduced.matches || document.hidden) return;
+      if (attempt !== generation || !mobile.matches || reduced.matches) return;
       if (permission !== 'granted') { message = 'denied'; return; }
       sensorGranted = true; sensorWanted = true; userStopped = false;
       attachSensor(true);
     } catch { if (attempt === generation) message = 'denied'; }
     finally { if (attempt === generation) { permissionPending = false; renderControls(); } }
   }
-  function suspend() {
-    ++generation; permissionPending = false;
+  function suspend(cancelPermission = false) {
+    // A native permission sheet may temporarily hide the page. Keep that request
+    // alive, but do not subscribe until the page is visible again.
+    if (cancelPermission) { ++generation; permissionPending = false; }
     detachSensor(); reset(); renderControls();
   }
   function mobileMode() {
-    suspend();
+    suspend(true);
     stage.classList.toggle('sensor-mobile', mobile.matches && !reduced.matches);
     if (mobile.matches && !reduced.matches && canSense && !userStopped && (!needsPermission || sensorGranted)) {
       sensorWanted = true; attachSensor();
@@ -194,7 +196,7 @@
     renderControls();
   }
   toggle?.addEventListener('click', () => {
-    if (sensorWanted) { sensorWanted = false; userStopped = true; message = ''; suspend(); }
+    if (sensorWanted) { sensorWanted = false; userStopped = true; message = ''; suspend(true); }
     else return enableSensor();
   });
   center?.addEventListener('click', () => { baseline = null; reset(); renderControls(); });
@@ -207,7 +209,7 @@
     if (document.hidden) suspend();
     else if (sensorWanted && !userStopped) attachSensor();
   });
-  window.addEventListener('pagehide', suspend);
+  window.addEventListener('pagehide', () => suspend());
   window.addEventListener('pageshow', () => { if (sensorWanted && !userStopped) attachSensor(); });
   document.addEventListener('teamhjd:languagechange', renderControls);
   mobileMode();
