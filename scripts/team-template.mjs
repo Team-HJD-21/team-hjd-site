@@ -28,6 +28,12 @@ export function renderStudioLeadership() {
 export function renderProfileCard(member) {
   const hasImage = provided(member.image?.src);
   const hasPortrait = hasImage || provided(member.portraitPlaceholder);
+  const portraits = hasImage ? [member.image, ...(member.image.alternatives || [])].filter(image => provided(image?.src)).map(image => ({
+    src: '../../' + image.src, alt: image.alt || member.name,
+    width: image.width || 1608, height: image.height || 2145, position: image.position || '50% 50%',
+  })) : [];
+  const portrait = portraits[0];
+  const portraitOptions = portraits.length > 1 ? ` data-portrait-options="${escape(JSON.stringify(portraits))}"` : '';
   const links = (member.links || []).filter(link => provided(link.href) && /^https:\/\//.test(link.href) && provided(link.label));
   const interests = (member.interests || []).filter(provided);
   const email = provided(member.contactEmail) ? member.contactEmail : '';
@@ -35,7 +41,7 @@ export function renderProfileCard(member) {
     ${hasPortrait ? `<div class="portrait-stage"><div class="portrait-orbit" aria-hidden="true"></div><div class="portrait-card" data-tilt role="button" tabindex="0" aria-label="카드 뒷면 보기" aria-pressed="false">
       <div class="portrait-flipper"><div class="portrait-turner">
       <div class="portrait-front">
-      ${hasImage ? `<div class="portrait-image"><img src="../../${escape(member.image.src)}" width="${escape(member.image.width || 1608)}" height="${escape(member.image.height || 2145)}" alt="${escape(member.image.alt || member.name)}" style="object-position:${escape(member.image.position || '50% 50%')}" fetchpriority="high"></div>` : `<div class="portrait-placeholder"><span>${escape(member.portraitPlaceholder)}</span></div>`}
+      ${hasImage ? `<div class="portrait-image"><img src="${escape(portrait.src)}" width="${escape(portrait.width)}" height="${escape(portrait.height)}" alt="${escape(portrait.alt)}" style="object-position:${escape(portrait.position)}" fetchpriority="high"${portraitOptions}></div>` : `<div class="portrait-placeholder"><span>${escape(member.portraitPlaceholder)}</span></div>`}
       <div class="portrait-shine" aria-hidden="true"></div>
       <div class="portrait-sheen" aria-hidden="true"></div>
       ${hasImage ? '<div class="portrait-topline" aria-hidden="true"><span class="rocket-mark"><img src="../../assets/teamhjd-logo.png" width="650" height="650" alt=""></span></div>' : ''}

@@ -2,6 +2,14 @@
 (() => {
   const card = document.querySelector('[data-tilt]');
   if (!card) return;
+  // Choose once per visit, independently of motion preferences and card interaction.
+  const portrait = card.querySelector('[data-portrait-options]');
+  if (portrait?.dataset?.portraitOptions) {
+    const options = JSON.parse(portrait.dataset.portraitOptions);
+    const selected = options[Math.floor(Math.random() * options.length)];
+    Object.assign(portrait, {src: selected.src, alt: selected.alt, width: selected.width, height: selected.height});
+    portrait.style.objectPosition = selected.position;
+  }
   const stage = card.closest('.portrait-stage');
   const motion = matchMedia('(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');

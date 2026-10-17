@@ -16,7 +16,9 @@ for (const person of members.filter(person => person.profileEnabled)) {
   const page = readFileSync(`team/${person.slug}/index.html`, 'utf8');
   assert.equal(page, renderProfilePage(person, home), `Stale generated profile: ${person.id}`);
   assert.ok(home.includes(`team/${person.slug}/index.html?from=the-developer`), `Missing roster link: ${person.id}`);
-  if (person.image?.src) assert.ok(existsSync(person.image.src), `Missing supplied portrait: ${person.id}`);
+  if (person.image?.src) {
+    for (const image of [person.image, ...(person.image.alternatives || [])]) assert.ok(existsSync(image.src), `Missing supplied portrait: ${person.id}: ${image.src}`);
+  }
   for (const link of person.links || []) assert.ok(page.includes(link.href.replaceAll('&', '&amp;')), `Missing personal link: ${person.id}`);
 }
 const kimProfile = readFileSync('team/kim-jintae/index.html', 'utf8');

@@ -24,7 +24,12 @@ export const members = [
       {label: 'LinkedIn', href: 'https://www.linkedin.com/in/jaedong-hwang-67198b382', icon: 'linkedin'},
     ],
     contactEmail: 'jdhwang@teamhjd.com',
-    image: {src: 'assets/team/hwang-jaedong.png', alt: '황재동', width: 800, height: 1029, position: '50% 42%'},
+    image: {
+      src: 'assets/team/hwang-jaedong-01.jpg', alt: '황재동', width: 1154, height: 1440, position: '50% 50%',
+      alternatives: [
+        {src: 'assets/team/hwang-jaedong-02.jpg', alt: '황재동', width: 1080, height: 1440, position: '50% 50%'},
+      ],
+    },
     interests: ['Real-time Graphics', 'Gameplay Programming', 'Virtual Production'],
     organizationTitle: {ko: '공동대표', en: 'Co-founder', 'zh-CN': '联合创始人'},
   },

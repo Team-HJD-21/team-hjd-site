@@ -134,3 +134,7 @@ node scripts/preview-site.mjs _site 4173
 - 수정: 저장소의 Pages 설정만 PUT해 https_enforced=true로 변경했습니다. 재조회에서 https_enforced=true, html_url=https://teamhjd.com/, 인증서 approved를 확인했습니다. DNS·인증서·브라우저 보안 설정은 변경하지 않았습니다.
 - 변경 직후 일부 HTTP 응답은 기존 200 캐시를 제공했습니다. 설정의 전파와 실제 301 전환은 별도 확인이 필요하며, 사용자에게 명시적인 HTTPS 프로필 링크로 재접속하도록 안내합니다. HTTPS 경로는 정상 TLS 검증 및 HTTP 200으로 확인했습니다. 기기 재검증 전까지 iPhone Chrome 문제가 완전히 해결됐다고 주장하지 않습니다.
 - 후속 성공 증거: 운영 기록 배포 완료 후 HTTP 프로필 요청이 `301 Moved Permanently`, `Location: https://teamhjd.com/team/yang-hyunseok/`를 반환하는 것을 확인했습니다. 따라서 서버의 자동 HTTPS 전환 적용까지 검증했습니다. iPhone Chrome의 실제 센서 허용 결과는 사용자 재확인이 남습니다.
+
+### 프로필 사진 무작위 선택
+
+황재동 프로필은 제공된 두 JPG만 사용합니다. `image`의 기본 사진과 `image.alternatives`에 등록한 사진 중 하나를 페이지 진입·새로고침마다 무작위로 표시합니다. 시간에 따른 자동 전환은 하지 않으며, JavaScript를 사용할 수 없으면 기본 사진을 보여줍니다. 사진별 원본 크기와 `position`을 지정할 수 있습니다. 기존 PNG는 공개 빌드에 남지 않도록 제거했습니다.
