@@ -5,7 +5,7 @@ export const members = [
     name: '양현석', englishName: 'Yang HyunSeok', profileEnabled: true,
     shortBio: '호기심을 가지고, 방법을 찾는 개발자 양현석입니다.',
     links: [
-      {label: 'Portfolio', href: 'https://buly.kr/1GL01Px', icon: 'portfolio'},
+      {label: 'Portfolio', href: 'https://portfolio.teamhjd.com/hyunseok/', icon: 'portfolio'},
       {label: 'LinkedIn', href: 'https://www.linkedin.com/in/현석-양-8b5a32380', icon: 'linkedin'},
       {label: 'GitHub', href: 'https://github.com/yanggogi1423', icon: 'github'},
     ],
