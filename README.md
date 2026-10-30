@@ -2,6 +2,7 @@
 
 - 팀 프로필 및 관리: [scripts/team-profiles.md](scripts/team-profiles.md). 양현석·황재동·김진태·이영빈·조수빈 프로필을 연결하며, 데이터 수정 후 `node scripts/render-team.mjs`로 생성합니다.
 - Footer 통신판매업 신고번호: `2026-수원영통-1221호` (사용자 제공, 2026-10-16).
+- Footer 관련 사이트에는 GitHub Notify·팀 개발 문서와 함께 [Game Test Launcher](https://testlauncher.teamhjd.com/)를 표시합니다. 메인·게임·프레스·생성된 팀 프로필에서 같은 메뉴를 사용하며, 런처 링크에만 현재 사이트 언어(`ko`/`en`/`zh-CN`)를 전달합니다. 헤더·hero·메인 본문에는 추가하지 않습니다.
 
 TeamHJD 대표 사이트. 정적 HTML과 CSS를 GitHub Pages로 배포합니다.
 

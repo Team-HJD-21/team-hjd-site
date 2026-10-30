@@ -103,6 +103,11 @@ function applyPageLanguage(language) {
     if (url.origin !== location.origin || /\.(png|webp)$/i.test(url.pathname) || link.getAttribute('href').startsWith('#')) continue;
     url.searchParams.set('lang', lang); link.href = url.pathname + url.search + url.hash;
   }
+  for (const link of document.querySelectorAll('.testlauncher-link')) {
+    const url = new URL(link.href, location.href);
+    url.searchParams.set('lang', lang);
+    link.href = url.href;
+  }
   document.dispatchEvent(new CustomEvent('teamhjd:languagechange', {detail:{language:lang}}));
   return lang;
 }

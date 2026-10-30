@@ -90,6 +90,11 @@ function applyLanguage(language) {
     url.searchParams.set('lang', lang);
     link.href = url.pathname + url.search + url.hash;
   }
+  for (const link of document.querySelectorAll('.testlauncher-link')) {
+    const url = new URL(link.href, location.href);
+    url.searchParams.set('lang', lang);
+    link.href = url.href;
+  }
   languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === lang)));
   return lang;
 }
