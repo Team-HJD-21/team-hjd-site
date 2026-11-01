@@ -1,0 +1,13 @@
+{
+  "name": "frame-one-tech",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TeamHJD game technology newsletter and reading archive",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
