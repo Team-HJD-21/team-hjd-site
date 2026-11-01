@@ -2,3 +2,12 @@
 .game-detail-art{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;margin:30px 0}.game-detail-page .public-resources{grid-template-columns:minmax(0,1fr)}
 .game-detail-page .public-lead{text-wrap:balance;overflow-wrap:break-word}.game-detail-page:lang(ko) .public-lead{word-break:keep-all}
 .public-page .game-title{width:min(100%,650px);margin-bottom:32px;line-height:1}.game-title-logo{display:block;position:relative;overflow:hidden;aspect-ratio:896/94}.game-title-logo img{position:absolute;width:142.857143%;max-width:none;height:auto;left:-21.205357%;top:-329.787234%}.press-title-logo em{display:block;margin-top:20px;font-size:clamp(28px,3vw,40px);line-height:1.4;letter-spacing:-1px}
+
+/* Public pages share the same calm, inset content surfaces. */
+.public-page section{border-top:0;background:#ffffff03;border-radius:22px;padding:32px;margin-top:28px}
+.public-page .usage-card{border:0;background:var(--surface)}
+.press-facts{gap:12px}
+.press-facts>div{border-bottom:0;background:#ffffff04;border-radius:12px;padding:18px;grid-template-columns:110px minmax(0,1fr)}
+.public-page figure{border:0;border-radius:16px}
+.public-footer{border-top:0;background:#060c13;border-radius:22px 22px 0 0;padding:28px}
+@media(max-width:600px){.public-page section{padding:24px 20px;margin-top:20px;border-radius:18px}.press-facts>div{grid-template-columns:95px minmax(0,1fr);padding:16px}.public-footer{padding:24px 22px}}
