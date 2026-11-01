@@ -46,8 +46,8 @@ function messageFor(issue, from) {
   return {
     from: normalizeEmail(from),
     subject: `[겜붕이의 노트] ${issue.title}`,
-    text: `${issue.title}\n\n${issue.summary}\n\n전체 읽기: ${issue.url}\n\nFRAME/ONE · ${issue.id}`,
-    html: `<main><p>FRAME/ONE · ${escapeHtml(issue.id)}</p><h1>${escapeHtml(issue.title)}</h1><p>${escapeHtml(issue.summary).replace(/\n/g, '<br>')}</p><p><a href="${escapeHtml(issue.url)}">전체 읽기</a></p></main>`,
+    text: `${issue.title}\n\n${issue.summary}\n\n전체 읽기: ${issue.url}\n\n겜붕이의 노트 · ${issue.id}`,
+    html: `<main><p>겜붕이의 노트 · ${escapeHtml(issue.id)}</p><h1>${escapeHtml(issue.title)}</h1><p>${escapeHtml(issue.summary).replace(/\n/g, '<br>')}</p><p><a href="${escapeHtml(issue.url)}">전체 읽기</a></p></main>`,
   };
 }
 
@@ -332,7 +332,7 @@ export async function run(command, options = {}, { env = process.env, fetchImpl 
   });
 }
 
-const HELP = `FRAME/ONE Cloudflare email integration (Node 20.11+)\n\nCommands:\n  register [--email-env BOOTSTRAP_RECIPIENT] [--dry-run]\n  check [--email-env BOOTSTRAP_RECIPIENT]\n  activate [--email-env BOOTSTRAP_RECIPIENT] [--dry-run]\n  deactivate [--email-env BOOTSTRAP_RECIPIENT] [--dry-run]\n  send --issue /absolute/path/issue.json [--dry-run]\n  receipt --issue-id stable-issue-id [--email-env BOOTSTRAP_RECIPIENT]\n\nLive commands require private runtime configuration; see integrations/README.md.\nDry run never calls Cloudflare, writes state, verifies an address, or sends mail.\n`;
+const HELP = `겜붕이의 노트 Cloudflare email integration (Node 20.11+)\n\nCommands:\n  register [--email-env BOOTSTRAP_RECIPIENT] [--dry-run]\n  check [--email-env BOOTSTRAP_RECIPIENT]\n  activate [--email-env BOOTSTRAP_RECIPIENT] [--dry-run]\n  deactivate [--email-env BOOTSTRAP_RECIPIENT] [--dry-run]\n  send --issue /absolute/path/issue.json [--dry-run]\n  receipt --issue-id stable-issue-id [--email-env BOOTSTRAP_RECIPIENT]\n\nLive commands require private runtime configuration; see integrations/README.md.\nDry run never calls Cloudflare, writes state, verifies an address, or sends mail.\n`;
 
 export function parseArgs(args) {
   const [command, ...rest] = args;

@@ -33,6 +33,8 @@ npm run build
 
 ## 배포
 
+Cloudflare Pages로 직접 배포하는 GitHub Actions 설정과 초기 계정 연결 절차는 [배포 안내](deploy/DEPLOY.md)에 있다. 배포용 계정 ID와 API 토큰은 GitHub Secrets에 설정한다.
+
 `dist/`만 호스팅한다. 사이트 템플릿이나 원문을 변경하면 빌드를 다시 실행한다. 이미지를 포함한 전체 원문 묶음과 Markdown 다운로드는 빌더가 함께 생성한다.
 
 다른 회사 사이트와 같은 Git 저장소에 보관하더라도 이 디렉터리는 독립된 사이트 루트로 취급한다. 회사 홈페이지 빌드에 자동으로 추가되지 않는다.
