@@ -2,7 +2,7 @@ import {members} from '../data/team.mjs';
 
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 export const provided = value => typeof value === 'string' && value.trim() !== '' && value.trim().toUpperCase() !== 'X';
-const arrow = '<span aria-hidden="true">↗</span>';
+const arrow = '';
 const icons = {
   blog: '<path d="M5 3h11a3 3 0 0 1 3 3v15H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3M4 17h15M8 7h7M8 11h5"/>',
   portfolio: '<rect x="4" y="6" width="16" height="14" rx="2"/><path d="M9 6V4h6v2M4 11h16M10 11v3h4v-3"/>',
@@ -81,7 +81,7 @@ export function renderProfilePage(member, home) {
 <title>${escape(member.name)} — TeamHJD</title><meta name="description" content="${escape(provided(member.shortBio) ? member.shortBio : member.name + ' — TeamHJD')}">
 <link rel="canonical" href="https://teamhjd.com/team/${escape(member.slug)}/"><link rel="icon" href="../../assets/favicon.png"><link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../profile.css"></head>
 <body class="profile-page"><a class="skip-link" href="#main" data-copy="profileSkip">본문으로 이동</a>${header}
-<main class="shell profile-main" id="main"><div class="profile-breadcrumb"><a class="profile-back" href="../../index.html#project-team"><span aria-hidden="true">←</span> <span data-copy="profileBack">함께 만드는 사람들</span></a><span class="profile-page-label">TEAM / PROFILE</span></div>
+<main class="shell profile-main" id="main"><div class="profile-breadcrumb"><a class="profile-back" href="../../index.html#project-team"><span data-copy="profileBack">함께 만드는 사람들</span></a><span class="profile-page-label">TEAM / PROFILE</span></div>
 ${renderProfileCard(member)}
 <div class="profile-signoff" aria-hidden="true"><span>HAPPY JOURNEY OF DEVELOPERS.</span><span>함께 만드는 즐거움 <span class="signoff-star">✳</span></span></div></main>
 ${footer}<script src="../../public-pages.js" defer></script><script src="../../profile.js" defer></script></body></html>\n`.replace(/^[\t ]+$/gm, '');

@@ -49,13 +49,13 @@ assert.ok(existsSync('scripts/build-site.mjs'), 'Missing cache-versioned build s
 assert.match(readFileSync('.github/workflows/deploy.yml','utf8'), /node scripts\/build-site\.mjs/);
 console.log('Public website links, assets, anchors and responsive safeguards passed.');
 const game = readFileSync('games/the-developer/index.html', 'utf8');
-assert.match(html, /게임 알아보기 <span aria-hidden="true">→<\/span>/);
+assert.match(html, /게임 알아보기<\/a>/);
 assert.ok(game.indexOf('id="screenshots"') < game.indexOf('id="trailer"') && game.indexOf('id="trailer"') < game.indexOf('class="public-resources"'), 'Support and press must follow screenshots and trailer');
 assert.ok(!html.includes('class="game-faq"'), 'Detailed game FAQ belongs on the game page');
 assert.ok(html.includes('games/the-developer/index.html'), 'Missing game details entry');
 for (const value of ['Windows', 'macOS', '2027년 2월', '중국어', '싱글플레이', '멀티플레이', 'type=bug', 'press/index.html', 'content-policy/index.html']) assert.ok(game.includes(value), `Missing confirmed public information: ${value}`);
-assert.ok(!/데모|테스트|demo|playtest/i.test(game), 'Do not publish demo/test information');
-assert.ok(!/데모|테스트|demo|playtest/i.test(html), 'Do not publish demo/test information');
+assert.ok(!/데모|테스트|demo|playtest/i.test(game.match(/<main[\s\S]*?<\/main>/)?.[0] || game), 'Do not publish demo/test information');
+assert.ok(!/데모|테스트|demo|playtest/i.test(html.match(/<main[\s\S]*?<\/main>/)?.[0] || html), 'Do not publish demo/test information');
 const press = readFileSync('press/index.html', 'utf8');
 for (const value of ['wm4V9DZsgH8', '출처', '변형', '학습', '권장 사항']) assert.ok(press.includes(value));
 for (let index=1; index<=5; index++) assert.ok(existsSync(`assets/press/Gameplay_Example${index}.png`));

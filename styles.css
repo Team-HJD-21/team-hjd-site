@@ -71,7 +71,7 @@ body>.treant-visitor{z-index:1000}
 .project-copy{padding:42px}
 .project-art{background:#101e2a}
 .text-link,.email{border-bottom:0}
-.text-link:hover,.email:hover{text-decoration:underline;text-underline-offset:6px}
+.text-link:hover,.email:hover{text-decoration:none;color:var(--accent)}
 .contact{background:radial-gradient(ellipse at top left,#d9eea614,transparent 70%),#15262e;border-radius:28px;max-width:1124px;padding:48px;margin-bottom:72px}
 .contact-content{gap:48px;align-items:center}
 .footer{border-top:0;background:#060c13;border-radius:24px 24px 0 0;padding:36px;gap:28px 36px}
@@ -88,3 +88,30 @@ body>.treant-visitor{z-index:1000}
 @media(max-width:1180px){.project-card{grid-template-columns:minmax(0,1fr)}.project-art{min-height:0;aspect-ratio:920/430}}
 @media(max-width:600px){.project-art .art-caption{padding:34px 12px 16px;font-size:9px;letter-spacing:1.4px}}
 .about-content>div:last-child>p{margin-bottom:12px}.about-content>div:last-child>p:last-child{margin-bottom:0}
+
+/* Real link surfaces respond to pointer, keyboard and touch. */
+.button,.game-visual,.studio-leaders .member-profile-link,.participant-list li,.member-links a,.related-sites a{transition:background-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.participant-list li{position:relative}
+.participant-list .member-profile-link::after{content:"";position:absolute;inset:0;border-radius:16px}
+.participant-list li:focus-within{outline:2px solid var(--accent);outline-offset:4px;background:#1c303c}
+.participant-list .member-profile-link:focus-visible{outline:none}
+.button:focus-visible,.studio-leaders .member-profile-link:focus-visible,.game-visual:focus-visible{box-shadow:0 0 0 5px #d9eea61a}
+.text-link:focus-visible,.email:focus-visible,.footer-links a:focus-visible{text-decoration:none;color:var(--accent)}
+@media(hover:hover){.participant-list li:hover{background:#1c303c;transform:translateY(-3px);box-shadow:0 10px 24px #0003}.studio-leaders .member-profile-link:hover{background:#d9eea615;transform:translateY(-2px)}.button:hover,.game-visual:hover{transform:translateY(-2px);box-shadow:0 8px 24px #0003}.related-sites a:hover{background:#d9eea615}}
+.button:active,.studio-leaders .member-profile-link:active,.participant-list li:active{transform:translateY(1px);background-color:#243b43}
+.primary:active{background-color:#c9df94}
+@media(prefers-reduced-motion:reduce){.button,.game-visual,.studio-leaders .member-profile-link,.participant-list li,.member-links a,.related-sites a{transition:none;transform:none}}
+/* On desktop, the introduction and leadership share the right column. */
+@media(min-width:901px){
+.about{display:grid;grid-template-columns:1.1fr 1fr;gap:26px 64px;align-items:start;padding-top:38px;padding-bottom:38px}
+.about>.section-label{grid-column:1/-1}
+.about-content{display:contents}
+.about-content>div:first-child{grid-column:1;grid-row:2/4;align-self:center}
+.about-content>div:last-child{grid-column:2;grid-row:2;align-self:end}
+.about #studio-leadership{grid-column:2;grid-row:3;margin-top:0;align-self:start}
+.about .studio-logo{width:90px;height:90px;margin-bottom:14px}
+.about h2{font-size:clamp(28px,3vw,38px)}
+.about .team-roster h3{font-size:13px;color:var(--muted);margin-bottom:12px}
+.about .studio-leaders{gap:10px; font-size:12px;letter-spacing:0}
+.about .studio-leaders .member-profile-link{padding:10px 14px}
+}

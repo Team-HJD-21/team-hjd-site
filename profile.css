@@ -87,3 +87,6 @@
 .member-connect{border-top:0;background:#ffffff04;padding:22px;border-radius:18px}
 .profile-signoff{border-top:0;padding:22px 24px;background:#ffffff03;border-radius:14px}
 @media(max-width:600px){.participant-list{grid-template-columns:minmax(0,1fr)}.participant-list li{padding:20px;gap:10px}.member-connect{padding:20px}}
+.member-links a>span:last-child{color:inherit;font-size:12px;margin-left:0}
+
+.profile-back>span:first-child{font-size:inherit;color:inherit}
