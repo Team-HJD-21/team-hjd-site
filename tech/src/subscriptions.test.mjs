@@ -47,6 +47,11 @@ test('accepted confirmation is pending; GET and link scanners cannot activate it
  row=await f.db.prepare('SELECT * FROM subscribers').first();assert.equal(row.status,'active');assert.equal(row.confirm_hash,null);
  assert.equal((await f.call('/api/confirm',{token:f.token()})).status,400);
 });
+test('native HTML form posts are accepted with the same explicit consents',async()=>{
+ const f=fixture();
+ const result=await handleSubscription(new Request(`${SITE}/api/subscribe`,{method:'POST',headers:{origin:SITE,'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({email:'native@example.com',privacyConsent:'on',emailConsent:'on',overseasConsent:'on',consentVersion:CONSENT_VERSION})}),f.env,{fetcher:async()=>Response.json({id:'native-test'})});
+ assert.equal(result.status,200);assert.equal((await f.db.prepare('SELECT status FROM subscribers').first()).status,'pending');
+});
 test('active and recent pending subscriptions do not receive duplicate confirmation',async()=>{
  const f=fixture();await f.call('/api/subscribe',f.consent);await f.call('/api/subscribe',f.consent);assert.equal(f.sent.length,1);
  await f.call('/api/confirm',{token:f.token()});f.advance(700);await f.call('/api/subscribe',f.consent);assert.equal(f.sent.length,1);

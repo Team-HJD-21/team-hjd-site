@@ -33,7 +33,7 @@ export function issueCard(issue, tags) {
   </article>`;
 }
 
-export function page({ title, description, path = '/', active, content, math = false, data = null, articleImage = null, footer = '' }) {
+export function page({ title, description, path = '/', active, content, math = false, data = null, articleImage = null, footer = '', assetVersion = '1' }) {
   const canonical = `${SITE_URL}${path}`;
   const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} · ${SITE_NAME}`;
   return `<!doctype html>
@@ -61,10 +61,10 @@ export function page({ title, description, path = '/', active, content, math = f
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/v1/notes/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="겜붕이의 노트" href="/feed.xml">
   <script>document.documentElement.dataset.theme='dark';try{const t=localStorage.getItem('frame-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
-  <link rel="stylesheet" href="/assets/teamhjd.css">
-  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/assets/teamhjd.css?v=${assetVersion}">
+  <link rel="stylesheet" href="/assets/styles.css?v=${assetVersion}">
   ${math ? '<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">' : ''}
-  <script src="/assets/app.js" defer></script>
+  <script src="/assets/app.js?v=${assetVersion}" defer></script>
 </head>
 <body id="page-top">
   <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
@@ -105,6 +105,7 @@ export function subscribeContent() {
     <header class="archive-heading"><h1>구독하기</h1><p>매일 새로운 게임 개발 이야기를 이메일로 받아보세요.</p></header>
     <section class="subscription-panel" aria-label="이메일 구독 신청">
       <form class="subscribe-form" action="/api/subscribe" method="post" data-subscribe-form>
+        <input type="hidden" name="consentVersion" value="2026-11-03">
         <label for="subscriber-email">이메일 주소</label>
         <div class="subscribe-input-row"><input id="subscriber-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com" required><button type="submit">구독하기</button></div>
         <div class="subscribe-consents">

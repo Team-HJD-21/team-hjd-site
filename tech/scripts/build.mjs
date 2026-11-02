@@ -6,6 +6,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateRawSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
+import { createHash } from 'node:crypto';
 import { SITE_URL, SITE_NAME, issuePath, escapeHtml, page as renderPage, indexContent, searchContent, articleContent, subscribeContent } from '../src/templates.mjs';
 import { loadContent } from './content.mjs';
 import { buildBrand } from './brand.mjs';
@@ -21,7 +22,8 @@ const katex = require(katexPath);
 
 const { tags, issues, documents } = await loadContent(project);
 const company = await loadCompanyBrand(project);
-const page = (options) => renderPage({ ...options, footer: company.footer });
+const assetVersion = createHash('sha256').update(await readFile(join(project,'src/app.js'))).update(await readFile(join(project,'src/styles.css'))).update(company.stylesheet).digest('hex').slice(0,12);
+const page = (options) => renderPage({ ...options, footer: company.footer, assetVersion });
 
 // Rebuild only the generated directory. Source, hosting metadata and credentials stay untouched.
 await mkdir(dist, { recursive: true });
@@ -151,5 +153,5 @@ await writeFile(join(dist, '_redirects'), issues.map(issue=>`/articles/${issue.s
 const published = issues.filter((issue) => issue.status === 'published');
 await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}${issuePath(issue)}` })) }, null, 2));
 await writeFile(join(dist, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${SITE_NAME}</title><link>${SITE_URL}/</link><description>게임 클라이언트 개발자를 위한 기술 노트</description><language>ko</language>${published.map((issue) => `<item><title>${escapeHtml(issue.title)}</title><link>${SITE_URL}${issuePath(issue)}</link><guid>${SITE_URL}${issuePath(issue)}</guid><pubDate>${new Date(issue.publishedAt || issue.publishAt || `${issue.date}T12:00:00+09:00`).toUTCString()}</pubDate><description>${escapeHtml(issue.description)}</description></item>`).join('')}</channel></rss>`);
-await writeFile(join(dist, '_headers'), '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Content-Security-Policy: frame-ancestors \'self\'; object-src \'none\'; base-uri \'self\'\n/subscription/*\n  Referrer-Policy: no-referrer\n  X-Robots-Tag: noindex\n  Cache-Control: no-store\n');
+await writeFile(join(dist, '_headers'), '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Cache-Control: no-cache\n  Content-Security-Policy: frame-ancestors \'self\'; object-src \'none\'; base-uri \'self\'\n/subscription/*\n  Referrer-Policy: no-referrer\n  X-Robots-Tag: noindex\n  Cache-Control: no-store\n');
 console.log(`Built ${issues.length} article(s), archive, tag search and synchronized downloads in dist/.`);

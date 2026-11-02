@@ -49,7 +49,8 @@ async function limited(db, bucket, maximum, expires) {
  return result.meta.changes === 1;
 }
 async function readJson(request) {
- if (!(request.headers.get('content-type') || '').startsWith('application/json')) throw new Error('invalid_body');
+ const contentType=request.headers.get('content-type') || '';
+ if (!contentType.startsWith('application/json') && !contentType.startsWith('application/x-www-form-urlencoded')) throw new Error('invalid_body');
  const reader = request.body?.getReader();
  if (!reader) throw new Error('invalid_body');
  let size = 0, chunks = [];
@@ -59,7 +60,12 @@ async function readJson(request) {
   chunks.push(value);
  }
  const bytes = new Uint8Array(size); let offset=0; for(const c of chunks){bytes.set(c,offset);offset+=c.length;}
- return JSON.parse(new TextDecoder().decode(bytes));
+ const text=new TextDecoder().decode(bytes);
+ if(contentType.startsWith('application/x-www-form-urlencoded')) {
+  const fields=new URLSearchParams(text);
+  return {email:fields.get('email'),website:fields.get('website'),consentVersion:fields.get('consentVersion'),privacyConsent:fields.get('privacyConsent')==='on',emailConsent:fields.get('emailConsent')==='on',overseasConsent:fields.get('overseasConsent')==='on',token:fields.get('token')};
+ }
+ return JSON.parse(text);
 }
 function sameOrigin(request) {
  const origin = request.headers.get('origin');
