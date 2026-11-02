@@ -1,0 +1,6 @@
+{
+  "id": "sample-001-network-prediction",
+  "title": "게임은 왜 아직 오지 않은 서버 응답을 기다리지 않을까?",
+  "url": "https://example.com/issues/sample-001-network-prediction/",
+  "summary": "클라이언트 예측(Client-side Prediction)과 서버 재조정(Server Reconciliation)의 배경, 원리, 구현을 살펴봅니다. 실제 발송 전 공개된 글의 URL로 바꾸세요."
+}
