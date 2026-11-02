@@ -17,7 +17,7 @@ function updateConsent() {
   compose.tabIndex = ready ? 0 : -1;
   if (ready) {
     const body = [
-      '[TeamHJD 개인정보 안내 / Privacy notice v1.0 — 2026-10-04]',
+      '[TeamHJD 개인정보 안내 / Privacy notice v1.1 — 2026-11-02]',
       'https://teamhjd.com/privacy/',
       '일반 문의의 개인정보 수집·이용에 동의합니다. / I agree to collection and use for my general enquiry.',
       'Google Workspace를 통한 개인정보 국외 처리·보관에 별도로 동의합니다. / I separately agree to international processing and storage through Google Workspace.',
