@@ -1,0 +1,59 @@
+name: Publish newsletter at noon KST
+
+on:
+  schedule:
+    - cron: '0,10,20,30 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Check the release gate without publishing'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: newsletter-noon-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: main
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends pandoc
+      - name: Check release and content contracts
+        run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
+      - name: Apply the Seoul noon gate
+        id: gate
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            node tech/scripts/release.mjs --check
+          else
+            node tech/scripts/release.mjs --write
+          fi
+      - name: Build the exact release before committing
+        if: steps.gate.outputs.changed == 'true'
+        working-directory: tech
+        run: npm run build
+      - name: Publish the validated status change
+        if: steps.gate.outputs.changed == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- tech/content/issues.json
+          git commit -m "Publish prepared newsletter issue at noon KST"
+          git push origin HEAD:main

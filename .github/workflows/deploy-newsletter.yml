@@ -1,5 +1,5 @@
 # Install this file at repository root: .github/workflows/deploy-newsletter.yml
-name: Build and deploy newsletter
+name: Validate newsletter
 
 on:
   pull_request:
@@ -12,12 +12,6 @@ on:
       - 'tech/**'
       - '.github/workflows/deploy-newsletter.yml'
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: 'Publish the website publicly to Cloudflare Pages'
-        type: boolean
-        required: true
-        default: false
 
 permissions:
   contents: read
@@ -41,21 +35,15 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install Pandoc
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends pandoc
-
-      - name: Verify project provisioning safeguards
-        run: node --test tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs tech/scripts/content.test.mjs
-
       - name: Validate daily content contract
         working-directory: tech
         run: npm run validate
 
-      - name: Build newsletter
+      - name: Verify the Cloudflare build entrypoint and official Pandoc bootstrap
         working-directory: tech
-        run: npm run build
+        env:
+          PANDOC_PATH: /tmp/gambungi-ci-bootstrap-pandoc
+        run: npm run build:cloudflare
 
       - name: Save static website artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -65,25 +53,3 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Ensure the intended Pages project exists
-        if: >-
-          ${{ github.ref == 'refs/heads/main' &&
-          ((github.event_name == 'workflow_dispatch' && inputs.deploy) ||
-          (github.event_name == 'push' && vars.NEWSLETTER_AUTO_DEPLOY == 'true')) }}
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: node tech/deploy/ensure-pages-project.mjs
-
-      - name: Publish newsletter to Cloudflare Pages
-        if: >-
-          ${{ github.ref == 'refs/heads/main' &&
-          ((github.event_name == 'workflow_dispatch' && inputs.deploy) ||
-          (github.event_name == 'push' && vars.NEWSLETTER_AUTO_DEPLOY == 'true')) }}
-        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: tech
-          packageManager: npm
-          command: pages deploy dist --project-name=gambungi-notes --branch=main

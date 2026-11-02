@@ -19,6 +19,11 @@ test('future published issues are blocked while future drafts are valid', () => 
   assert.throws(() => metadata({ date: '2026-11-04' }));
   metadata({ date: '2026-11-04', status: 'draft' });
 });
+test('scheduled content requires an explicit noon timestamp and stays out of public states', () => {
+  metadata({ status: 'scheduled', date: '2026-11-04', publishAt: '2026-11-04T12:00:00+09:00' });
+  assert.throws(() => metadata({ status: 'scheduled' }), /publishAt/);
+  assert.throws(() => metadata({ status: 'scheduled', publishAt: '2026-11-03T10:30:00+09:00' }), /publishAt/);
+});
 test('body marker permits flexible headings and preserves the old sample contract', () => {
   assert.match(articleBody(markdown), /^## 질문/);
   assert.match(articleBody('# old\n## 01. 배경\n내용'), /^## 01/);

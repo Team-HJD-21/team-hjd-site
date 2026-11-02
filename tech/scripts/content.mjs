@@ -32,7 +32,8 @@ export function validateMetadata(tags, issues, { today = todayInSeoul() } = {}) 
     for (const key of ['title', 'description', 'question', 'summary']) text(issue[key], `${issue.id}.${key}`, key === 'title' ? 180 : 4000);
     if (/[\r\n]/.test(issue.title)) fail(`Title must be one line: ${issue.id}`);
     if (!validDate(issue.date)) fail(`Invalid calendar date: ${issue.id}`);
-    if (!['draft', 'sample', 'published'].includes(issue.status)) fail(`Invalid status: ${issue.id}`);
+    if (!['draft', 'scheduled', 'sample', 'published'].includes(issue.status)) fail(`Invalid status: ${issue.id}`);
+    if (issue.status === 'scheduled' && issue.publishAt !== `${issue.date}T12:00:00+09:00`) fail(`Scheduled issue requires publishAt at noon Asia/Seoul: ${issue.id}`);
     if (issue.status === 'published' && issue.date > today) fail(`Future issue must remain draft: ${issue.id}`);
     if (issue.source !== `content/issues/${issue.id}.md` || issue.assetDirectory !== `assets/issues/${issue.id}`) fail(`Unexpected source/asset path: ${issue.id}`);
     if (!Array.isArray(issue.tags) || !issue.tags.length || new Set(issue.tags).size !== issue.tags.length || issue.tags.some((id) => !tagIds.has(id))) fail(`Invalid or unknown tags: ${issue.id}`);

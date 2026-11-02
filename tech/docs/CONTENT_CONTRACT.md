@@ -31,7 +31,9 @@
 
 ID와 slug는 소문자 영문·숫자·단어 사이 하이픈을 사용한다. ID는 80자 이하. 초안을 포함해 ID와 slug가 각각 고유해야 한다. source와 assetDirectory는 위 규칙에서 벗어날 수 없다. 올바른 실제 달력 날짜를 사용하며 `published`는 한국 날짜 기준 미래 날짜가 될 수 없다.
 
-상태는 `draft`, `sample`, `published` 중 하나다. draft는 검증하지만 웹·다운로드·공개 자산에 포함하지 않는다. sample은 샘플 표시와 함께 웹에만 공개하며 RSS·발행 매니페스트에서 제외한다. published만 실제 발행 기록에 들어간다. 공개 Git의 draft는 비공개 저장이 아니다. 민감한 초안은 이 저장소에 넣지 않는다.
+상태는 `draft`, `scheduled`, `sample`, `published` 중 하나다. draft와 scheduled는 검증하지만 웹·다운로드·공개 자산에 포함하지 않는다. sample은 샘플 표시와 함께 웹에만 공개하며 RSS·발행 매니페스트에서 제외한다. published만 실제 발행 기록에 들어간다. 공개 Git의 draft/scheduled는 비공개 저장이 아니다. 민감한 초안은 이 저장소에 넣지 않는다.
+
+ChatGPT의 일일 원고는 `status: "scheduled"`, `publishAt: "YYYY-MM-DDT12:00:00+09:00"`로 반영한다. 날짜와 timestamp의 날짜가 일치해야 한다. 한국 시간 정오의 GitHub Actions가 당일 한 호만 published로 바꾸고, Cloudflare Git 연결이 main의 변경을 빌드·배포한다. 같은 날 이미 published가 있으면 재발행하지 않는다. 12:30까지 준비되지 않거나 유효하지 않으면 지난 호를 대신 발행하지 않고 실패를 남긴다. GitHub와 Cloudflare의 큐 지연으로 실제 반영은 12시보다 늦을 수 있다.
 
 ## Markdown
 
