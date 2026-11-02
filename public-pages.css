@@ -11,3 +11,23 @@
 .public-page figure{border:0;border-radius:16px}
 .public-footer{border-top:0;background:#060c13;border-radius:22px 22px 0 0;padding:28px}
 @media(max-width:600px){.public-page section{padding:24px 20px;margin-top:20px;border-radius:18px}.press-facts>div{grid-template-columns:95px minmax(0,1fr);padding:16px}.public-footer{padding:24px 22px}}
+/* Disclosure and media cards respond across mouse, keyboard and touch. */
+.game-faq details{padding:0;transition:background-color .18s ease,box-shadow .18s ease}
+.game-faq summary{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:64px;padding:20px 24px;list-style:none;border-radius:16px}
+.game-faq summary::-webkit-details-marker{display:none}
+.game-faq summary::marker{content:""}
+.game-faq details>p{margin:0;padding:0 24px 24px;max-width:none}
+.game-faq details[open]{background:#1b2d3a}
+.game-faq details[open] .disclosure-chevron{transform:rotate(180deg)}
+.game-faq details:focus-within,.screenshot-grid figure:focus-within,.press-assets figure:focus-within{outline:2px solid var(--accent);outline-offset:4px}
+.game-faq summary:focus-visible{outline:none}
+.screenshot-grid figure,.press-assets figure{transition:background-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.screenshot-grid figure>a{display:block}
+.screenshot-grid figure>a:focus-visible{outline:none}
+.public-page figcaption a{display:inline-flex;align-items:center;min-height:44px;padding:4px 8px;border-radius:8px;transition:background-color .18s ease,color .18s ease}
+@media(hover:hover){.game-faq details:hover{background:#1b2d3a;box-shadow:0 8px 24px #0002}.screenshot-grid figure:hover,.press-assets figure:hover{background:#1b2d3a;transform:translateY(-3px);box-shadow:0 12px 28px #0004}.public-page figcaption a:hover{background:#d9eea615;color:var(--ink)}}
+.game-faq summary:active,.public-page figcaption a:active{background:#d9eea610}
+.screenshot-grid figure:has(a:active),.press-assets figure:has(a:active){transform:translateY(1px)}
+@media(max-width:600px){.game-faq summary{padding:18px 20px;gap:16px}.game-faq details>p{padding:0 20px 20px}.public-page figcaption{align-items:center;gap:4px 12px}}
+@media(prefers-reduced-motion:reduce){.game-faq details,.screenshot-grid figure,.press-assets figure,.public-page figcaption a{transition:none;transform:none}}
+.game-faq details.is-animating{overflow:hidden}.game-faq details.is-collapsing .disclosure-chevron{transform:rotate(0deg)}

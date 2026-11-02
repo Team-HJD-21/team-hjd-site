@@ -13,3 +13,5 @@
 
 /* Policy content grouped by topic. */
 .policy section{border-top:0;background:#ffffff03;border-radius:20px;padding:28px;margin-top:24px}.policy-summary{border:0;border-radius:20px}.policy-details{display:grid;gap:10px}.policy-details>div{border-bottom:0;padding:16px;background:#ffffff04;border-radius:12px}@media(max-width:600px){.policy section{padding:22px 18px}.policy-details>div{grid-template-columns:minmax(0,1fr);gap:6px}}
+
+.provider-locations summary{display:flex;align-items:center;justify-content:space-between;gap:18px;list-style:none}.provider-locations summary::-webkit-details-marker{display:none}.provider-locations summary::marker{content:''}.provider-locations[open] .disclosure-chevron{transform:rotate(180deg)}

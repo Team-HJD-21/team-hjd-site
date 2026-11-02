@@ -131,3 +131,45 @@ document.addEventListener('keydown', event => {
     relatedSites.querySelector('summary').focus();
   }
 });
+
+// Animate the native disclosure height so surrounding cards move with the answer.
+for (const details of document.querySelectorAll('.game-faq details')) {
+  const summary = details.querySelector('summary');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let animation = null;
+  let targetOpen = details.open;
+  const settle = () => {
+    if (animation) {
+      animation.onfinish = null;
+      animation.cancel();
+      animation = null;
+    }
+    details.open = targetOpen;
+    details.classList.remove('is-collapsing', 'is-animating');
+  };
+  summary.addEventListener('click', event => {
+    event.preventDefault();
+    const startHeight = details.getBoundingClientRect().height;
+    targetOpen = animation ? !targetOpen : !details.open;
+    if (reducedMotion.matches || typeof details.animate !== 'function') {
+      settle();
+      return;
+    }
+    if (animation) {
+      animation.onfinish = null;
+      animation.cancel();
+    }
+    details.open = true;
+    const endHeight = targetOpen ? details.scrollHeight : summary.getBoundingClientRect().height;
+    details.classList.add('is-animating');
+    details.classList.toggle('is-collapsing', !targetOpen);
+    animation = details.animate(
+      [{height: `${startHeight}px`}, {height: `${endHeight}px`}],
+      {duration: 320, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'both'}
+    );
+    animation.onfinish = settle;
+  });
+  window.addEventListener('resize', settle);
+  document.addEventListener('teamhjd:languagechange', settle);
+  reducedMotion.addEventListener('change', settle);
+}

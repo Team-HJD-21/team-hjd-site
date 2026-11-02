@@ -115,3 +115,8 @@ body>.treant-visitor{z-index:1000}
 .about .studio-leaders{gap:10px; font-size:12px;letter-spacing:0}
 .about .studio-leaders .member-profile-link{padding:10px 14px}
 }
+/* One chevron shape for all disclosure controls. */
+.related-sites-chevron,.disclosure-chevron{display:block;width:12px;height:12px;flex:0 0 12px;transition:transform .18s ease}
+.related-sites-chevron{transform:rotate(180deg)}
+.related-sites[open] .related-sites-chevron{transform:rotate(0deg)}
+@media(prefers-reduced-motion:reduce){.related-sites-chevron,.disclosure-chevron{transition:none}}
