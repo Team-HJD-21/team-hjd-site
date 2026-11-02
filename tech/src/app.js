@@ -3,7 +3,7 @@
 
   const themeButton = document.querySelector('[data-theme-toggle]');
   const preference = window.matchMedia('(prefers-color-scheme: dark)');
-  const currentTheme = () => document.documentElement.dataset.theme || (preference.matches ? 'dark' : 'light');
+  const currentTheme = () => document.documentElement.dataset.theme || 'dark';
   function updateThemeLabel() {
     const label = currentTheme() === 'dark' ? '밝은 화면으로 보기' : '어두운 화면으로 보기';
     themeButton?.setAttribute('aria-label', label);

@@ -10,6 +10,8 @@
     "status": "sample",
     "source": "content/issues/frame-2026-11-02.md",
     "assetDirectory": "assets/issues/frame-2026-11-02",
+    "coverImage": "01_prediction_timeline.png",
+    "format": "기술 해설",
     "tags": ["game-networking", "engine-internals", "client-side-prediction", "server-reconciliation", "resimulation", "rollback-netcode", "lag-compensation", "determinism", "unreal-engine", "unity", "technical-explainer"]
   }
 ]

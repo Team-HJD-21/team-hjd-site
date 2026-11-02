@@ -44,7 +44,7 @@ export function page({ title, description, path = '/', active, content, math = f
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#fcfbf8" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#080f17" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#10191b" media="(prefers-color-scheme: dark)">
   <link rel="canonical" href="${escapeHtml(canonical)}">
   <meta property="og:type" content="${active === 'article' ? 'article' : 'website'}">
   <meta property="og:locale" content="ko_KR">
@@ -52,9 +52,12 @@ export function page({ title, description, path = '/', active, content, math = f
   <meta property="og:title" content="${escapeHtml(pageTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
-  ${articleImage ? `<meta property="og:image" content="${SITE_URL}${escapeHtml(articleImage)}">` : ''}
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <script>try{const t=localStorage.getItem('frame-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <meta property="og:image" content="${SITE_URL}${escapeHtml(articleImage || '/assets/brand/teamhjd-original.png')}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/brand/teamhjd-original.png">
+  <link rel="alternate" type="application/rss+xml" title="겜붕이의 노트" href="/feed.xml">
+  <script>document.documentElement.dataset.theme='dark';try{const t=localStorage.getItem('frame-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
   <link rel="stylesheet" href="/assets/styles.css">
   ${math ? '<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">' : ''}
   <script src="/assets/app.js" defer></script>
@@ -62,7 +65,7 @@ export function page({ title, description, path = '/', active, content, math = f
 <body id="page-top">
   <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
   <header class="site-header">
-    <a class="brand" href="/" aria-label="겜붕이의 노트, 글 목록"><span class="brand-name">겜붕이의 노트</span><span class="publisher">TEAMHJD</span></a>
+    <a class="brand" href="/" aria-label="겜붕이의 노트 by TeamHJD, 글 목록"><img class="brand-wordmark" src="/assets/brand/gambungi-wordmark.svg" width="720" height="180" alt="겜붕이의 노트 by TeamHJD"></a>
     <nav class="site-nav" aria-label="주 메뉴">
       <a href="/"${active === 'index' ? ' aria-current="page"' : ''}>글 목록</a>
       <a href="/tags/"${active === 'tags' ? ' aria-current="page"' : ''}>태그 검색</a>
@@ -72,7 +75,7 @@ export function page({ title, description, path = '/', active, content, math = f
     </nav>
   </header>
   <main id="main-content">${content}</main>
-  <footer class="site-footer"><a href="/">${SITE_NAME}</a><span>TEAMHJD</span><a href="#page-top">맨 위로 ↑</a></footer>
+  <footer class="site-footer"><a href="/">${SITE_NAME}</a><a class="publisher-link" href="https://teamhjd.com/" target="_blank" rel="noopener noreferrer">by TeamHJD ↗</a><a href="#page-top">맨 위로 ↑</a></footer>
   <dialog class="image-dialog" aria-label="그림 확대 보기" data-image-dialog>
     <div class="image-dialog-toolbar"><a href="#" target="_blank" rel="noopener noreferrer" data-image-original>원본 열기 ↗</a><form method="dialog"><button type="submit" autofocus aria-label="확대한 그림 닫기">닫기 ×</button></form></div>
     <div class="image-dialog-viewport"><img alt="" data-image-full></div>
@@ -86,7 +89,7 @@ export function page({ title, description, path = '/', active, content, math = f
 
 export function indexContent(issues, tags) {
   return `<div class="archive-shell">
-    <header class="archive-heading"><p class="eyebrow">GAME DEVELOPMENT</p><h1>게임 기술을 읽는 시간</h1><p>원리에서 구현까지, 오래 두고 읽을 이야기.</p></header>
+    <header class="archive-heading"><p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> GAME DEVELOPMENT NOTES</p><h1>원리를 읽고,<br><em>구현으로 이어가는 노트.</em></h1><p>렌더링부터 엔진, 네트워킹까지.<br>게임을 만드는 기술을 하나씩 깊이 읽습니다.</p></header>
     <div class="archive-count">글 ${issues.length}개</div>
     <div class="issue-list">${issues.map((issue) => issueCard(issue, tags)).join('')}</div>
   </div>`;
@@ -109,7 +112,7 @@ export function searchContent(issues, tags) {
 export function articleContent(issue, tags, body, toc) {
   return `<article class="reading-shell" aria-labelledby="issue-title">
     <header class="article-header">
-      <div class="meta"><time datetime="${escapeHtml(issue.date)}">${formatDate(issue.date)}</time><span>기술 해설${issue.status === 'sample' ? ' · 샘플' : ''}</span></div>
+      <div class="meta"><time datetime="${escapeHtml(issue.date)}">${formatDate(issue.date)}</time><span>${escapeHtml(issue.format || '기술 해설')}${issue.status === 'sample' ? ' · 샘플' : ''}</span></div>
       <h1 id="issue-title">${escapeHtml(issue.title)}</h1>
       <p class="article-deck">${escapeHtml(issue.question)}</p>
       <div class="tags" aria-label="관련 태그">${tagLinks(issue.tags.filter((id) => id !== 'technical-explainer'), tags)}</div>

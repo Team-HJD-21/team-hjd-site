@@ -6,7 +6,9 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateRawSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
-import { SITE_URL, SITE_NAME, page, indexContent, searchContent, articleContent } from '../src/templates.mjs';
+import { SITE_URL, SITE_NAME, escapeHtml, page, indexContent, searchContent, articleContent } from '../src/templates.mjs';
+import { loadContent } from './content.mjs';
+import { buildBrand } from './brand.mjs';
 
 const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(project, 'dist');
@@ -15,27 +17,21 @@ const katexPath = join(project, 'assets/vendor/katex/katex.min.cjs');
 if (!existsSync(katexPath)) throw new Error('Vendored KaTeX is missing from assets/vendor/katex.');
 const katex = require(katexPath);
 
-const tags = JSON.parse(await readFile(join(project, 'content/tags.json'), 'utf8'));
-const allIssues = JSON.parse(await readFile(join(project, 'content/issues.json'), 'utf8'));
-const issues = allIssues.filter((issue) => ['sample', 'published'].includes(issue.status)).sort((a, b) => b.date.localeCompare(a.date));
-const knownTags = new Set(tags.map((tag) => tag.id));
-if (knownTags.size !== tags.length) throw new Error('Tag IDs must be unique.');
-if (new Set(issues.map((issue) => issue.slug)).size !== issues.length) throw new Error('Issue slugs must be unique.');
-for (const issue of issues) {
-  if (!/^[a-z0-9-]+$/.test(issue.slug) || !/^[a-z0-9-]+$/.test(issue.id)) throw new Error(`Invalid issue path: ${issue.id}`);
-  for (const id of issue.tags) if (!knownTags.has(id)) throw new Error(`Unknown tag ${id} in ${issue.id}`);
-}
+const { tags, issues, documents } = await loadContent(project);
 
 // Rebuild only the generated directory. Source, hosting metadata and credentials stay untouched.
 await mkdir(dist, { recursive: true });
 // Keep the output directory itself stable for an already running static preview.
 for (const name of await readdir(dist)) await rm(join(dist, name), { recursive: true, force: true });
 await mkdir(join(dist, 'assets'), { recursive: true });
-await cp(join(project, 'assets'), join(dist, 'assets'), { recursive: true });
+// Only shared brand/vendor assets and each public issue are copied; drafts stay private.
+for (const directory of ['brand', 'vendor']) await cp(join(project, 'assets', directory), join(dist, 'assets', directory), { recursive: true });
+for (const issue of issues) if (documents.get(issue.id).assets.length) await cp(join(project, issue.assetDirectory), join(dist, issue.assetDirectory), { recursive: true });
 await rm(join(dist, 'assets/vendor/katex/katex.min.cjs'), { force: true });
+await buildBrand(project, join(dist, 'assets/brand'));
 await cp(join(project, 'src/styles.css'), join(dist, 'assets/styles.css'));
 await cp(join(project, 'src/app.js'), join(dist, 'assets/app.js'));
-await writeFile(join(dist, 'assets/favicon.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="8" fill="#41652d"/><path d="M11 16v-5h5m8 0h5v5m0 8v5h-5m-8 0h-5v-5" fill="none" stroke="#f3f0e8" stroke-width="2.5"/></svg>');
+await cp(join(dist, 'assets/brand/favicon.svg'), join(dist, 'favicon.svg'));
 
 async function writePage(path, html) {
   const target = join(dist, path);
@@ -104,17 +100,12 @@ function zip(entries) {
 }
 
 for (const issue of issues) {
-  const markdown = await readFile(join(project, issue.source), 'utf8');
-  // The site's header replaces the document masthead; every numbered section and source stays intact.
-  const firstSection = markdown.search(/^##\s+01\./m);
-  if (firstSection < 0) throw new Error(`Missing first article section in ${issue.source}`);
-  const bodyMarkdown = markdown.slice(firstSection);
-  if (/<\s*(script|iframe|object)\b|\bon\w+\s*=|javascript:/i.test(bodyMarkdown)) throw new Error(`Unsafe raw HTML in ${issue.source}`);
+  const { markdown, body: bodyMarkdown, assets } = documents.get(issue.id);
   const temporary = await mkdtemp(join(tmpdir(), 'frame-pandoc-'));
   const inputFile = join(temporary, 'article.md');
   const outputFile = join(temporary, 'article.html');
   await writeFile(inputFile, bodyMarkdown);
-  const converted = spawnSync('pandoc', [inputFile, '--from=markdown-implicit_figures', '--to=html5', '--section-divs', '--katex', '--wrap=none', '--output', outputFile], { encoding: 'utf8', timeout: 30000 });
+  const converted = spawnSync(process.env.PANDOC_PATH || 'pandoc', [inputFile, '--from=markdown-implicit_figures', '--to=html5', '--section-divs', '--katex', '--wrap=none', '--output', outputFile], { encoding: 'utf8', timeout: 30000 });
   if (converted.status !== 0) throw new Error(`Pandoc failed: ${converted.error?.message || converted.stderr}`);
   let body = await readFile(outputFile, 'utf8');
   await rm(temporary, { recursive: true, force: true });
@@ -133,20 +124,23 @@ for (const issue of issues) {
     const decoded = tex.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim().replace(/^\\[([]/, '').replace(/\\[)\]]$/, '');
     return `<span class="math ${mode}">${katex.renderToString(decoded, { displayMode: mode === 'display', throwOnError: true, output: 'htmlAndMathml', strict: 'warn' })}</span>`;
   });
-  const firstImage = `/${issue.assetDirectory}/01_prediction_timeline.png`;
+  const firstImage = issue.coverImage ? `/${issue.assetDirectory}/${issue.coverImage}` : '/assets/brand/teamhjd-original.png';
   await writePage(`articles/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: `/articles/${issue.slug}/`, active: 'article', math: true, articleImage: firstImage, content: articleContent(issue, tags, body, toc) }));
   const downloads = join(dist, 'downloads');
   await mkdir(downloads, { recursive: true });
-  await writeFile(join(downloads, `${issue.id}.md`), markdown);
+  // Standalone Markdown works outside the ZIP; ZIP retains portable relative paths.
+  await writeFile(join(downloads, `${issue.id}.md`), markdown.replace(/\]\(assets\//g, `](${SITE_URL}/${issue.assetDirectory}/`));
   const entries = [{ name: `${issue.id}/${issue.id}.md`, data: markdown }];
   const assetDir = join(project, issue.assetDirectory);
-  for (const name of (await readdir(assetDir)).sort()) {
-    if (/\.(png|svg)$/i.test(name)) entries.push({ name: `${issue.id}/assets/${name}`, data: await readFile(join(assetDir, name)) });
-  }
+  for (const name of assets) entries.push({ name: `${issue.id}/assets/${name}`, data: await readFile(join(assetDir, name)) });
   await writeFile(join(downloads, `${issue.id}.zip`), zip(entries));
 }
 
 await writePage('404.html', page({ title: '글을 찾을 수 없습니다', description: '요청한 페이지를 찾을 수 없습니다.', path: '/404.html', content: '<div class="archive-shell not-found"><header class="archive-heading"><h1>글을 찾을 수 없습니다</h1><p>주소를 확인하거나 글 목록에서 찾아보세요.</p></header><a href="/">글 목록으로 돌아가기 →</a></div>' }));
 await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/', '/tags/', ...issues.map((issue) => `/articles/${issue.slug}/`)].map((path) => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>`);
+const published = issues.filter((issue) => issue.status === 'published');
+await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}/articles/${issue.slug}/` })) }, null, 2));
+await writeFile(join(dist, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${SITE_NAME}</title><link>${SITE_URL}/</link><description>게임 클라이언트 개발자를 위한 기술 노트</description><language>ko</language>${published.map((issue) => `<item><title>${escapeHtml(issue.title)}</title><link>${SITE_URL}/articles/${issue.slug}/</link><guid>${SITE_URL}/articles/${issue.slug}/</guid><pubDate>${new Date(`${issue.date}T12:00:00+09:00`).toUTCString()}</pubDate><description>${escapeHtml(issue.description)}</description></item>`).join('')}</channel></rss>`);
+await writeFile(join(dist, '_headers'), '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Content-Security-Policy: frame-ancestors \'self\'; object-src \'none\'; base-uri \'self\'\n');
 console.log(`Built ${issues.length} article(s), archive, tag search and synchronized downloads in dist/.`);

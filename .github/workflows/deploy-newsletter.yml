@@ -47,7 +47,11 @@ jobs:
           sudo apt-get install --yes --no-install-recommends pandoc
 
       - name: Verify project provisioning safeguards
-        run: node --test tech/deploy/ensure-pages-project.test.mjs
+        run: node --test tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs tech/scripts/content.test.mjs
+
+      - name: Validate daily content contract
+        working-directory: tech
+        run: npm run validate
 
       - name: Build newsletter
         working-directory: tech

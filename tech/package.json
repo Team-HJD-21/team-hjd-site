@@ -5,7 +5,9 @@
   "type": "module",
   "description": "TeamHJD game technology newsletter and reading archive",
   "scripts": {
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "validate": "node scripts/validate.mjs",
+    "test:content": "node --test scripts/content.test.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -1,17 +1,17 @@
 :root {
-  color-scheme: light;
-  --paper: #fcfbf8;
-  --ink: #242a27;
-  --secondary: #59645e;
-  --rule: #dedfd8;
-  --panel: #f0f2ec;
-  --accent: #41652d;
-  --focus: #5e7b39;
+  color-scheme: dark;
+  --paper: #10191b;
+  --ink: #f3f0e8;
+  --secondary: #a2afab;
+  --rule: #33413e;
+  --panel: #192426;
+  --accent: #d9eea6;
+  --focus: #d9eea6;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { color-scheme: dark; --paper: #080f17; --ink: #f3f0e8; --secondary: #a2afab; --rule: #2c3b48; --panel: #13202c; --accent: #d9eea6; --focus: #d9eea6; }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
 }
-:root[data-theme="dark"] { color-scheme: dark; --paper: #080f17; --ink: #f3f0e8; --secondary: #a2afab; --rule: #2c3b48; --panel: #13202c; --accent: #d9eea6; --focus: #d9eea6; }
+:root[data-theme="light"] { color-scheme: light; --paper: #fcfbf8; --ink: #242a27; --secondary: #59645e; --rule: #dedfd8; --panel: #f0f2ec; --accent: #41652d; --focus: #41652d; }
 * { box-sizing: border-box; }
 html { scroll-padding-top: 24px; -webkit-text-size-adjust: 100%; }
 body { margin: 0; color: var(--ink); background: var(--paper); font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; font-size: 18px; line-height: 1.85; word-break: keep-all; overflow-wrap: anywhere; }
@@ -29,7 +29,9 @@ button { border: 0; }
 .skip-link { position: absolute; z-index: 20; top: -90px; left: 20px; background: var(--ink); color: var(--paper); padding: 12px 18px; }
 .skip-link:focus { top: 12px; }
 .site-header { max-width: 1120px; margin: 0 auto; padding: 22px 36px; display: flex; align-items: center; justify-content: space-between; gap: 12px 28px; border-bottom: 1px solid var(--rule); }
-.brand { display: flex; align-items: baseline; gap: 13px; text-decoration: none; color: var(--ink); min-width: 0; }
+.brand { display: flex; align-items: center; text-decoration: none; color: var(--ink); flex-shrink: 0; width: 210px; height: 50px; overflow: hidden; }
+.brand-wordmark { width: 210px; max-width: 100%; flex-shrink: 0; }
+:root[data-theme="light"] .brand-wordmark { filter: brightness(.27) sepia(.25) hue-rotate(50deg); }
 .brand-name { font-size: 19px; font-weight: 700; letter-spacing: -.04em; white-space: nowrap; }
 .publisher { color: var(--secondary); font-size: 11px; font-weight: 500; letter-spacing: .1em; }
 .site-nav { display: flex; align-items: center; flex-shrink: 0; gap: 24px; }
@@ -38,8 +40,12 @@ button { border: 0; }
 .theme-toggle { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; background: transparent; color: var(--secondary); border-radius: 50%; }
 .theme-toggle:hover { background: var(--panel); color: var(--accent); }
 .archive-shell, .reading-shell { width: 100%; max-width: 792px; margin: 0 auto; padding: 50px 36px 72px; min-width: 0; }
-.archive-heading { margin-bottom: 32px; }
-.archive-heading h1 { font-size: 34px; line-height: 1.4; font-weight: 700; letter-spacing: -.05em; margin: 0 0 12px; }
+.archive-heading { margin-bottom: 48px; padding: 22px 0 14px; }
+.archive-heading h1 { font-size: clamp(32px, 4vw, 44px); line-height: 1.4; font-weight: 650; letter-spacing: -.05em; margin: 0 0 22px; }
+.archive-heading h1 em { color: var(--accent); font-style: normal; }
+.eyebrow { display: flex; align-items: center; gap: 11px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px #d9eea610; }
+.publisher-link { font-size: 11px; text-decoration: none; }
 .archive-heading > p:not(.eyebrow) { font-size: 17px; line-height: 1.75; color: var(--secondary); margin: 0; }
 .eyebrow { color: var(--accent); font-size: 11px; letter-spacing: .14em; font-weight: 600; margin: 0 0 15px; }
 .archive-count { color: var(--secondary); font-size: 13px; margin: 0; padding: 16px 0; border-bottom: 1px solid var(--rule); }
@@ -129,6 +135,8 @@ button { border: 0; }
 @media (max-width: 700px) {
   body { font-size: 17px; }
   .site-header { padding: 17px 24px; flex-wrap: wrap; gap: 12px 20px; }
+  .brand { width: 175px; height: 44px; }
+  .brand-wordmark { width: 175px; }
   .publisher { display: none; }
   .site-nav { gap: 18px; }
   .archive-shell, .reading-shell { padding: 35px 24px 48px; }
@@ -145,6 +153,9 @@ button { border: 0; }
 }
 @media (max-width: 380px) {
   .site-header { gap: 10px; }
+  .brand { width: 162px; }
+  .brand-wordmark { width: 162px; }
+  .site-nav { margin-left: auto; }
   .site-nav { gap: 10px; }
   .brand-name { font-size: 18px; }
   .site-nav > a { font-size: 13px; }

@@ -29,7 +29,9 @@ npm run build
 
 개인 이메일, Cloudflare API 토큰, 수신자 목록과 발송 기록은 소스나 정적 산출물에 넣지 않는다. 이메일 도구는 외부의 비공개 상태 디렉터리를 사용하며 **Cloudflare에서 검증된 주소이면서 이 뉴스레터에 활성 등록된 주소**만 발송 대상으로 삼는다. 자세한 설정과 검증은 `integrations/README.md`에 있다.
 
-일일 목표 발행 시각은 한국 시간 정오다. 현재 웹 빌드 자체에는 생성·발행·메일 예약 작업이 포함되어 있지 않다. 운영 서비스와 발송 경로를 연결한 다음 예약을 활성화해야 한다.
+일일 목표 발행 시각은 한국 시간 정오다. ChatGPT 예약은 원고를 공급하고 CI가 검증·빌드·설정 후 배포한다. 실제 운영 연결과 메일 예약은 아직 완료되지 않았다. [ChatGPT 인계 문서](docs/CHATGPT_PUBLISHING_HANDOFF.md), [예약 프롬프트](docs/CHATGPT_DAILY_PROMPT.md), [원고 계약](docs/CONTENT_CONTRACT.md)을 따른다.
+
+`npm run validate`는 원고·태그·자산을 검사하고 `npm run test:content`는 발행 계약 회귀 검사를 실행한다. 새 원고의 `<!-- article -->` 다음이 웹 본문이다. `draft` 자산은 배포에서 제외하고 `published`만 `/publication.json`과 `/feed.xml`에 포함한다.
 
 ## 배포
 
