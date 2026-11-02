@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
@@ -34,7 +35,7 @@ jobs:
       - name: Install Pandoc
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends pandoc
       - name: Check release and content contracts
-        run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
+        run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/src/subscriptions.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
       - name: Apply the Seoul noon gate
         id: gate
         env:
@@ -57,3 +58,8 @@ jobs:
           git add -- tech/content/issues.json
           git commit -m "Publish prepared newsletter issue at noon KST"
           git push origin HEAD:main
+      - name: Deliver the live issue to confirmed subscribers
+        if: steps.gate.outputs.issue_ids != '' && !(github.event_name == 'workflow_dispatch' && inputs.dry_run)
+        env:
+          ISSUE_IDS: ${{ steps.gate.outputs.issue_ids }}
+        run: node tech/scripts/deliver.mjs

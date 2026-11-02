@@ -1,60 +1,79 @@
 # ChatGPT 인계 — 겜붕이의 노트
 
-작성: 2026-11-03, Asia/Seoul. 이 문서는 개인 수신 주소·인증값을 포함하지 않아 공개 소스와 함께 보관할 수 있다. 최초 인계 문서 전체를 공개 저장소에 복사하지 않는다.
+기준일은 2026년 11월 3일, 시간대는 Asia/Seoul입니다. 이 문서는 이전의 미배포·샘플·Direct Upload·파일 기반 메일 CLI 인계를 대체합니다. 비밀값과 개인 수신 주소는 포함하지 않습니다.
 
-## 무엇을 이어받는가
+## 운영 주소와 구조
 
-한국어 게임 클라이언트 기술 뉴스레터다. 표시 이름은 **겜붕이의 노트**, 작은 서명은 **by TeamHJD**, 목표 도메인은 `https://tech.teamhjd.com`이다. ChatGPT는 매일 조사·원고·자료·GitHub 반영을 맡고, GitHub Actions는 검사·정적 빌드·설정 후 배포를 맡는다. 사용자 요청은 ChatGPT 예약을 통한 매일 퍼블리싱이며 별도 AI API 서버는 사용하지 않는다.
+- 운영 사이트는 https://tech.teamhjd.com/ 이며 기본 주소는 https://gambungi-notes.pages.dev/ 입니다.
+- GitHub는 https://github.com/Team-HJD-21/team-hjd-site 의 main 브랜치입니다. 뉴스레터 소스 루트는 tech/입니다.
+- Cloudflare Pages 프로젝트는 gambungi-notes입니다. Git integration, root=tech, build=npm run build:cloudflare, output=dist를 사용합니다. 회사 홈페이지의 기존 GitHub Pages 배포는 별도입니다.
+- 글 목록 /, 태그 검색 /tags/, 구독하기 /subscribe/를 별도 페이지로 제공합니다. 동의·인증·해지 안내는 /subscription/ 아래에 있습니다.
+- 2026년 11월 3일 첫 정식 글은 ‘먼저 움직이고, 과거를 고칩니다’입니다. 예전 경로 호환을 위해 ID frame-2026-11-02와 slug client-side-prediction은 유지했습니다. 새 호에서 이 예외를 따라 날짜를 어긋나게 만들지 않습니다.
+- 공개 매니페스트는 /publication.json, RSS는 /feed.xml입니다. published 호만 들어갑니다. 구독자나 발송 기록은 공개 JSON에 넣지 않습니다.
+- 글 주소는 /YYYY-MM-DD/제목-slug/입니다. 첫 글은 https://tech.teamhjd.com/2026-11-03/client-side-prediction/ 입니다. 예전 /articles/client-side-prediction/은 새 주소로 301 이동합니다. RSS·목록·검색·메일도 날짜가 들어간 주소를 사용합니다.
 
-정본 저장소: https://github.com/Team-HJD-21/team-hjd-site
+## 말투·난이도·디자인 원칙
 
-기존 PR: https://github.com/Team-HJD-21/team-hjd-site/pull/1
+EDITORIAL.md를 함께 읽어 주세요. 원고·소개·인계 문서는 친숙한 존댓말을 사용합니다. ‘~입니다’, ‘~해 보겠습니다’, ‘왜 그럴까요?’가 기본입니다. 초기 원고의 난이도 10을 기준으로 목표는 약 8입니다. 작은 예제 하나를 끝까지 설명하고, 기술 핵심과 실제 구현의 손익은 유지해 주세요.
 
-웹 소스는 `tech/`, 실제 운영 브랜치는 `main`이다. 기존 PR을 main에 반영해야 그 구현을 운영에서 쓸 수 있다. 아래 예약 프롬프트 역시 main에 문서와 코드가 들어간 뒤 사용한다.
+첫 화면 문구는 ‘매일 하나씩 알아가는 호기심 가득한 게임 개발.’입니다. GAME DEVELOPMENT NOTES 같은 위쪽 영문 문구는 사용하지 않습니다. 브랜드는 겜붕이의 노트, 작은 표기는 by TeamHJD입니다. 손그림 로켓은 원본 픽셀을 재사용합니다. 헤더 워드마크와 탭 아이콘은 용도가 다릅니다. 탭 아이콘은 회사 공통 v1의 notes 배지 파일을 그대로 사용합니다.
 
-## 이번 구현
+색·폰트·푸터는 teamhjd.com을 기준으로 맞췄습니다. scripts/company-brand.mjs가 회사 루트 styles.css와 index.html 푸터·워드마크를 가져옵니다. 회사 사이트의 관련 사이트에도 겜붕이의 노트를 연결했습니다. 매일 원고 작업에서 이 코드를 수정하지 않습니다.
 
-- TeamHJD의 `#10191b` 배경, `#d9eea6` 강조색과 본문 스타일을 적용했다. 밝은 화면 전환도 유지한다.
-- 페이지 상단은 작은 가로형 로고다. **원본 TeamHJD PNG의 로켓을 그대로 재사용**하고 새 한글 글자에 연필 질감을 맞췄다. by TeamHJD는 작은 서명이다. 탭 아이콘도 원본 로켓을 재사용한다. 커다란 삽화는 페이지에 넣지 않는다.
-- 원본 PNG와 한글 lettering 소스는 `assets/brand/`, 실제 SVG 조합 코드는 `scripts/brand.mjs`다. 원본 그림을 다시 생성하지 않는다.
-- 목록·기사·목차·세부 태그 검색·그림 확대·코드·표·수식·Markdown·ZIP 다운로드를 유지한다. 기존 샘플 URL `/articles/client-side-prediction/`도 유지한다.
-- `<!-- article -->`로 유동적인 절 구성을 지원하고 호별 coverImage·format을 지원한다. JPG/WebP 등의 다운로드도 포함한다.
-- 메타데이터·날짜·중복 ID/slug·태그·경로·자산·마지막 학습 절·일부 위험한 마크업을 검증한다. draft의 파일은 배포 산출물에 복사하지 않는다. 공개 저장소 자체는 비공개 초안 보관소가 아니다.
-- `/publication.json`과 `/feed.xml`은 실제 published 호만 담는다. 샘플을 실제 발행으로 취급하지 않는다.
+직접 만드는 그림은 다크 모드를 기준으로 합니다. 배경 #080f17, 패널 #13202c, 본문 #f3f0e8, 보조 글자 #a2afab, 강조 #d9eea6입니다. 수치·화살표·범례는 검증 가능한 코드·벡터로 제작해 주세요. 원문 이미지와 직접 만든 개념도를 구분합니다. 원문 이미지는 색을 임의로 바꾸지 않습니다. 확대 팝업에는 그림 전체가 들어오도록 맞추고, 원본 해상도는 별도 링크로 엽니다.
 
-정확한 원고 계약은 [CONTENT_CONTRACT.md](CONTENT_CONTRACT.md), 예약에 붙일 프롬프트는 [CHATGPT_DAILY_PROMPT.md](CHATGPT_DAILY_PROMPT.md)다. 기술 정확성·링크의 사실성·영상 장면·이미지 이용권은 원고 작성자가 확인한다. 자동 검사만으로 편집 검증을 대체할 수 없다.
+모든 공개 글은 정식 발행입니다. 샘플·데모·가짜 호로 목록을 채우지 않습니다. 읽기 시간은 넣지 않습니다. 마지막 실질적 절은 ‘오늘 얻어갈 것’이며, 그 뒤에 출처를 둘 수 있습니다. 주요 사실과 최신 버전은 1차 자료로 검증해 주세요.
 
-## 실제 운영 상태
+## 매일 발행하는 역할과 시간
 
-2026-11-03 조회 시 기존 PR #1은 draft/open이고 Cloudflare 배포용 GitHub repository Secret·Variable 목록은 비어 있었다. 이 문서의 예시 URL은 배포 성공 증거가 아니다. 로컬 구현·검사 결과는 `tech/qa/README.md`의 이번 검증 항목을 확인한다. 계정 상태가 달라졌으면 최신 상태를 다시 조회한다.
+ChatGPT의 **기존 클라우드 예약을 매일 10:30 Asia/Seoul**에 실행해 조사·원고·그림·GitHub 반영을 맡깁니다. **12:00 웹 공개와 이메일 발송은 GitHub Actions·Cloudflare Pages Functions·Resend**가 맡습니다. 사용자 컴퓨터를 켜 둘 필요가 없습니다. 별도 유료 AI API 생성 서버는 사용하지 않습니다.
 
-현재 글은 `frame-2026-11-02` 샘플 한 편이다. 새 날짜로 복사해 정기 발행분처럼 표시하지 않는다.
+ChatGPT는 CONTENT_CONTRACT.md에 맞춰 당일 호를 status=scheduled, publishAt=YYYY-MM-DDT12:00:00+09:00으로 반영합니다. 이 상태는 웹·다운로드·RSS에서 제외합니다. 공개 Git의 scheduled는 비공개 초안 저장이 아니므로 민감한 내용을 넣지 않습니다.
 
-메일은 기존 `integrations/cloudflare-email.mjs` 파일 기반 Node CLI만 있다. **상시 구독 서버·관리 UI·D1·정오 발송 스케줄러는 구현돼 있지 않다.** 이번 디자인 및 웹 원고 발행 계약 작업이 이 기능의 운영 완료를 뜻하지 않는다. 메일 CLI는 영구 디스크가 있는 Linux/macOS 대상으로 작성됐으며 Windows에서 디렉터리 fsync가 EPERM으로 실패했다. Windows에서 기록 보장을 제거해 억지로 운영하지 않는다. 실제 메일 등록·인증·발송·받은편지함 도착은 확인하지 않았다.
+Publish newsletter at noon KST가 정오와 12:10·12:20·12:30에 점검합니다. 검증된 당일 호 하나만 published로 바꾸고 실제 공개 시각 publishedAt을 기록한 뒤 main에 커밋합니다. Cloudflare가 빌드·배포합니다. 같은 날 이미 발행한 호가 있으면 다시 공개하지 않습니다. 원고가 없거나 검사가 실패하면 지난 호로 대체하지 않습니다. 12:30 이후 준비되지 않은 글은 자동 지연 공개하지 않습니다.
 
-예약은 원래 인계 문서 기준 `겜붕이의 노트`(`6ae774bba4148191961bb42f0e193d6b`), 일시 중지, 매일 12:00 Asia/Seoul이다. 이 턴에서는 ChatGPT 예약의 실시간 상태를 조회·수정하지 않았다. 이전 예약(`6ae770fa2b148191b9db1650b0dc6a08`)과 새 예약을 동시에 켜지 않는다.
+메일 단계는 운영 publication.json에 해당 ID가 나타날 때까지 기다린 후 발송을 요청합니다. 당일 이미 공개한 호도 동일한 발송 기록으로 점검하므로 재실행해도 같은 수신자에게 중복 발송하지 않습니다. 큐 지연이 있어 정확한 12:00의 웹 반영·메일 도착은 보장하지 않습니다.
 
-## 운영 연결을 완료하는 순서
+## 이 문서를 받은 GPT가 해야 할 예약 설정
 
-1. 기존 PR의 CI와 diff를 검토하고 main에 병합한다. 회사 홈페이지 변경과 섞지 않는다.
-2. Cloudflare에서 해당 계정에만 Pages Edit 권한을 가진 토큰을 생성하고 GitHub Actions Secrets에 `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`을 등록한다. 비밀값을 ChatGPT에 붙이지 않는다.
-3. 사이트 열람 범위를 결정한다. 기존 workflow의 `deploy` 체크는 공개 Pages 발행이다. 비공개를 원하면 운영 도메인과 `pages.dev`를 함께 보호한 다음 배포한다.
-4. main의 **Build and deploy newsletter**를 수동 실행하고 공개 발행을 선택했다면 `deploy=true`를 지정한다. 실제 배포 단계가 skipped가 아닌 success인지 확인한다.
-5. Cloudflare의 `gambungi-notes` 프로젝트에서 Custom domain으로 `tech.teamhjd.com`을 먼저 연결한 뒤 안내된 DNS만 적용한다. 기존 루트 홈페이지·MX·메일 인증 TXT를 바꾸지 않는다.
-6. 실제 도메인의 로고·파비콘·기사·태그·이미지·Markdown·ZIP을 확인한다. GitHub Variable `NEWSLETTER_AUTO_DEPLOY=true`를 등록하면 이후 main의 tech 변경을 자동 배포한다.
-7. 일반 ChatGPT 웹 채팅에서 예약 프롬프트로 새 한 호를 조사·작성하고 GitHub 반영부터 운영 URL 확인까지 한 번 수행한다. 연결된 GitHub 도구에 읽기만 있고 쓰기가 없다면 예약만으로 해결되지 않는다. 승인·브랜치 보호가 막으면 pending으로 기록한다.
-8. 수동 시험이 성공한 뒤 기존 예약의 프롬프트를 갱신하고 활성화한다. 실제 예약 첫 실행에서도 같은 클라우드 도구·권한을 쓰는지 확인한다. 로컬 폴더 유지에 의존하지 않는다.
+이 Codex 작업은 ChatGPT의 기존 예약을 조회·수정하지 않았습니다. 전달받은 이전 예약 ID는 6ae774bba4148191961bb42f0e193d6b이며 당시 일시 중지·12시 설정이었습니다. 실제 현재 상태를 먼저 확인해 주세요. 예전 ID 6ae770fa2b148191b9db1650b0dc6a08도 함께 켜 중복 실행하지 않습니다.
 
-메일까지 운영하려면 별도로 구독의 영구 저장소·관리 인증·발송 선점·중복 방지·로그를 구현·배포하고, Cloudflare destination 소유 확인과 실제 수신 시험을 마친 뒤 정오 발송 스케줄을 연결해야 한다. 기존 CLI의 영구 상태를 임시 GitHub runner 파일로 대체하지 않는다. 자세한 경계는 [integrations/README.md](../integrations/README.md)를 따른다.
+1. 이 문서, EDITORIAL.md, CONTENT_CONTRACT.md, CHATGPT_DAILY_PROMPT.md를 읽어 주세요.
+2. 연결된 GitHub에서 main을 읽고 실제 콘텐츠 쓰기 도구가 있는지 확인해 주세요. 로컬 폴더에 의존하지 않습니다.
+3. 일반 채팅에서 원고 준비와 GitHub 반영을 한 번 시험해 주세요. 오늘 이미 정식 발행된 호가 있으면 오늘의 두 번째 호를 만들지 않습니다. 내일 원고를 미리 준비하는 경우 date와 publishAt을 내일로 맞추고 scheduled를 유지합니다.
+4. 기존 예약의 편집 의도를 보존하며 CHATGPT_DAILY_PROMPT.md를 적용하고 매일 10:30 Asia/Seoul로 갱신해 주세요. 실제 클라우드 도구와 권한이 확인된 뒤 활성화합니다.
+5. Run now로 한 번 시험하고 실제 원고·이미지·커밋·CI 결과를 확인해 주세요. 예약이 생성됐다는 사실만으로 무인 반영 성공이라고 말하지 않습니다.
+6. 첫 정오 실행에서 Actions, Cloudflare 배포, publication.json, 기사·그림·다운로드를 확인해 주세요. 원고 준비·웹 공개·API 발송 수락·실제 이메일 수신은 구분해 보고합니다.
 
-## 시간과 성공 판정
+예약 실행에서 쓰기가 승인 대기로 멈추거나 도구가 읽기 전용이면, 그 제한을 사용자에게 알려 주세요. 공개 권한을 확대하거나 다른 서비스로 몰래 대체하지 않습니다.
 
-12시 예약은 **작성을 시작하는 시간**이다. 목표가 정오에 웹 게시·메일 발송 준비 완료라면 ChatGPT 준비 작업을 예를 들어 10:30 Asia/Seoul로 앞당기고 정오 발송을 분리한다. 이 시간은 운영 제안이며 예약을 변경했다는 뜻이 아니다. 초 단위 게시·받은편지함 도착을 보장하지 않는다.
+## GitHub 콘텐츠 반영 범위
 
-각 실행은 원고 작성 → GitHub 반영 → CI 검사 → 실제 배포 → 운영 기사 확인 → (별도 연결 후) 메일 API 처리 → 실제 받은편지함 확인을 구분해 보고한다. 어느 단계든 실패하면 지난 호를 오늘 글처럼 게시하거나 중복 발송하지 않는다. 0개의 published 항목은 현재 샘플만 있는 상태에서 정상이다.
+허용된 변경은 tech/content/issues.json, tech/content/tags.json, 이번 호의 tech/content/issues/<id>.md와 tech/assets/issues/<id>/입니다. 기존 배열·호·타인의 변경을 보존하고 최신 HEAD를 기준으로 일관된 커밋 하나를 만들어 주세요. 가능하면 GitHub의 blob → tree(base 지정) → commit(parent 지정) → update_ref(expected SHA, force=false) 흐름을 사용합니다. 실제 도구가 제공되는지는 실행 때 확인합니다.
+
+브랜치 보호 때문에 main 쓰기가 안 되면 콘텐츠 PR을 만들고 pending으로 보고해 주세요. 자동 병합이나 무인 배포가 끝났다고 주장하지 않습니다. 코드·브랜드·워크플로·DNS·권한·Secrets·구독 DB·발송 기록은 GPT의 매일 작업 범위가 아닙니다. 개인 주소나 키를 공개 Git에 넣지 않습니다.
+
+## 구독과 메일 운영
+
+구독 신청에는 개인정보 수집·이용, 뉴스레터 이메일 수신, 국외 이전 동의를 각각 받습니다. 미리 선택하지 않습니다. 메일 링크를 열기만 해서는 활성화하지 않으며, 확인 버튼을 누른 뒤 active가 됩니다. 확인 링크는 24시간 유효하고, 미확인 신청은 7일 후 정리합니다. 해지는 서명된 링크에서 버튼을 눌러 처리하고 이메일 주소를 삭제합니다. 원클릭 해지 헤더도 제공합니다.
+
+비공개 D1 데이터베이스 gambungi-notes-subscribers를 Pages의 DB 바인딩으로 사용합니다. 미국 관할로 생성했습니다. 발송자는 겜붕이의 노트 <notes@news.teamhjd.com>이며 Resend의 도쿄 리전 도메인을 사용합니다. 발송 전용·도메인 제한 API 키는 Pages의 RESEND_API_KEY 암호화 비밀값에만 저장합니다. 확인·해지 서명과 비식별 해시에는 별도 TOKEN_SECRET을 사용합니다. 키는 GitHub·문서·채팅으로 전달하지 않습니다.
+
+Resend 무료 플랜을 사용하며 이 앱은 인증 메일을 포함해 하루 최대 90건으로 제한합니다. 제공자의 무료 100건/일 한도에 여유를 둔 값입니다. 다른 앱이 같은 계정의 한도를 쓰거나 월 한도에 도달하면 실패할 수 있습니다. 유료 전환은 자동으로 하지 않습니다. 한 요청당 최대 10명을 순차 처리합니다.
+
+정오 발송 API는 짧게 유효한 GitHub Actions OIDC를 검증하며 정확한 저장소·main·발행 워크플로만 허용합니다. 장기 발송 관리자 키를 GitHub에 보관하지 않습니다. 임의 수신자·임의 본문은 받지 않고 실제 공개된 당일 호를 읽습니다. D1 영구 발송 기록과 Resend Idempotency-Key로 중복을 막습니다. 응답 유실 등 불명확한 발송은 자동 재전송하지 않습니다. 운영자가 제공자 기록을 확인하기 전에는 receipt를 지우거나 호 ID를 바꾸지 않습니다.
+
+클릭·열람 추적은 끕니다. API의 queued는 제공자가 발송을 수락했다는 뜻이며 받은편지함 도착을 보장하지 않습니다. 구독 목록·집계·관리 UI는 공개하지 않습니다. 기존 integrations/cloudflare-email.mjs는 이전 영구 디스크용 도구이며 현재 공개 구독 서비스의 발송 경로가 아닙니다.
+
+## 검사와 실제 확인 상태
+
+소스 검사는 Node 22 이상과 Pandoc으로 수행합니다. npm run validate, npm run test:content, node --test src/subscriptions.test.mjs, npm run build를 사용합니다. Cloudflare 빌드와 Validate newsletter는 기존 검사와 구독 검사를 함께 실행합니다. Pandoc이 없으면 공식 3.13 Linux 파일을 고정 SHA256으로 확인해 임시 사용합니다.
+
+최종 실행·배포·실제 메일 확인 결과는 함께 전달하는 실행 기록을 확인해 주세요. 테스트 성공과 실제 메일 도착은 구분해야 합니다. ChatGPT 예약의 첫 실제 실행과 앞으로의 첫 정오 자동 실행은 아직 완료했다고 간주하지 않습니다.
 
 ## 공식 근거
 
-ChatGPT 웹 예약은 연결된 도구와 업로드 문맥을 사용할 수 있지만 로컬 폴더를 계속 보존하지 않는다. 예약 전에 일반 웹 채팅에서 프롬프트를 시험하고 실제 초기 실행을 확인한다. 계정별 권한과 제공 여부는 별도다. [OpenAI Scheduled tasks](https://learn.chatgpt.com/docs/automations), [예약 작업 설정](https://developers.openai.com/training/walkthroughs/scheduled-tasks).
-
-배포의 계정·도메인 연결은 [Cloudflare CI Direct Upload](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/), [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/)와 [DEPLOY.md](../deploy/DEPLOY.md)를 확인한다.
+- [OpenAI Scheduled tasks](https://learn.chatgpt.com/docs/automations): 연결 도구와 로컬 폴더의 비지속성, 예약 전 일반 채팅 시험 안내입니다.
+- [Cloudflare Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/), [D1 바인딩](https://developers.cloudflare.com/pages/functions/bindings/#d1-databases): 실제 배포와 데이터베이스 연결 경로입니다.
+- [GitHub schedule](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule): 큐 지연과 공개 저장소의 장기간 비활동 시 비활성화 조건을 확인할 수 있습니다.
+- [Resend API](https://resend.com/docs/api-reference/emails/send-email), [중복 방지 키](https://resend.com/docs/dashboard/emails/idempotency-keys), [가격·무료 한도](https://resend.com/pricing): 제공자의 실제 동작과 한도입니다.

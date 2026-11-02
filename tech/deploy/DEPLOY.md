@@ -1,60 +1,41 @@
-# 겜붕이의 노트: GitHub → Cloudflare Pages 배포
+# 겜붕이의 노트 운영 배포
 
-소스 저장소는 `Team-HJD-21/team-hjd-site`, 사이트 소스는 `tech/`, 운영 브랜치는 `main`, Pages 프로젝트는 `gambungi-notes`로 고정한다. GitHub Actions가 Node.js 22와 Pandoc으로 빌드하고 **`tech/dist/`만** 업로드한다. 기존 회사 사이트와 메일 DNS를 변경하는 작업은 없다.
+기준: 2026-11-03, Asia/Seoul. 기존 PR #1은 main에 병합했고 Cloudflare Pages에 실제 배포했다.
 
-## 1. 파일 반영
+- 운영 도메인: https://tech.teamhjd.com/ (연결 등록 후 DNS/HTTPS 활성 상태는 실제 화면에서 확인)
+- 기본 도메인: https://gambungi-notes.pages.dev/
+- 저장소: Team-HJD-21/team-hjd-site, 운영 브랜치 main
+- Pages 프로젝트: gambungi-notes, 회사 도메인과 같은 Cloudflare 계정
+- 방식: 기존 Cloudflare Workers and Pages GitHub 앱의 Git integration
+- 소스 루트: tech
+- 프레임워크: None
+- 빌드 명령: npm run build:cloudflare
+- 출력 폴더: dist
 
-| 준비된 파일 | 저장소 위치 |
-| --- | --- |
-| `.github/workflows/deploy-newsletter.yml` | 저장소 루트에 설치된 실제 워크플로 |
-| `tech/deploy/ensure-pages-project.mjs` | 그대로 유지 |
-| `tech/deploy/ensure-pages-project.test.mjs` | 그대로 유지 |
+## 자동 배포
 
-배포 워크플로와 아래 안내는 기존 PR에 함께 포함되어 있다. PR을 확인하고 `main`에 병합한다. 기본 상태에서는 빌드와 다운로드용 `gambungi-notes-site` 아티팩트 생성만 실행한다. 배포 버튼을 체크하지 않은 수동 실행도 동일하다. 이 단계에는 Cloudflare 자격 증명이 필요 없다.
+main 변경을 Cloudflare가 받아 독립적으로 검사·빌드·배포한다. 별도의 Cloudflare API 토큰이나 GitHub의 CLOUDFLARE_ACCOUNT_ID/CLOUDFLARE_API_TOKEN Secret, NEWSLETTER_AUTO_DEPLOY 변수는 필요하지 않다. 이 프로젝트는 Git integration으로 생성했으므로 이전 Direct Upload용 provisioning 코드를 실행하지 않는다.
 
-## 2. 최초 1회: 비밀값 두 개 등록
+scripts/cloudflare-build.mjs는 Pandoc이 없으면 공식 Pandoc 3.13 Linux 배포 파일을 다운로드해 고정 SHA256으로 확인하고 임시 폴더에서만 사용한다. 콘텐츠·메일·Pages·정오 발행 검사를 실행한 뒤 빌드한다. 실패하면 배포가 중단된다. GitHub Actions의 Validate newsletter도 같은 진입점을 검사한다.
 
-Cloudflare의 **My Profile → API Tokens → Create Token → Create Custom Token**에서 권한을 **Account → Cloudflare Pages → Edit**, 계정 범위를 사용할 계정 하나로 제한한다. 해당 계정의 Account ID도 확인한다.
+회사 홈페이지의 기존 GitHub Pages 배포와 뉴스레터 Pages는 별도 산출물을 사용한다. 뉴스레터에는 tech/dist만 배포한다. 단, 디자인을 맞추기 위해 회사 루트 styles.css·index.html의 푸터·로고를 빌드 입력으로 사용한다.
 
-GitHub 저장소의 **Settings → Secrets and variables → Actions → New repository secret**에서 아래 두 값을 등록한다. 토큰은 채팅이나 코드에 붙이지 않는다.
+## 도메인
 
-| Secret 이름 | 값 |
-| --- | --- |
-| `CLOUDFLARE_ACCOUNT_ID` | 사용할 Cloudflare 계정의 Account ID |
-| `CLOUDFLARE_API_TOKEN` | 위에서 생성한 토큰 |
+Pages Custom domains에 tech.teamhjd.com을 먼저 등록하고, 안내한 CNAME tech → gambungi-notes.pages.dev만 추가했다. 기존 tech 레코드는 없었다. 회사 루트 DNS·MX·메일 인증 TXT는 변경하지 않았다. DNS 캐시와 인증서 발급이 완료되어 기본 TLS 검증의 HTTPS 200을 확인한 경우에만 운영 도메인 완료라고 보고한다.
 
-## 3. 첫 공개 발행
+## 매일 정오 공개
 
-**Cloudflare Pages는 기본적으로 공개 웹사이트다.** 아래 체크박스는 사이트를 공개 발행한다는 선택이다. 이메일 수신자를 한 명으로 제한하는 것과 사이트 열람을 한 명으로 제한하는 것은 별개다. 비공개 열람이 필요하면 이 단계에서 멈추고, 해당 사이트의 운영 주소와 `pages.dev` 접근 경로까지 보호하는 Cloudflare Access 구성을 먼저 완료해야 한다. 이 워크플로는 Access 설정을 생성하지 않는다.
+ChatGPT는 매일 10:30 Asia/Seoul에 원고를 준비하는 구성을 권장한다. 원고는 scheduled 상태와 publishAt=YYYY-MM-DDT12:00:00+09:00으로 main에 반영한다. 그 상태에서는 사이트에 공개하지 않는다.
 
-GitHub **Actions → Build and deploy newsletter → Run workflow**에서 브랜치 `main`을 선택하고 **Publish the website publicly to Cloudflare Pages**를 체크한 뒤 실행한다.
+.github/workflows/publish-newsletter.yml의 Publish newsletter at noon KST가 매일 정오와 10·20·30분 후에 상태를 확인한다. 당일의 준비된 한 호만 published로 바꾸고, 검사·빌드 후 그 상태 변경을 main에 커밋한다. Cloudflare가 이를 배포한다. 이미 당일 발행 호가 있으면 다시 공개하지 않는다. 원고 미준비·검사 실패·복수 후보·공개 시간창 초과는 지난 호로 대체하지 않는다.
 
-워크플로는 지정 계정의 `gambungi-notes`를 조회한다. 404일 때만 Direct Upload 프로젝트를 새로 만들며, 다른 오류는 즉시 중단한다. 같은 이름의 기존 프로젝트가 있으면 이 뉴스레터 전용 프로젝트인지 먼저 확인한다. Git 연동 프로젝트이거나 운영 브랜치가 `main`이 아니면 변경하지 않고 중단한다. ZIP 업로드나 최초 프로젝트 수동 생성은 필요 없다.
+GitHub Actions의 시간 예약과 Cloudflare 빌드 큐는 지연될 수 있다. 목표는 정오 공개이며 초 단위·정확한 12:00 반영을 보장하지 않는다. 12:30 이후에는 자동 지연 공개를 멈춘다. GitHub 공개 저장소의 예약 workflow는 장기간 활동이 없으면 비활성화될 수 있으므로 운영자가 상태를 확인한다.
 
-배포 결과에 표시되는 실제 `*.pages.dev` 주소에서 PC·모바일을 확인한다. 이미 확인한 로컬 화면과 별개로 실제 운영 주소의 이미지·영상·검색·태그·Markdown 다운로드를 확인한다.
+## 수동 점검
 
-## 4. 도메인 연결
+Actions → Publish newsletter at noon KST → Run workflow → dry_run=true는 상태를 쓰지 않는 점검이다. 정오 전에는 before_noon, 당일 이미 발행되었으면 already_published가 정상이다. 실제 공개는 dry_run=false도 시간 제한과 콘텐츠 검증을 지킨다.
 
-Cloudflare **Workers & Pages → gambungi-notes → Custom domains → Set up a domain**에서 `tech.teamhjd.com`을 추가한다.
+게시 후 /publication.json의 호 ID·날짜/제목 주소의 기사·그림·Markdown·ZIP을 확인합니다. CI 성공과 사이트 반영, 이메일 API 수락과 받은편지함 도착은 서로 다른 상태입니다. 현재는 Pages Functions·D1·Resend를 사용하는 실제 구독과 정오 메일 발송 경로도 구현했습니다. 연결·권한·비밀값·한도·중복 방지에 관한 운영 지침은 ../docs/SUBSCRIPTIONS.md를 읽어 주세요. /api/status의 configured=true만으로 실제 메일 수신이 검증됐다고 판단하지 않습니다.
 
-- `teamhjd.com` DNS를 같은 Cloudflare 계정에서 관리하면 안내에 따라 해당 서브도메인의 CNAME 생성을 확인한다.
-- 외부 DNS에서 관리하면 Pages에서 도메인을 먼저 연결한 뒤, `tech`의 CNAME을 배포 결과에 나온 실제 Pages 호스트명으로 설정한다.
-- 회사 홈페이지의 루트 레코드, MX, 메일 인증용 TXT는 수정하지 않는다. 기존 `tech` 레코드가 다른 서비스를 가리키면 소유 용도를 확인한 뒤 변경한다.
-
-DNS에 CNAME만 먼저 추가하면 Pages 프로젝트와 연결되지 않아 522 오류가 날 수 있다. HTTPS와 도메인이 활성화된 뒤 `https://tech.teamhjd.com`에서 다시 확인한다.
-
-## 5. 이후 자동 배포
-
-첫 발행을 확인한 뒤 GitHub **Settings → Secrets and variables → Actions → Variables → New repository variable**에 `NEWSLETTER_AUTO_DEPLOY` = `true`를 등록한다. 이후 `main`의 `tech/**` 또는 배포 워크플로 변경을 빌드·배포한다. 변수 등록 자체는 배포를 실행하지 않는다. 변수를 지우거나 `false`로 바꾸면 자동 배포가 중지된다. 수동 발행은 계속 가능하다.
-
-이 구성은 **사이트 배포**를 완성한다. 정오 기사 생성, 승인된 이메일 구독자 등록, 발행 알림 전송은 별도 자동화이며 이 워크플로에서 동작하지 않는다. Direct Upload 프로젝트는 나중에 Cloudflare 기본 Git 연동 모드로 전환할 수 없지만 GitHub Actions를 통한 자동 배포는 계속 사용할 수 있다.
-
-## 검증과 공식 문서
-
-`node --test tech/deploy/ensure-pages-project.test.mjs`는 모의 응답만 사용하며 실제 Cloudflare에 접속하지 않는다. GitHub Actions의 액션은 공식 저장소의 확인된 v6/v4 태그 커밋으로 고정했다.
-
-- [Cloudflare: CI로 Direct Upload 배포, API 토큰과 GitHub Secrets](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)
-- [Cloudflare: Direct Upload와 모드 제한](https://developers.cloudflare.com/pages/get-started/direct-upload/)
-- [Cloudflare: Pages 프로젝트 생성 API](https://developers.cloudflare.com/api/resources/pages/subresources/projects/methods/create/)
-- [Cloudflare: Pages 프로젝트 조회 API](https://developers.cloudflare.com/api/resources/pages/subresources/projects/methods/get/)
-- [Cloudflare: 사용자 도메인 연결과 CNAME](https://developers.cloudflare.com/pages/configuration/custom-domains/)
+공식 근거: [Cloudflare Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/), [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/), [GitHub schedule의 지연·비활성화 조건](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).

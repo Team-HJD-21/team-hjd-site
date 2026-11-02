@@ -5,12 +5,22 @@ on:
   pull_request:
     paths:
       - 'tech/**'
+      - 'index.html'
+      - 'styles.css'
+      - 'assets/teamhjd-wordmark.png'
+      - 'assets/favicons/v1/**'
       - '.github/workflows/deploy-newsletter.yml'
+      - '.github/workflows/publish-newsletter.yml'
   push:
     branches: [main]
     paths:
       - 'tech/**'
+      - 'index.html'
+      - 'styles.css'
+      - 'assets/teamhjd-wordmark.png'
+      - 'assets/favicons/v1/**'
       - '.github/workflows/deploy-newsletter.yml'
+      - '.github/workflows/publish-newsletter.yml'
   workflow_dispatch:
 
 permissions:
@@ -52,4 +62,3 @@ jobs:
           path: tech/dist/
           if-no-files-found: error
           retention-days: 7
-

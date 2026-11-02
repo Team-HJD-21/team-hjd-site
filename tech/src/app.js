@@ -1,6 +1,35 @@
 (() => {
   'use strict';
 
+  async function subscriptionPost(endpoint, body) {
+    const response = await fetch(endpoint, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'same-origin'});
+    const result = await response.json();
+    if(!response.ok) throw new Error(result.message || '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    return result.message;
+  }
+  const subscribeForm = document.querySelector('[data-subscribe-form]');
+  subscribeForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    if(!subscribeForm.reportValidity()) return;
+    const button=subscribeForm.querySelector('button[type=submit]'), status=subscribeForm.querySelector('[data-subscribe-status]');
+    button.disabled=true; status.textContent='인증 메일을 준비하고 있습니다…';
+    const values=new FormData(subscribeForm);
+    try {status.textContent=await subscriptionPost('/api/subscribe',{email:values.get('email'),website:values.get('website'),consentVersion:'2026-11-03',privacyConsent:values.has('privacyConsent'),emailConsent:values.has('emailConsent'),overseasConsent:values.has('overseasConsent')});}
+    catch(error){status.textContent=error.message;} finally{button.disabled=false;}
+  });
+  const actionForm=document.querySelector('[data-subscription-action]');
+  if(actionForm){
+    // Merely loading an email link must never confirm or unsubscribe a reader.
+    const token=new URLSearchParams(location.search).get('token') || '';
+    history.replaceState(null,'',location.pathname);
+    actionForm.addEventListener('submit',async event=>{
+      event.preventDefault();const button=actionForm.querySelector('button'),status=actionForm.querySelector('[data-subscription-status]');
+      button.disabled=true;
+      try{status.textContent=await subscriptionPost(`/api/${actionForm.dataset.subscriptionAction}`,{token});}
+      catch(error){status.textContent=error.message;button.disabled=false;}
+    });
+  }
+
   const themeButton = document.querySelector('[data-theme-toggle]');
   const preference = window.matchMedia('(prefers-color-scheme: dark)');
   const currentTheme = () => document.documentElement.dataset.theme || 'dark';
@@ -17,6 +46,20 @@
   });
   preference.addEventListener('change', updateThemeLabel);
   updateThemeLabel();
+
+  const relatedSites = document.querySelector('#related-sites');
+  document.addEventListener('click', (event) => {
+    if (relatedSites && !relatedSites.contains(event.target)) relatedSites.open = false;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && relatedSites?.open) {
+      relatedSites.open = false;
+      relatedSites.querySelector('summary').focus();
+    }
+  });
+  relatedSites?.addEventListener('focusout', (event) => {
+    if (event.relatedTarget && !relatedSites.contains(event.relatedTarget)) relatedSites.open = false;
+  });
 
   const dialog = document.querySelector('[data-image-dialog]');
   let savedOverflow = '';
@@ -92,7 +135,7 @@
     if (issue.status === 'sample') meta.append(create('span', 'sample-label', '샘플'));
     const heading = create('h2');
     const link = create('a', '', issue.title);
-    link.href = `/articles/${issue.slug}/`;
+    link.href = `/${issue.date}/${issue.slug}/`;
     heading.append(link);
     const tags = create('div', 'tags');
     tags.setAttribute('aria-label', '글의 태그');

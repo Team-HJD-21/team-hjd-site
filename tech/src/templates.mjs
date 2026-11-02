@@ -1,5 +1,6 @@
 export const SITE_URL = 'https://tech.teamhjd.com';
 export const SITE_NAME = '겜붕이의 노트';
+export const issuePath = issue => `/${issue.date}/${issue.slug}/`;
 
 export function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -26,13 +27,13 @@ export function tagLinks(ids, tags, { limit = ids.length } = {}) {
 export function issueCard(issue, tags) {
   return `<article class="issue-card">
     <div class="meta"><time datetime="${escapeHtml(issue.date)}">${formatDate(issue.date)}</time>${issue.status === 'sample' ? '<span class="sample-label">샘플</span>' : ''}</div>
-    <h2><a href="/articles/${escapeHtml(issue.slug)}/">${escapeHtml(issue.title)}</a></h2>
+    <h2><a href="${issuePath(issue)}">${escapeHtml(issue.title)}</a></h2>
     <p>${escapeHtml(issue.description)}</p>
     <div class="tags" aria-label="글의 태그">${tagLinks(issue.tags, tags, { limit: 6 })}</div>
   </article>`;
 }
 
-export function page({ title, description, path = '/', active, content, math = false, data = null, articleImage = null }) {
+export function page({ title, description, path = '/', active, content, math = false, data = null, articleImage = null, footer = '' }) {
   const canonical = `${SITE_URL}${path}`;
   const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} · ${SITE_NAME}`;
   return `<!doctype html>
@@ -44,7 +45,7 @@ export function page({ title, description, path = '/', active, content, math = f
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#fcfbf8" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#10191b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#080f17" media="(prefers-color-scheme: dark)">
   <link rel="canonical" href="${escapeHtml(canonical)}">
   <meta property="og:type" content="${active === 'article' ? 'article' : 'website'}">
   <meta property="og:locale" content="ko_KR">
@@ -54,10 +55,13 @@ export function page({ title, description, path = '/', active, content, math = f
   <meta property="og:url" content="${escapeHtml(canonical)}">
   <meta property="og:image" content="${SITE_URL}${escapeHtml(articleImage || '/assets/brand/teamhjd-original.png')}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/assets/brand/teamhjd-original.png">
+  <link rel="icon" href="/assets/favicons/v1/notes/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/v1/notes/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" sizes="any" href="/assets/favicons/v1/notes/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/v1/notes/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" title="겜붕이의 노트" href="/feed.xml">
   <script>document.documentElement.dataset.theme='dark';try{const t=localStorage.getItem('frame-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="/assets/teamhjd.css">
   <link rel="stylesheet" href="/assets/styles.css">
   ${math ? '<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">' : ''}
   <script src="/assets/app.js" defer></script>
@@ -69,13 +73,14 @@ export function page({ title, description, path = '/', active, content, math = f
     <nav class="site-nav" aria-label="주 메뉴">
       <a href="/"${active === 'index' ? ' aria-current="page"' : ''}>글 목록</a>
       <a href="/tags/"${active === 'tags' ? ' aria-current="page"' : ''}>태그 검색</a>
+      <a class="nav-subscribe" href="/subscribe/"${active === 'subscribe' ? ' aria-current="page"' : ''}>구독하기</a>
       <button class="theme-toggle" type="button" aria-label="화면 색상 바꾸기" title="화면 색상 바꾸기" data-theme-toggle>
         <svg class="theme-icon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none"/></svg>
       </button>
     </nav>
   </header>
   <main id="main-content">${content}</main>
-  <footer class="site-footer"><a href="/">${SITE_NAME}</a><a class="publisher-link" href="https://teamhjd.com/" target="_blank" rel="noopener noreferrer">by TeamHJD ↗</a><a href="#page-top">맨 위로 ↑</a></footer>
+  ${footer}
   <dialog class="image-dialog" aria-label="그림 확대 보기" data-image-dialog>
     <div class="image-dialog-toolbar"><a href="#" target="_blank" rel="noopener noreferrer" data-image-original>원본 열기 ↗</a><form method="dialog"><button type="submit" autofocus aria-label="확대한 그림 닫기">닫기 ×</button></form></div>
     <div class="image-dialog-viewport"><img alt="" data-image-full></div>
@@ -89,9 +94,29 @@ export function page({ title, description, path = '/', active, content, math = f
 
 export function indexContent(issues, tags) {
   return `<div class="archive-shell">
-    <header class="archive-heading"><p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> GAME DEVELOPMENT NOTES</p><h1>원리를 읽고,<br><em>구현으로 이어가는 노트.</em></h1><p>렌더링부터 엔진, 네트워킹까지.<br>게임을 만드는 기술을 하나씩 깊이 읽습니다.</p></header>
+    <header class="archive-heading"><h1>매일 하나씩 알아가는<br><em>호기심 가득한 게임 개발.</em></h1></header>
     <div class="archive-count">글 ${issues.length}개</div>
     <div class="issue-list">${issues.map((issue) => issueCard(issue, tags)).join('')}</div>
+  </div>`;
+}
+
+export function subscribeContent() {
+  return `<div class="archive-shell subscribe-shell">
+    <header class="archive-heading"><h1>구독하기</h1><p>매일 새로운 게임 개발 이야기를 이메일로 받아보세요.</p></header>
+    <section class="subscription-panel" aria-label="이메일 구독 신청">
+      <form class="subscribe-form" action="/api/subscribe" method="post" data-subscribe-form>
+        <label for="subscriber-email">이메일 주소</label>
+        <div class="subscribe-input-row"><input id="subscriber-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com" required><button type="submit">구독하기</button></div>
+        <div class="subscribe-consents">
+          <label><input type="checkbox" name="privacyConsent" required><span><a href="/subscription/privacy/" target="_blank" rel="noopener noreferrer">개인정보 수집·이용</a>에 동의합니다. <small>필수</small></span></label>
+          <label><input type="checkbox" name="emailConsent" required><span>겜붕이의 노트 이메일 수신에 동의합니다. <small>필수</small></span></label>
+          <label><input type="checkbox" name="overseasConsent" required><span><a href="/subscription/privacy/#overseas" target="_blank" rel="noopener noreferrer">개인정보 국외 이전</a>에 동의합니다. <small>필수</small></span></label>
+        </div>
+        <div class="subscribe-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p class="subscribe-note">이메일 확인 후 구독이 시작되며, 메일에서 언제든 해지하실 수 있습니다.</p>
+        <p class="subscribe-status" role="status" aria-live="polite" data-subscribe-status></p>
+      </form>
+    </section>
   </div>`;
 }
 

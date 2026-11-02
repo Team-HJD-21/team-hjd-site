@@ -35,6 +35,7 @@ export function validateMetadata(tags, issues, { today = todayInSeoul() } = {}) 
     if (!['draft', 'scheduled', 'sample', 'published'].includes(issue.status)) fail(`Invalid status: ${issue.id}`);
     if (issue.status === 'scheduled' && issue.publishAt !== `${issue.date}T12:00:00+09:00`) fail(`Scheduled issue requires publishAt at noon Asia/Seoul: ${issue.id}`);
     if (issue.status === 'published' && issue.date > today) fail(`Future issue must remain draft: ${issue.id}`);
+    if (issue.publishedAt !== undefined && (!Number.isFinite(Date.parse(issue.publishedAt)) || !/^\d{4}-\d{2}-\d{2}T/.test(issue.publishedAt) || new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(issue.publishedAt)) !== issue.date)) fail(`Invalid publishedAt: ${issue.id}`);
     if (issue.source !== `content/issues/${issue.id}.md` || issue.assetDirectory !== `assets/issues/${issue.id}`) fail(`Unexpected source/asset path: ${issue.id}`);
     if (!Array.isArray(issue.tags) || !issue.tags.length || new Set(issue.tags).size !== issue.tags.length || issue.tags.some((id) => !tagIds.has(id))) fail(`Invalid or unknown tags: ${issue.id}`);
     if (issue.coverImage !== undefined && (typeof issue.coverImage !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(issue.coverImage) || !IMAGE.test(issue.coverImage))) fail(`Invalid coverImage: ${issue.id}`);

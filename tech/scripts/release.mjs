@@ -9,8 +9,9 @@ export function planRelease(issues, now = new Date()) {
   const today = `${parts.year}-${parts.month}-${parts.day}`;
   const minutes = Number(parts.hour) * 60 + Number(parts.minute);
   const alreadyPublished = issues.filter((issue) => issue.date === today && issue.status === 'published');
-  if (alreadyPublished.length) return { state: 'already_published', today, ids: [] };
   if (minutes < 720) return { state: 'before_noon', today, ids: [] };
+  if (alreadyPublished.length > 1) throw new Error(`Multiple published issues for ${today}.`);
+  if (alreadyPublished.length) return { state: 'already_published', today, ids: alreadyPublished.map(issue=>issue.id) };
   if (minutes > 750) throw new Error(`Release window ended for ${today}; no previous issue is republished.`);
   const ready = issues.filter((issue) => issue.status === 'scheduled' && issue.date === today && Date.parse(issue.publishAt) <= now.getTime());
   if (ready.length > 1) throw new Error(`Multiple scheduled issues for ${today}; select one issue containing the day's articles.`);
@@ -21,9 +22,9 @@ export async function release({ project, write = false, now = new Date() }) {
   const { allIssues } = await loadContent(project);
   const plan = planRelease(allIssues, now);
   if (write && plan.state === 'not_ready') throw new Error(`No scheduled issue is ready for ${plan.today}.`);
-  const changed = write && plan.ids.length > 0;
+  const changed = write && plan.state === 'ready';
   if (changed) {
-    for (const issue of allIssues) if (plan.ids.includes(issue.id)) issue.status = 'published';
+    for (const issue of allIssues) if (plan.ids.includes(issue.id)) { issue.status = 'published'; issue.publishedAt = now.toISOString(); }
     await writeFile(join(project, 'content/issues.json'), `${JSON.stringify(allIssues, null, 2)}\n`);
   }
   return { ...plan, changed, dryRun: !write };

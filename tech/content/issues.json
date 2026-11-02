@@ -2,16 +2,29 @@
   {
     "id": "frame-2026-11-02",
     "slug": "client-side-prediction",
-    "title": "먼저 움직이고, 과거를 고친다",
-    "description": "클라이언트 예측과 서버 보정. 입력을 다시 실행하는 이유부터 상태 기록, 재실행 비용, Unity와 Unreal의 구현까지 살펴본다.",
-    "question": "서버의 답이 아직 도착하지 않았는데, 내 캐릭터는 어떻게 즉시 움직일까?",
-    "summary": "내 입력을 즉시 계산해 조작에 반응하고, 서버가 확인한 과거 상태에서 미확인 입력을 다시 적용해 현재를 고친다. 이 과정에서 무엇을 저장하고 무엇을 다시 실행하는지가 구현과 비용을 결정한다.",
-    "date": "2026-11-02",
-    "status": "sample",
+    "title": "먼저 움직이고, 과거를 고칩니다",
+    "description": "서버 응답 전에도 캐릭터가 바로 움직이는 이유를 알아봅니다. 입력 101~103의 작은 예제로 클라이언트 예측과 서버 보정을 따라가 봅니다.",
+    "question": "서버의 답이 아직 도착하지 않았는데, 내 캐릭터는 어떻게 바로 움직일까요?",
+    "summary": "내 입력을 먼저 계산하면 조작에 바로 반응할 수 있습니다. 서버의 결과가 도착하면 확인된 과거 상태에서 남은 입력을 다시 실행해 현재를 맞춥니다. 오늘은 이 과정을 숫자와 그림으로 살펴봅니다.",
+    "date": "2026-11-03",
+    "status": "published",
     "source": "content/issues/frame-2026-11-02.md",
     "assetDirectory": "assets/issues/frame-2026-11-02",
     "coverImage": "01_prediction_timeline.png",
     "format": "기술 해설",
-    "tags": ["game-networking", "engine-internals", "client-side-prediction", "server-reconciliation", "resimulation", "rollback-netcode", "lag-compensation", "determinism", "unreal-engine", "unity", "technical-explainer"]
+    "tags": [
+      "game-networking",
+      "engine-internals",
+      "client-side-prediction",
+      "server-reconciliation",
+      "resimulation",
+      "rollback-netcode",
+      "lag-compensation",
+      "determinism",
+      "unreal-engine",
+      "unity",
+      "technical-explainer"
+    ],
+    "publishedAt": "2026-11-02T19:23:31.714Z"
   }
 ]

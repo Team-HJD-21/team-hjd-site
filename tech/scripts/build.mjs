@@ -6,9 +6,11 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateRawSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
-import { SITE_URL, SITE_NAME, escapeHtml, page, indexContent, searchContent, articleContent } from '../src/templates.mjs';
+import { SITE_URL, SITE_NAME, issuePath, escapeHtml, page as renderPage, indexContent, searchContent, articleContent, subscribeContent } from '../src/templates.mjs';
 import { loadContent } from './content.mjs';
 import { buildBrand } from './brand.mjs';
+import { loadCompanyBrand } from './company-brand.mjs';
+import { subscriptionPages } from '../src/subscription-pages.mjs';
 
 const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(project, 'dist');
@@ -18,6 +20,8 @@ if (!existsSync(katexPath)) throw new Error('Vendored KaTeX is missing from asse
 const katex = require(katexPath);
 
 const { tags, issues, documents } = await loadContent(project);
+const company = await loadCompanyBrand(project);
+const page = (options) => renderPage({ ...options, footer: company.footer });
 
 // Rebuild only the generated directory. Source, hosting metadata and credentials stay untouched.
 await mkdir(dist, { recursive: true });
@@ -25,12 +29,14 @@ await mkdir(dist, { recursive: true });
 for (const name of await readdir(dist)) await rm(join(dist, name), { recursive: true, force: true });
 await mkdir(join(dist, 'assets'), { recursive: true });
 // Only shared brand/vendor assets and each public issue are copied; drafts stay private.
-for (const directory of ['brand', 'vendor']) await cp(join(project, 'assets', directory), join(dist, 'assets', directory), { recursive: true });
+for (const directory of ['brand', 'vendor', 'favicons']) await cp(join(project, 'assets', directory), join(dist, 'assets', directory), { recursive: true });
 for (const issue of issues) if (documents.get(issue.id).assets.length) await cp(join(project, issue.assetDirectory), join(dist, issue.assetDirectory), { recursive: true });
 await rm(join(dist, 'assets/vendor/katex/katex.min.cjs'), { force: true });
 await buildBrand(project, join(dist, 'assets/brand'));
 await cp(join(project, 'src/styles.css'), join(dist, 'assets/styles.css'));
 await cp(join(project, 'src/app.js'), join(dist, 'assets/app.js'));
+await writeFile(join(dist, 'assets/teamhjd.css'), company.stylesheet);
+await writeFile(join(dist, 'assets/brand/teamhjd-wordmark.png'), company.wordmark);
 await cp(join(dist, 'assets/brand/favicon.svg'), join(dist, 'favicon.svg'));
 
 async function writePage(path, html) {
@@ -42,6 +48,8 @@ async function writePage(path, html) {
 const publicIssues = issues.map(({ id, slug, title, description, date, status, tags }) => ({ id, slug, title, description, date, status, tags }));
 await writePage('index.html', page({ title: SITE_NAME, description: '게임 클라이언트 개발을 위한 기술 이야기. 렌더링, 엔진, 네트워킹의 원리부터 구현까지 읽습니다.', active: 'index', content: indexContent(issues, tags) }));
 await writePage('tags/index.html', page({ title: '태그로 찾기', description: '한글과 영어 태그로 게임 개발 기술 글을 찾아보세요.', path: '/tags/', active: 'tags', content: searchContent(issues, tags), data: { tags, issues: publicIssues } }));
+await writePage('subscribe/index.html', page({title:'구독하기',description:'겜붕이의 노트를 이메일로 받아보세요.',path:'/subscribe/',active:'subscribe',content:subscribeContent()}));
+for (const [name, detail] of Object.entries(subscriptionPages)) await writePage(`subscription/${name}/index.html`, page({title:detail.title,description:detail.title,path:`/subscription/${name}/`,content:detail.content}));
 
 // A small deterministic ZIP writer keeps the downloadable source and figures in sync.
 const crcTable = Uint32Array.from({ length: 256 }, (_, n) => {
@@ -125,7 +133,7 @@ for (const issue of issues) {
     return `<span class="math ${mode}">${katex.renderToString(decoded, { displayMode: mode === 'display', throwOnError: true, output: 'htmlAndMathml', strict: 'warn' })}</span>`;
   });
   const firstImage = issue.coverImage ? `/${issue.assetDirectory}/${issue.coverImage}` : '/assets/brand/teamhjd-original.png';
-  await writePage(`articles/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: `/articles/${issue.slug}/`, active: 'article', math: true, articleImage: firstImage, content: articleContent(issue, tags, body, toc) }));
+  await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, articleImage: firstImage, content: articleContent(issue, tags, body, toc) }));
   const downloads = join(dist, 'downloads');
   await mkdir(downloads, { recursive: true });
   // Standalone Markdown works outside the ZIP; ZIP retains portable relative paths.
@@ -138,9 +146,10 @@ for (const issue of issues) {
 
 await writePage('404.html', page({ title: '글을 찾을 수 없습니다', description: '요청한 페이지를 찾을 수 없습니다.', path: '/404.html', content: '<div class="archive-shell not-found"><header class="archive-heading"><h1>글을 찾을 수 없습니다</h1><p>주소를 확인하거나 글 목록에서 찾아보세요.</p></header><a href="/">글 목록으로 돌아가기 →</a></div>' }));
 await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
-await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/', '/tags/', ...issues.map((issue) => `/articles/${issue.slug}/`)].map((path) => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>`);
+await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/', '/tags/', '/subscribe/', ...issues.map(issuePath)].map((path) => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>`);
+await writeFile(join(dist, '_redirects'), issues.map(issue=>`/articles/${issue.slug}/ ${issuePath(issue)} 301`).join('\n')+'\n');
 const published = issues.filter((issue) => issue.status === 'published');
-await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}/articles/${issue.slug}/` })) }, null, 2));
-await writeFile(join(dist, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${SITE_NAME}</title><link>${SITE_URL}/</link><description>게임 클라이언트 개발자를 위한 기술 노트</description><language>ko</language>${published.map((issue) => `<item><title>${escapeHtml(issue.title)}</title><link>${SITE_URL}/articles/${issue.slug}/</link><guid>${SITE_URL}/articles/${issue.slug}/</guid><pubDate>${new Date(`${issue.date}T12:00:00+09:00`).toUTCString()}</pubDate><description>${escapeHtml(issue.description)}</description></item>`).join('')}</channel></rss>`);
-await writeFile(join(dist, '_headers'), '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Content-Security-Policy: frame-ancestors \'self\'; object-src \'none\'; base-uri \'self\'\n');
+await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}${issuePath(issue)}` })) }, null, 2));
+await writeFile(join(dist, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${SITE_NAME}</title><link>${SITE_URL}/</link><description>게임 클라이언트 개발자를 위한 기술 노트</description><language>ko</language>${published.map((issue) => `<item><title>${escapeHtml(issue.title)}</title><link>${SITE_URL}${issuePath(issue)}</link><guid>${SITE_URL}${issuePath(issue)}</guid><pubDate>${new Date(issue.publishedAt || issue.publishAt || `${issue.date}T12:00:00+09:00`).toUTCString()}</pubDate><description>${escapeHtml(issue.description)}</description></item>`).join('')}</channel></rss>`);
+await writeFile(join(dist, '_headers'), '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Content-Security-Policy: frame-ancestors \'self\'; object-src \'none\'; base-uri \'self\'\n/subscription/*\n  Referrer-Policy: no-referrer\n  X-Robots-Tag: noindex\n  Cache-Control: no-store\n');
 console.log(`Built ${issues.length} article(s), archive, tag search and synchronized downloads in dist/.`);

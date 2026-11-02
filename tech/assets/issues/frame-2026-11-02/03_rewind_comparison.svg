@@ -26,7 +26,7 @@ L 1152 597.6
 L 1152 0 
 L 0 0 
 z
-" style="fill: #f7f8fa"/>
+" style="fill: #080f17"/>
   </g>
   <g id="axes_1">
    <g id="patch_2">
@@ -40,7 +40,7 @@ Q 43.2 532.8 43.2 516.96
 L 43.2 167.76 
 Q 43.2 151.92 59.04 151.92 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #ffffff; stroke: #d7dfe8; stroke-linejoin: miter"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #13202c; stroke: #334553; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 66.24 173.52 
@@ -53,7 +53,7 @@ Q 63.36 179.28 63.36 176.4
 L 63.36 176.4 
 Q 63.36 173.52 66.24 173.52 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #127e87"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #71c0c2"/>
    </g>
    <g id="patch_4">
     <path d="M 72 325.44 
@@ -66,17 +66,17 @@ Q 64.08 361.44 64.08 353.52
 L 64.08 333.36 
 Q 64.08 325.44 72 325.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #e8f4f3"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #132f32"/>
    </g>
    <g id="patch_5">
     <path d="M 212.4 363.6 
 Q 212.4 370.08 212.4 374.771146 
-" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #127e87; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #71c0c2; stroke-width: 1.6; stroke-linecap: round"/>
     <path d="M 214.8 369.971146 
 L 212.4 374.771146 
 L 210 369.971146 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #127e87; stroke: #127e87; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #71c0c2; stroke: #71c0c2; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_6">
     <path d="M 72 379.44 
@@ -89,17 +89,17 @@ Q 64.08 415.44 64.08 407.52
 L 64.08 387.36 
 Q 64.08 379.44 72 379.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #e8f4f3"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #132f32"/>
    </g>
    <g id="patch_7">
     <path d="M 212.4 417.6 
 Q 212.4 424.08 212.4 428.771146 
-" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #127e87; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #71c0c2; stroke-width: 1.6; stroke-linecap: round"/>
     <path d="M 214.8 423.971146 
 L 212.4 428.771146 
 L 210 423.971146 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #127e87; stroke: #127e87; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #71c0c2; stroke: #71c0c2; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_8">
     <path d="M 72 433.44 
@@ -112,7 +112,7 @@ Q 64.08 469.44 64.08 461.52
 L 64.08 441.36 
 Q 64.08 433.44 72 433.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #e8f4f3"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #132f32"/>
    </g>
    <g id="patch_9">
     <path d="M 422.64 151.92 
@@ -125,7 +125,7 @@ Q 406.8 532.8 406.8 516.96
 L 406.8 167.76 
 Q 406.8 151.92 422.64 151.92 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #ffffff; stroke: #d7dfe8; stroke-linejoin: miter"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #13202c; stroke: #334553; stroke-linejoin: miter"/>
    </g>
    <g id="patch_10">
     <path d="M 429.84 173.52 
@@ -138,7 +138,7 @@ Q 426.96 179.28 426.96 176.4
 L 426.96 176.4 
 Q 426.96 173.52 429.84 173.52 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #6065a8"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #a5a5df"/>
    </g>
    <g id="patch_11">
     <path d="M 435.6 325.44 
@@ -151,17 +151,17 @@ Q 427.68 361.44 427.68 353.52
 L 427.68 333.36 
 Q 427.68 325.44 435.6 325.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #f0f0fa"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #242b40"/>
    </g>
    <g id="patch_12">
     <path d="M 576 363.6 
 Q 576 370.08 576 374.771146 
-" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #6065a8; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #a5a5df; stroke-width: 1.6; stroke-linecap: round"/>
     <path d="M 578.4 369.971146 
 L 576 374.771146 
 L 573.6 369.971146 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #6065a8; stroke: #6065a8; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #a5a5df; stroke: #a5a5df; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_13">
     <path d="M 435.6 379.44 
@@ -174,17 +174,17 @@ Q 427.68 415.44 427.68 407.52
 L 427.68 387.36 
 Q 427.68 379.44 435.6 379.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #f0f0fa"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #242b40"/>
    </g>
    <g id="patch_14">
     <path d="M 576 417.6 
 Q 576 424.08 576 428.771146 
-" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #6065a8; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #a5a5df; stroke-width: 1.6; stroke-linecap: round"/>
     <path d="M 578.4 423.971146 
 L 576 428.771146 
 L 573.6 423.971146 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #6065a8; stroke: #6065a8; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #a5a5df; stroke: #a5a5df; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_15">
     <path d="M 435.6 433.44 
@@ -197,7 +197,7 @@ Q 427.68 469.44 427.68 461.52
 L 427.68 441.36 
 Q 427.68 433.44 435.6 433.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #f0f0fa"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #242b40"/>
    </g>
    <g id="patch_16">
     <path d="M 786.24 151.92 
@@ -210,7 +210,7 @@ Q 770.4 532.8 770.4 516.96
 L 770.4 167.76 
 Q 770.4 151.92 786.24 151.92 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #ffffff; stroke: #d7dfe8; stroke-linejoin: miter"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #13202c; stroke: #334553; stroke-linejoin: miter"/>
    </g>
    <g id="patch_17">
     <path d="M 793.44 173.52 
@@ -223,7 +223,7 @@ Q 790.56 179.28 790.56 176.4
 L 790.56 176.4 
 Q 790.56 173.52 793.44 173.52 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #d36d36"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #efb275"/>
    </g>
    <g id="patch_18">
     <path d="M 799.2 325.44 
@@ -236,17 +236,17 @@ Q 791.28 361.44 791.28 353.52
 L 791.28 333.36 
 Q 791.28 325.44 799.2 325.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #fcf0e9"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #35291f"/>
    </g>
    <g id="patch_19">
     <path d="M 939.6 363.6 
 Q 939.6 370.08 939.6 374.771146 
-" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #d36d36; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #efb275; stroke-width: 1.6; stroke-linecap: round"/>
     <path d="M 942 369.971146 
 L 939.6 374.771146 
 L 937.2 369.971146 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #d36d36; stroke: #d36d36; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #efb275; stroke: #efb275; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_20">
     <path d="M 799.2 379.44 
@@ -259,17 +259,17 @@ Q 791.28 415.44 791.28 407.52
 L 791.28 387.36 
 Q 791.28 379.44 799.2 379.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #fcf0e9"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #35291f"/>
    </g>
    <g id="patch_21">
     <path d="M 939.6 417.6 
 Q 939.6 424.08 939.6 428.771146 
-" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #d36d36; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: none; stroke: #efb275; stroke-width: 1.6; stroke-linecap: round"/>
     <path d="M 942 423.971146 
 L 939.6 428.771146 
 L 937.2 423.971146 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #d36d36; stroke: #d36d36; stroke-width: 1.6; stroke-linecap: round"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #efb275; stroke: #efb275; stroke-width: 1.6; stroke-linecap: round"/>
    </g>
    <g id="patch_22">
     <path d="M 799.2 433.44 
@@ -282,11 +282,11 @@ Q 791.28 469.44 791.28 461.52
 L 791.28 441.36 
 Q 791.28 433.44 799.2 433.44 
 z
-" clip-path="url(#p0cc0eac20c)" style="fill: #fcf0e9"/>
+" clip-path="url(#p0cc0eac20c)" style="fill: #35291f"/>
    </g>
    <g id="text_1">
     <!-- 03  /  THREE DIFFERENT REWINDS -->
-    <g style="fill: #127e87" transform="translate(48.96 35.323555) scale(0.125 -0.125)">
+    <g style="fill: #71c0c2" transform="translate(48.96 35.323555) scale(0.125 -0.125)">
      <defs>
       <path id="NotoSansKR-Thin-30" d="M 1888 -90 
 Q 1408 -90 1046 188 
@@ -600,7 +600,7 @@ z
    </g>
    <g id="text_2">
     <!-- 무엇을 되돌리는지 보면, 기술이 구분된다 -->
-    <g style="fill: #16243a" transform="translate(48.96 83.915313) scale(0.29 -0.29)">
+    <g style="fill: #f3f0e8" transform="translate(48.96 83.915313) scale(0.29 -0.29)">
      <defs>
       <path id="NotoSansKR-Thin-bb34" d="M 262 2048 
 L 5626 2048 
@@ -1322,7 +1322,7 @@ z
    </g>
    <g id="text_3">
     <!-- 늦게 알게 된 정보와 다시 수행하는 작업을 함께 확인하세요. -->
-    <g style="fill: #637187" transform="translate(48.96 118.32) scale(0.16 -0.16)">
+    <g style="fill: #a2afab" transform="translate(48.96 118.32) scale(0.16 -0.16)">
      <defs>
       <path id="NotoSansKR-Thin-b2a6" d="M 1024 3744 
 L 4973 3744 
@@ -2293,7 +2293,7 @@ z
    </g>
    <g id="text_4">
     <!-- CLIENT -->
-    <g style="fill: #127e87" transform="translate(64.08 204.23207) scale(0.115 -0.115)">
+    <g style="fill: #71c0c2" transform="translate(64.08 204.23207) scale(0.115 -0.115)">
      <defs>
       <path id="NotoSansKR-Thin-43" d="M 2509 -90 
 Q 2061 -90 1670 67 
@@ -2342,7 +2342,7 @@ z
    </g>
    <g id="text_5">
     <!-- 클라이언트 보정 -->
-    <g style="fill: #16243a" transform="translate(64.08 240.995625) scale(0.24 -0.24)">
+    <g style="fill: #f3f0e8" transform="translate(64.08 240.995625) scale(0.24 -0.24)">
      <defs>
       <path id="NotoSansKR-Thin-d074" d="M 922 5152 
 L 4672 5152 
@@ -2521,7 +2521,7 @@ z
    </g>
    <g id="text_6">
     <!-- 새로 받은 정보 -->
-    <g style="fill: #637187" transform="translate(64.08 272.1225) scale(0.125 -0.125)">
+    <g style="fill: #a2afab" transform="translate(64.08 272.1225) scale(0.125 -0.125)">
      <defs>
       <path id="NotoSansKR-Thin-c0c8" d="M 1491 4768 
 L 1958 4768 
@@ -2704,7 +2704,7 @@ z
    </g>
    <g id="text_7">
     <!-- 서버가 확인한 과거 상태 -->
-    <g style="fill: #127e87" transform="translate(64.08 298.715234) scale(0.17 -0.17)">
+    <g style="fill: #71c0c2" transform="translate(64.08 298.715234) scale(0.17 -0.17)">
      <defs>
       <path id="NotoSansKR-Thin-c11c" d="M 3251 3507 
 L 4813 3507 
@@ -3073,7 +3073,7 @@ z
    </g>
    <g id="text_8">
     <!-- 서버 기준 상태 복원 -->
-    <g style="fill: #127e87" transform="translate(150.081523 347.958008) scale(0.155 -0.155)">
+    <g style="fill: #71c0c2" transform="translate(150.081523 347.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-c900" d="M 2355 4736 
 L 3110 4736 
@@ -3255,7 +3255,7 @@ z
    </g>
    <g id="text_9">
     <!-- 미확인 로컬 입력 재실행 -->
-    <g style="fill: #127e87" transform="translate(135.821523 401.958008) scale(0.155 -0.155)">
+    <g style="fill: #71c0c2" transform="translate(135.821523 401.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-bbf8" d="M 550 4832 
 L 3398 4832 
@@ -3554,7 +3554,7 @@ z
    </g>
    <g id="text_10">
     <!-- 현재 예측 상태 갱신 -->
-    <g style="fill: #127e87" transform="translate(150.081523 455.958008) scale(0.155 -0.155)">
+    <g style="fill: #71c0c2" transform="translate(150.081523 455.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-d604" d="M 4365 5357 
 L 5222 5357 
@@ -3855,7 +3855,7 @@ z
    </g>
    <g id="text_11">
     <!-- 실행: 소유 클라이언트 -->
-    <g style="fill: #637187" transform="translate(151.541367 505.6875) scale(0.135 -0.135)">
+    <g style="fill: #a2afab" transform="translate(151.541367 505.6875) scale(0.135 -0.135)">
      <defs>
       <path id="NotoSansKR-Thin-3a" d="M 922 2464 
 Q 730 2464 598 2598 
@@ -3987,7 +3987,7 @@ z
    </g>
    <g id="text_12">
     <!-- GGPO EXAMPLE -->
-    <g style="fill: #6065a8" transform="translate(427.68 204.23207) scale(0.115 -0.115)">
+    <g style="fill: #a5a5df" transform="translate(427.68 204.23207) scale(0.115 -0.115)">
      <defs>
       <path id="NotoSansKR-Thin-47" d="M 2618 -90 
 Q 1978 -90 1462 192 
@@ -4165,7 +4165,7 @@ z
    </g>
    <g id="text_13">
     <!-- GGPO의 롤백 -->
-    <g style="fill: #16243a" transform="translate(427.68 240.995625) scale(0.24 -0.24)">
+    <g style="fill: #f3f0e8" transform="translate(427.68 240.995625) scale(0.24 -0.24)">
      <defs>
       <path id="NotoSansKR-Thin-c758" d="M 2170 4966 
 Q 2630 4966 3001 4780 
@@ -4317,7 +4317,7 @@ z
    </g>
    <g id="text_14">
     <!-- 새로 받은 정보 -->
-    <g style="fill: #637187" transform="translate(427.68 272.1225) scale(0.125 -0.125)">
+    <g style="fill: #a2afab" transform="translate(427.68 272.1225) scale(0.125 -0.125)">
      <use xlink:href="#NotoSansKR-Thin-c0c8"/>
      <use xlink:href="#NotoSansKR-Thin-b85c" transform="translate(91.999985 0)"/>
      <use xlink:href="#NotoSansKR-Thin-20" transform="translate(183.999969 0)"/>
@@ -4330,7 +4330,7 @@ z
    </g>
    <g id="text_15">
     <!-- 실제로 도착한 상대 입력 -->
-    <g style="fill: #6065a8" transform="translate(427.68 298.715234) scale(0.17 -0.17)">
+    <g style="fill: #a5a5df" transform="translate(427.68 298.715234) scale(0.17 -0.17)">
      <defs>
       <path id="NotoSansKR-Thin-c81c" d="M 4538 5363 
 L 5350 5363 
@@ -4523,7 +4523,7 @@ z
    </g>
    <g id="text_16">
     <!-- 잘못 추정한 입력 교체 -->
-    <g style="fill: #6065a8" transform="translate(506.551523 347.958008) scale(0.155 -0.155)">
+    <g style="fill: #a5a5df" transform="translate(506.551523 347.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-c798" d="M 1562 4915 
 L 2259 4915 
@@ -4807,7 +4807,7 @@ z
    </g>
    <g id="text_17">
     <!-- 과거 게임 상태 복원 -->
-    <g style="fill: #6065a8" transform="translate(513.681523 401.958008) scale(0.155 -0.155)">
+    <g style="fill: #a5a5df" transform="translate(513.681523 401.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-c784" d="M 4333 5357 
 L 5184 5357 
@@ -4872,7 +4872,7 @@ z
    </g>
    <g id="text_18">
     <!-- 현재까지 재시뮬레이션 -->
-    <g style="fill: #6065a8" transform="translate(502.940508 455.958008) scale(0.155 -0.155)">
+    <g style="fill: #a5a5df" transform="translate(502.940508 455.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-ae4c" d="M 4122 5363 
 L 4973 5363 
@@ -5088,7 +5088,7 @@ z
    </g>
    <g id="text_19">
     <!-- 실행: GGPO 참여 게임 -->
-    <g style="fill: #637187" transform="translate(513.507656 505.6875) scale(0.135 -0.135)">
+    <g style="fill: #a2afab" transform="translate(513.507656 505.6875) scale(0.135 -0.135)">
      <defs>
       <path id="NotoSansKR-Thin-cc38" d="M 1728 4346 
 L 2214 4346 
@@ -5217,7 +5217,7 @@ z
    </g>
    <g id="text_20">
     <!-- SERVER -->
-    <g style="fill: #d36d36" transform="translate(791.28 204.23207) scale(0.115 -0.115)">
+    <g style="fill: #efb275" transform="translate(791.28 204.23207) scale(0.115 -0.115)">
      <defs>
       <path id="NotoSansKR-Thin-56" d="M 1414 0 
 L -32 4742 
@@ -5245,7 +5245,7 @@ z
    </g>
    <g id="text_21">
     <!-- 서버 지연 보상 -->
-    <g style="fill: #16243a" transform="translate(791.28 240.995625) scale(0.24 -0.24)">
+    <g style="fill: #f3f0e8" transform="translate(791.28 240.995625) scale(0.24 -0.24)">
      <defs>
       <path id="NotoSansKR-Thin-c5f0" d="M 2938 4538 
 L 4685 4538 
@@ -5319,7 +5319,7 @@ z
    </g>
    <g id="text_22">
     <!-- 새로 받은 정보 -->
-    <g style="fill: #637187" transform="translate(791.28 272.1225) scale(0.125 -0.125)">
+    <g style="fill: #a2afab" transform="translate(791.28 272.1225) scale(0.125 -0.125)">
      <use xlink:href="#NotoSansKR-Thin-c0c8"/>
      <use xlink:href="#NotoSansKR-Thin-b85c" transform="translate(91.999985 0)"/>
      <use xlink:href="#NotoSansKR-Thin-20" transform="translate(183.999969 0)"/>
@@ -5332,7 +5332,7 @@ z
    </g>
    <g id="text_23">
     <!-- 판정에 필요한 과거 시점 -->
-    <g style="fill: #d36d36" transform="translate(791.28 298.715234) scale(0.17 -0.17)">
+    <g style="fill: #efb275" transform="translate(791.28 298.715234) scale(0.17 -0.17)">
      <defs>
       <path id="NotoSansKR-Thin-d310" d="M 378 4877 
 L 3546 4877 
@@ -5561,7 +5561,7 @@ z
    </g>
    <g id="text_24">
     <!-- 상대의 과거 상태 적용 -->
-    <g style="fill: #d36d36" transform="translate(870.151523 347.958008) scale(0.155 -0.155)">
+    <g style="fill: #efb275" transform="translate(870.151523 347.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-c801" d="M 1632 4768 
 L 2323 4768 
@@ -5703,7 +5703,7 @@ z
    </g>
    <g id="text_25">
     <!-- 그 상태로 명중 여부 판정 -->
-    <g style="fill: #d36d36" transform="translate(861.262031 401.958008) scale(0.155 -0.155)">
+    <g style="fill: #efb275" transform="translate(861.262031 401.958008) scale(0.155 -0.155)">
      <defs>
       <path id="NotoSansKR-Thin-adf8" d="M 813 4819 
 L 4563 4819 
@@ -5908,7 +5908,7 @@ z
    </g>
    <g id="text_26">
     <!-- 현재 상태 복원 -->
-    <g style="fill: #d36d36" transform="translate(893.301016 455.958008) scale(0.155 -0.155)">
+    <g style="fill: #efb275" transform="translate(893.301016 455.958008) scale(0.155 -0.155)">
      <use xlink:href="#NotoSansKR-Thin-d604"/>
      <use xlink:href="#NotoSansKR-Thin-c7ac" transform="translate(91.999985 0)"/>
      <use xlink:href="#NotoSansKR-Thin-20" transform="translate(183.999969 0)"/>
@@ -5921,7 +5921,7 @@ z
    </g>
    <g id="text_27">
     <!-- 실행: 판정을 맡는 서버 -->
-    <g style="fill: #637187" transform="translate(877.228945 505.6875) scale(0.135 -0.135)">
+    <g style="fill: #a2afab" transform="translate(877.228945 505.6875) scale(0.135 -0.135)">
      <defs>
       <path id="NotoSansKR-Thin-b9e1" d="M 531 4902 
 L 3226 4902 
@@ -5986,7 +5986,7 @@ z
    </g>
    <g id="text_28">
     <!-- 대표적인 구현을 비교한 개념도입니다. 일반적인 롤백 기법의 연결 방식이나 복원 범위를 한 가지로 제한하지 않습니다. -->
-    <g style="fill: #637187" transform="translate(50.4 569.4825) scale(0.125 -0.125)">
+    <g style="fill: #a2afab" transform="translate(50.4 569.4825) scale(0.125 -0.125)">
      <defs>
       <path id="NotoSansKR-Thin-d45c" d="M 1728 2150 
 L 2330 2150 

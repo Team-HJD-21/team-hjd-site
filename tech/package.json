@@ -8,10 +8,11 @@
     "build": "node scripts/build.mjs",
     "validate": "node scripts/validate.mjs",
     "test:content": "node --test scripts/content.test.mjs scripts/release.test.mjs",
+    "test:subscriptions": "node --test src/subscriptions.test.mjs",
     "build:cloudflare": "node scripts/cloudflare-build.mjs",
     "release:check": "node scripts/release.mjs --check"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.16"
   }
 }

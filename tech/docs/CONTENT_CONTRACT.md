@@ -2,6 +2,8 @@
 
 기준: 2026-11-03, Asia/Seoul. 저장소 `Team-HJD-21/team-hjd-site`, 소스 루트 `tech/`.
 
+먼저 [EDITORIAL.md](EDITORIAL.md)를 읽어 주세요. 독자에게 친숙한 ‘~입니다’, ‘~까요?’ 말투를 사용합니다. 초기 원고의 난이도 10을 기준으로 약 8을 목표로 하며, 작은 예제와 필요한 순서의 용어 설명으로 핵심 원리를 전달합니다. 직접 제작하는 그림은 다크 모드가 기준입니다. 공개 원고는 모두 정식 글이며 sample 상태의 새 글은 만들지 않습니다. 아래 상태 목록의 sample은 이전 자료 호환 용도입니다.
+
 ## 한 호의 파일
 
 1. `content/issues/<id>.md`: UTF-8 전체 원고.
@@ -15,8 +17,8 @@
   "slug": "example-topic",
   "title": "이번 글의 제목",
   "description": "목록과 검색 결과에서 읽을 소개",
-  "question": "이번 글이 답할 구체적인 질문은 무엇인가?",
-  "summary": "질문에 대한 핵심 답변과 구현에서 확인할 내용.",
+  "question": "이번 글에서 함께 알아볼 질문은 무엇일까요?",
+  "summary": "질문의 답을 작은 예제와 실제 구현으로 알아봅니다.",
   "date": "2026-11-04",
   "status": "draft",
   "source": "content/issues/note-2026-11-04-example-topic.md",
@@ -30,6 +32,8 @@
 예제는 발행 자료가 아니다. 태그는 실제 사전에 있는 ID를 골라야 한다. `coverImage`는 선택이며 있으면 해당 폴더에 실제 파일이 있어야 한다. `format`은 선택이며 기본값은 `기술 해설`이다.
 
 ID와 slug는 소문자 영문·숫자·단어 사이 하이픈을 사용한다. ID는 80자 이하. 초안을 포함해 ID와 slug가 각각 고유해야 한다. source와 assetDirectory는 위 규칙에서 벗어날 수 없다. 올바른 실제 달력 날짜를 사용하며 `published`는 한국 날짜 기준 미래 날짜가 될 수 없다.
+
+공개 글 주소는 `https://tech.teamhjd.com/YYYY-MM-DD/<slug>/`입니다. 날짜는 metadata.date를 사용합니다. 목록·검색·canonical·RSS·메일이 모두 같은 경로를 사용하며 이전 `/articles/<slug>/` 주소는 새 주소로 301 이동합니다. 기존 공개 호의 날짜와 slug를 임의로 바꾸지 않습니다.
 
 상태는 `draft`, `scheduled`, `sample`, `published` 중 하나다. draft와 scheduled는 검증하지만 웹·다운로드·공개 자산에 포함하지 않는다. sample은 샘플 표시와 함께 웹에만 공개하며 RSS·발행 매니페스트에서 제외한다. published만 실제 발행 기록에 들어간다. 공개 Git의 draft/scheduled는 비공개 저장이 아니다. 민감한 초안은 이 저장소에 넣지 않는다.
 
@@ -100,6 +104,6 @@ npm run test:content
 npm run build
 ```
 
-Node.js 20 이상, Pandoc이 필요하다. 선택적으로 `PANDOC_PATH`에 pandoc 실행 파일의 절대 경로를 넣을 수 있다. npm 런타임 의존성은 없다.
+Node.js 22 이상, Pandoc이 필요합니다. 선택적으로 `PANDOC_PATH`에 pandoc 실행 파일의 절대 경로를 넣을 수 있습니다. npm 런타임 의존성은 없습니다. 구독 서버 검사에는 Node의 내장 SQLite를 사용하며 운영 서버는 Cloudflare D1을 사용합니다.
 
 산출물은 `dist/`뿐이다. `/publication.json`은 published 호만 담는 공개 JSON이고, `/feed.xml`은 published 호만 담는 RSS다. 메일 수신자나 발송 결과는 이 파일에 넣지 않는다. 검증 성공, 빌드 성공, CI 성공, 운영 URL 반영, 이메일 수신은 서로 다른 상태다.
