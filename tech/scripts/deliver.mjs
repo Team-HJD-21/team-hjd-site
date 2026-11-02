@@ -8,7 +8,12 @@ async function oidcToken(){
  console.log(`::add-mask::${value}`);return value;
 }
 if(process.argv.includes('--check')){
- const response=await fetch(`${site}/api/internal/check`,{method:'POST',headers:{Authorization:`Bearer ${await oidcToken()}`,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(30000)});
+ const token=await oidcToken();
+ const claims=JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString());
+ const header=JSON.parse(Buffer.from(token.split('.')[0],'base64url').toString());
+ const {verifyActionsToken}=await import('../src/subscriptions.mjs');
+ console.log(JSON.stringify({oidcDiagnostics:{algorithm:header.alg,audience:claims.aud,repository:claims.repository,subject:claims.sub,ref:claims.ref,workflow:claims.workflow_ref,lifetime:claims.exp-claims.iat,notBeforeDelta:claims.nbf-Date.now()/1000,expiresIn:claims.exp-Date.now()/1000,localVerification:await verifyActionsToken(token)}}));
+ const response=await fetch(`${site}/api/internal/check`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(30000)});
  console.log(JSON.stringify(await response.json()));
  if(!response.ok)throw new Error(`Authenticated connection check failed (${response.status}).`);
  process.exit(0);
