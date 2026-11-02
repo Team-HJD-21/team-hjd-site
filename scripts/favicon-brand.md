@@ -40,6 +40,7 @@
 - 기존과 다른 버전 URL을 사용해 브라우저의 favicon 캐시와 구분한다. 기존 아이콘 캐시를 강제로 삭제할 수 있다고 주장하지 않는다.
 - SVG `image/svg+xml`, PNG `image/png`, ICO `image/x-icon` 또는 `image/vnd.microsoft.icon`으로 제공한다. 로컬 preview-site.mjs의 SVG/ICO MIME 누락을 이 작업에서 수정했다.
 - `manifest.json`에 모든 파일의 SHA256/크기와 원본 SHA256이 있다. 담당자는 적용 후 파일 해시·head URL·실제 배포 응답을 확인한다.
+- 배포 폴더의 `.gitattributes`도 복사한다. SVG/JSON/HTML은 LF, PNG/ICO는 binary로 고정해 Windows checkout에서도 manifest의 바이트 해시를 유지한다.
 - 전체 비교 화면: `https://teamhjd.com/assets/favicons/v1/preview.html`. 각 서비스가 다른 저장소를 사용해도 동일한 v1 배포본을 사용할 수 있다.
 
 ## 재생성과 검증
