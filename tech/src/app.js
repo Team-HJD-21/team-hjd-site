@@ -11,7 +11,7 @@
   const pendingStorage='gambungi-subscription-pending';
   const subscriptionChannel=typeof BroadcastChannel==='function' ? new BroadcastChannel('gambungi-subscription') : null;
   let pendingSubscription=null, pendingTimer=null, checkingSubscription=false;
-  const warnPending=event=>{event.preventDefault();event.returnValue='';};
+  const warnPending=event=>{event.preventDefault();event.returnValue=true;};
   const savePending=()=>{try{if(pendingSubscription)sessionStorage.setItem(pendingStorage,JSON.stringify(pendingSubscription));else sessionStorage.removeItem(pendingStorage);}catch{}};
   const lockSubscription=locked=>subscribeForm?.querySelectorAll('input:not([type=hidden]),button[type=submit]').forEach(field=>field.disabled=locked);
   const finishPending=(confirmed,message)=>{
