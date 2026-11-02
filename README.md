@@ -1,5 +1,7 @@
 # TeamHJD public website
 
+- 공통 브라우저 탭 아이콘: [scripts/favicon-brand.md](scripts/favicon-brand.md). 원본 손그림 로켓을 보존한 7종 서비스 배포본은 `assets/favicons/v1/`, 크기·무결성 검사는 `node scripts/check-favicons.mjs`를 사용합니다.
+
 - Footer ‘관련 사이트’에 [겜붕이의 노트](https://tech.teamhjd.com/)를 연결합니다. 메인·게임·프레스·생성 팀 프로필의 기존 메뉴 범위를 유지하고 고유명은 모든 언어에서 동일하게 표시합니다. 뉴스레터 콘텐츠·배포는 `tech/` 담당 작업에서 관리합니다.
 
 - 팀 프로필 및 관리: [scripts/team-profiles.md](scripts/team-profiles.md). 양현석·황재동·김진태·이영빈·조수빈 프로필을 연결하며, 데이터 수정 후 `node scripts/render-team.mjs`로 생성합니다.

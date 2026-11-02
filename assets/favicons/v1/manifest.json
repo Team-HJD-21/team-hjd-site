@@ -1,0 +1,320 @@
+{
+  "version": "1.0.0",
+  "source": "assets/favicon.png",
+  "sourceSha256": "da8f7548c8c8751bb6a009d0fffbb2c5be53346c73620290603ea2a133440a18",
+  "renderer": "@resvg/resvg-js@2.6.2",
+  "palette": {
+    "accent": "#d9eea6",
+    "ink": "#080f17"
+  },
+  "variants": [
+    {
+      "id": "teamhjd",
+      "name": "TeamHJD",
+      "host": "teamhjd.com",
+      "feature": "Original rocket",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57153,
+          "sha256": "4fd089a138e460a9c620591a3e42e27ca0607a2a0b38c18b2e6895676f8d0a4c"
+        },
+        "favicon-16.png": {
+          "bytes": 578,
+          "sha256": "248df6be333c16ef2e7426b00ab5a582e83913d04078e2c0efbca1b7d9c98977"
+        },
+        "favicon-32.png": {
+          "bytes": 1611,
+          "sha256": "76d8d0beb490a3df371c6e98fd9eee24e9729823ec61fd1460788c979442bcfd"
+        },
+        "favicon-48.png": {
+          "bytes": 3064,
+          "sha256": "9b5b20768d03c2e63fc7c9fb240272db1709cdda79241fa7c19c4c96316afb08"
+        },
+        "favicon-64.png": {
+          "bytes": 5108,
+          "sha256": "8aa75b4e09a56b068788c9e96a816f633dda3c9cb5efb75937c3e4d32847cdd9"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 30073,
+          "sha256": "493ed80754b33aa3c483db1877cba6e01b3099a8c323cb12056ac9f256482d15"
+        },
+        "favicon-192.png": {
+          "bytes": 33265,
+          "sha256": "213f9b63e298b481c9a8b4ebc4a8c1dcb5db7e6d0bc4e053a7effacacda740db"
+        },
+        "favicon-512.png": {
+          "bytes": 170220,
+          "sha256": "0c0b76cddfd9bc203f2ee6abb3dc1d1af339fdac15832055123964013dcea4a0"
+        },
+        "favicon.ico": {
+          "bytes": 5307,
+          "sha256": "16c315fbfeeac63ea1d55a9bad3fb8699e687e2cb2cd6388f598a6b0aba41193"
+        }
+      }
+    },
+    {
+      "id": "docs",
+      "name": "TeamHJD Docs",
+      "host": "docs.teamhjd.com",
+      "feature": "Open book",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57493,
+          "sha256": "0b80184a448006d703032bbc285f3b09ca07217bc999767f7dc74aaeb9f5ad85"
+        },
+        "favicon-16.png": {
+          "bytes": 755,
+          "sha256": "f2218a044b0f5406c5da25409e68cbecf33e6ea2aa95346f22dd234ddbc602d2"
+        },
+        "favicon-32.png": {
+          "bytes": 2094,
+          "sha256": "811fd7c578a30bef8432f103517a6f199a43e815b40213c2f78a1df991e477c3"
+        },
+        "favicon-48.png": {
+          "bytes": 3692,
+          "sha256": "12ee24205f14019f69d860b8f3b42c940ce1185201bfdacdc610502ff301cbfa"
+        },
+        "favicon-64.png": {
+          "bytes": 5908,
+          "sha256": "2d9ab3f1f9cb2fec55147cd38d206e0bdfb8317314e11c5f3bfb8f77fe2744ff"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 31889,
+          "sha256": "c04816d09b717b244e76ba513f9178900ef51978be74843f9303e2167ec11420"
+        },
+        "favicon-192.png": {
+          "bytes": 35109,
+          "sha256": "c09e6871fe21ddd656cdb849fecddfb621e832dcac8e267dc1dfc14853e33f08"
+        },
+        "favicon-512.png": {
+          "bytes": 173590,
+          "sha256": "de9ce1c87239e1dbc0b084fe55f3bc05566afbfa6e03fef5f59918c4b7b86f27"
+        },
+        "favicon.ico": {
+          "bytes": 6595,
+          "sha256": "5e3f270c92dec26400c6edb76ce9943b0cccc8fc1a2bdd6ebc06819c59001e6c"
+        }
+      }
+    },
+    {
+      "id": "launcher",
+      "name": "Game Test Launcher",
+      "host": "testlauncher.teamhjd.com",
+      "feature": "Play",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57488,
+          "sha256": "4ebf8a5f2fb9efd05646c95eaa48baf00e4f7c57ef311afc10b4bbe7584dc33a"
+        },
+        "favicon-16.png": {
+          "bytes": 751,
+          "sha256": "907c6a21b94cf1d369c4806fb77236cdc7cb3e8ca5310ee0d2de3edffaa76f55"
+        },
+        "favicon-32.png": {
+          "bytes": 2016,
+          "sha256": "049232deb9ec656a4aad7486084e47a1aaba05c570e395872ca50f07cb6aaaec"
+        },
+        "favicon-48.png": {
+          "bytes": 3626,
+          "sha256": "5e3cd8ffebb2d7a09d6970226974a64ab17c3917f6ec0f1a882e5b30f0b2433e"
+        },
+        "favicon-64.png": {
+          "bytes": 5790,
+          "sha256": "3381e9950f19413af9cedcb81b6c65fb533043fc77f8af916a30c3f7e5eed24b"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 31578,
+          "sha256": "6cf664aee7fcb74c3e8767afe40a0547292ab8c748086ea2259c474d2a6da961"
+        },
+        "favicon-192.png": {
+          "bytes": 34796,
+          "sha256": "d238800632b36810ce0917dc4546f19c3c4d09ccdb6d9f2630137a0657f05ab2"
+        },
+        "favicon-512.png": {
+          "bytes": 172317,
+          "sha256": "a4a4645f788abc3ff53cf8eb76a30973e4d5ad571b5dfd1e6dbbf2d2e8414a08"
+        },
+        "favicon.ico": {
+          "bytes": 6447,
+          "sha256": "9c94f49ad8751e6ef0d433fbff1c4139263be702d8c670cc9cd449382d22dfee"
+        }
+      }
+    },
+    {
+      "id": "notes",
+      "name": "겜붕이의 노트",
+      "host": "tech.teamhjd.com",
+      "feature": "Notebook",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57511,
+          "sha256": "5003821e329d0adf1984da4122cfb04c8c9f59b17937089d07ef7b499e213530"
+        },
+        "favicon-16.png": {
+          "bytes": 752,
+          "sha256": "a0d677682846bb96a791cd137e907d62b0a918c312e4bc39f70a49c8cc39a12a"
+        },
+        "favicon-32.png": {
+          "bytes": 2114,
+          "sha256": "6e380fbd54973cb21758fbc088a5c779d0fe9116534e24b62d5e5d3ccf327661"
+        },
+        "favicon-48.png": {
+          "bytes": 3721,
+          "sha256": "5b595cb06e32d52b5b0132ad63e59252116b359a1ac2740ce7b630dbd18fa54c"
+        },
+        "favicon-64.png": {
+          "bytes": 5910,
+          "sha256": "09dcfbc19b7fde1f3871c42d0b5b1f47ad868250ca3a4c9d3acb8868ec344e89"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 31733,
+          "sha256": "c1cdfb6d1192fbc25bf8baa9608fb1d1a8cac6636ad60ca3d8ecdfbe80cc5774"
+        },
+        "favicon-192.png": {
+          "bytes": 35160,
+          "sha256": "d42caeaa3e7525cb1c7b342dd44bee3612b85afd048d357b08b1de62a347585d"
+        },
+        "favicon-512.png": {
+          "bytes": 173356,
+          "sha256": "92295df3e1a42a56bb3a61a0bc8cf619bbebc72c883b036c30a582f4e95e5dfb"
+        },
+        "favicon.ico": {
+          "bytes": 6641,
+          "sha256": "0f71aac8b948d9c0f8426728406061bff98ca7762ea613a5c63110c10c91ef92"
+        }
+      }
+    },
+    {
+      "id": "portfolio",
+      "name": "HyunSeok Portfolio",
+      "host": "hyunseok.teamhjd.com",
+      "feature": "Person",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57493,
+          "sha256": "e6e6a0170efd449d3965bd43a83e97610267391923201de07824be2081f0190e"
+        },
+        "favicon-16.png": {
+          "bytes": 757,
+          "sha256": "684b9c105f49430f2a7bc1778011277a7d605654ac4e0ee5ceb1f3f3501e308e"
+        },
+        "favicon-32.png": {
+          "bytes": 2103,
+          "sha256": "6e0a5daff09efd93dc87c35a076623a8617ae16c5792856f8b22046fdb29b6f9"
+        },
+        "favicon-48.png": {
+          "bytes": 3706,
+          "sha256": "0af59c6682bb678313e2dce307ca924506fa9d693de3ee7954f385cce45f6321"
+        },
+        "favicon-64.png": {
+          "bytes": 5967,
+          "sha256": "dbd92699bc74b4c55c3cfca0f3e76061980b2eb104581f50375fae1ad287e46c"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 32027,
+          "sha256": "cb6ccad2d5aae27231d6602bc186127376c206b44603d948a82cf04264f4ec55"
+        },
+        "favicon-192.png": {
+          "bytes": 35302,
+          "sha256": "3ac73eb22b465fa4640375bb020917f174251c9dc30673d9ba0f1e6d1d9d5425"
+        },
+        "favicon-512.png": {
+          "bytes": 173590,
+          "sha256": "b115d2ec41c003f1daf128e4daec66abcc7a4578707b1220e2727d06c16b9baf"
+        },
+        "favicon.ico": {
+          "bytes": 6620,
+          "sha256": "5549fa9f3b52b0965da3a06a0476729515e8a12689ca33669710c2d7b4b3fa27"
+        }
+      }
+    },
+    {
+      "id": "threadle",
+      "name": "Threadle",
+      "host": "threadle.teamhjd.com",
+      "feature": "Thread branches",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57521,
+          "sha256": "ffa295f20ef72c66acb3ba1b3c9c60fe64200735ba066415147335e4b4a35792"
+        },
+        "favicon-16.png": {
+          "bytes": 758,
+          "sha256": "8e5227d171e315fa8274244ed73a67e3ce0125aed636a7335e438f3c74d7ba14"
+        },
+        "favicon-32.png": {
+          "bytes": 2121,
+          "sha256": "20fe24395bc2f637eb0c71a5a278093abb9c91d74fdd9a4ed5deb3b22ce7edd1"
+        },
+        "favicon-48.png": {
+          "bytes": 3769,
+          "sha256": "a601469c08eb885d546b433eff9471a850cdbd8d2b402a2d8e37e28bce3615f9"
+        },
+        "favicon-64.png": {
+          "bytes": 5979,
+          "sha256": "a7ec2acd1a6b2910ed3c0f4aa832eb7a93a6f0ebe0ea2e8d875ef6335fcb2af4"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 32175,
+          "sha256": "2875fc3d39e9a699d9f3ec1d86b4efdf0f6ecb6a15932f393f16a1afee720c3f"
+        },
+        "favicon-192.png": {
+          "bytes": 35366,
+          "sha256": "0a3dbd19cd3d441cfed5cba1e2b09c39c89d6178e9e2b5c13ade6cf18cf7e63b"
+        },
+        "favicon-512.png": {
+          "bytes": 174042,
+          "sha256": "8527b38e2710dde5aa8250a7b66754f371d9ab6d656b5192321f3b09192908ab"
+        },
+        "favicon.ico": {
+          "bytes": 6702,
+          "sha256": "942dc972444bda4b3e6749fd7968d924ad2c31c1c66658aef22151a89a34b451"
+        }
+      }
+    },
+    {
+      "id": "pixelpin",
+      "name": "PixelPin",
+      "host": "pixelpin.teamhjd.com",
+      "feature": "Color eyedropper",
+      "files": {
+        "favicon.svg": {
+          "bytes": 57478,
+          "sha256": "8bbdbb319d668f9fd05e403c7a576f283f75b6109729b162854c8f92fd839f25"
+        },
+        "favicon-16.png": {
+          "bytes": 755,
+          "sha256": "9e1b3204710b8ca59891ef0fe8144e2b910dc65bdff167b4b6d688c356cfb646"
+        },
+        "favicon-32.png": {
+          "bytes": 2098,
+          "sha256": "fce9dc0e600ff3e7032bb0129a6e402b0d0c16498a3fd2d4e3bcd47d504dee81"
+        },
+        "favicon-48.png": {
+          "bytes": 3705,
+          "sha256": "829321fd4eb1d98f1cc0a80e2a9ff6e77c2281a4882dedb5f9ee0bcd01aee01d"
+        },
+        "favicon-64.png": {
+          "bytes": 5904,
+          "sha256": "4679f4343f74567062fed690776024d084079a8ea4a675a28ce48fb44358f2df"
+        },
+        "apple-touch-icon.png": {
+          "bytes": 31802,
+          "sha256": "d8fdbafd410a590fed06a231a4eec365e4d863077ea19e16390ff8c47d62a47f"
+        },
+        "favicon-192.png": {
+          "bytes": 35120,
+          "sha256": "11af4a9c44e02fe8db6fd4861c084e3724bae77aaa643379cdfc66bff52ad74b"
+        },
+        "favicon-512.png": {
+          "bytes": 173026,
+          "sha256": "fdb71e18ecb294fcb5890f70f5525e07476d310eee9038d14648ad4b3e0b5402"
+        },
+        "favicon.ico": {
+          "bytes": 6612,
+          "sha256": "034fc7a501ef1f13568a4e70531df89fe5a68fc42144112b220e379abff36e3e"
+        }
+      }
+    }
+  ]
+}

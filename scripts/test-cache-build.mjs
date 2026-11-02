@@ -10,7 +10,7 @@ const {chromium}=require(process.env.TEAMHJD_PLAYWRIGHT || 'playwright');
 const root=process.cwd();
 const testRoot=mkdtempSync(path.resolve(root,'../.codex/cache-build-'));
 const fixture=path.join(testRoot,'fixture');mkdirSync(path.join(fixture,'scripts'),{recursive:true});
-for(const name of ['index.html','404.html','styles.css','languages.js','treant.js','slimes.js','astronaut.js','meteors.js','assets','privacy','press','content-policy','games','public-pages.css','public-pages.js','profile.css','profile.js','data','robots.txt','scripts/build-site.mjs','scripts/render-team.mjs','scripts/team-template.mjs']) cpSync(path.join(root,name),path.join(fixture,name),{recursive:true});
+for(const name of ['index.html','404.html','styles.css','languages.js','treant.js','slimes.js','astronaut.js','meteors.js','assets','privacy','press','content-policy','games','public-pages.css','public-pages.js','profile.css','profile.js','data','robots.txt','scripts/build-site.mjs','scripts/render-team.mjs','scripts/team-template.mjs','scripts/favicon-links.mjs']) cpSync(path.join(root,name),path.join(fixture,name),{recursive:true});
 const build=output=>execFileSync(process.execPath,[path.join(fixture,'scripts/build-site.mjs'),output],{encoding:'utf8'});
 const first=path.join(testRoot,'first'),second=path.join(testRoot,'second'),changed=path.join(testRoot,'changed');
 build(first);build(second);
