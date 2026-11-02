@@ -27,13 +27,13 @@ for(const issueId of ids){
   await new Promise(resolve=>setTimeout(resolve,10000));
  }
  if(!live)throw new Error('The released issue is not live yet. No email sent.');
- for(let batch=0;batch<10;batch++){
+ for(let batch=0;batch<12;batch++){
   const value=await oidcToken();
   const response=await fetch(`${site}/api/internal/deliver`,{method:'POST',headers:{Authorization:`Bearer ${value}`,'Content-Type':'application/json'},body:JSON.stringify({issueId}),signal:AbortSignal.timeout(90000)});
   const result=await response.json();
   console.log(JSON.stringify(result)); // Aggregate counts only.
   if(!response.ok)throw new Error(`Email delivery needs attention (${response.status}). Existing receipts are never replayed automatically.`);
   if(!result.remaining)break;
-  if(batch===9)throw new Error('Pending recipients exceed this free-plan run capacity.');
+  if(batch===11)throw new Error('Pending recipients exceed this free-plan run capacity.');
  }
 }

@@ -111,6 +111,7 @@ function zip(entries) {
 
 for (const issue of issues) {
   const { markdown, body: bodyMarkdown, assets } = documents.get(issue.id);
+  const assetVersions=new Map(await Promise.all(assets.map(async name=>[name,createHash('sha256').update(await readFile(join(project,issue.assetDirectory,name))).digest('hex').slice(0,12)])));
   const temporary = await mkdtemp(join(tmpdir(), 'frame-pandoc-'));
   const inputFile = join(temporary, 'article.md');
   const outputFile = join(temporary, 'article.html');
@@ -122,7 +123,7 @@ for (const issue of issues) {
   const toc = [...body.matchAll(/<section id="([^"]+)" class="level2">\s*<h2>([\s\S]*?)<\/h2>/g)].map((match) => ({ id: match[1], title: match[2].replace(/^\d+\.\s*/, '') }));
   if (!toc.length) throw new Error(`No article headings converted for ${issue.id}`);
   body = body.replace(/<h2>(\d+)\.\s*([\s\S]*?)<\/h2>/g, '<h2><span class="section-number">$1</span>$2</h2>');
-  body = body.replace(/src="assets\/([^"/]+)"/g, `src="/${issue.assetDirectory}/$1"`);
+  body = body.replace(/src="assets\/([^"/]+)"/g, (_,name)=>`src="/${issue.assetDirectory}/${name}?v=${assetVersions.get(name)}"`);
   body = body.replace(/<p>(<img\b[^>]+>)<\/p>\s*<p><em>([\s\S]*?)<\/em><\/p>/g, (_, image, caption) => {
     const src = image.match(/src="([^"]+)"/)[1];
     return `<figure class="article-figure"><a class="image-zoom" href="${src}" data-lightbox aria-label="그림 원본 크기로 보기">${image.replace('<img ', '<img loading="lazy" decoding="async" ')}</a><div class="figure-tools"><a href="${src}" target="_blank" rel="noopener noreferrer">원본 크기로 보기 ↗</a></div><figcaption>${caption}</figcaption></figure>`;
@@ -134,12 +135,12 @@ for (const issue of issues) {
     const decoded = tex.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim().replace(/^\\[([]/, '').replace(/\\[)\]]$/, '');
     return `<span class="math ${mode}">${katex.renderToString(decoded, { displayMode: mode === 'display', throwOnError: true, output: 'htmlAndMathml', strict: 'warn' })}</span>`;
   });
-  const firstImage = issue.coverImage ? `/${issue.assetDirectory}/${issue.coverImage}` : '/assets/brand/teamhjd-original.png';
+  const firstImage = issue.coverImage ? `/${issue.assetDirectory}/${issue.coverImage}?v=${assetVersions.get(issue.coverImage)}` : '/assets/brand/teamhjd-original.png';
   await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, articleImage: firstImage, content: articleContent(issue, tags, body, toc) }));
   const downloads = join(dist, 'downloads');
   await mkdir(downloads, { recursive: true });
   // Standalone Markdown works outside the ZIP; ZIP retains portable relative paths.
-  await writeFile(join(downloads, `${issue.id}.md`), markdown.replace(/\]\(assets\//g, `](${SITE_URL}/${issue.assetDirectory}/`));
+  await writeFile(join(downloads, `${issue.id}.md`), markdown.replace(/\]\(assets\/([^)]+)\)/g,(_,name)=>`](${SITE_URL}/${issue.assetDirectory}/${name}?v=${assetVersions.get(name)})`));
   const entries = [{ name: `${issue.id}/${issue.id}.md`, data: markdown }];
   const assetDir = join(project, issue.assetDirectory);
   for (const name of assets) entries.push({ name: `${issue.id}/assets/${name}`, data: await readFile(join(assetDir, name)) });

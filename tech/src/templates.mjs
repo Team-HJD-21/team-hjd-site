@@ -116,7 +116,9 @@ export function subscribeContent() {
         <div class="subscribe-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <p class="subscribe-note">이메일 확인 후 구독이 시작되며, 메일에서 언제든 해지하실 수 있습니다.</p>
         <p class="subscribe-status" role="status" aria-live="polite" data-subscribe-status></p>
+        <p data-subscribe-manage hidden><a href="/subscription/manage/">구독 관리·해지하기</a></p>
       </form>
+      <p class="subscription-help">구독 중이신가요? <a href="/subscription/manage/">구독 관리·해지하기</a></p>
     </section>
   </div>`;
 }

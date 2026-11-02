@@ -200,3 +200,7 @@ button { border: 0; }
 .subscription-panel { padding:28px 32px; border:1px solid var(--rule); border-radius:20px; background:var(--panel); }
 .subscription-panel .subscribe-form { margin-top:0; }
 @media(max-width:600px) { .subscription-panel { padding:24px 22px; } }
+.subscribe-reset { background:transparent; border:1px solid var(--rule); border-radius:10px; color:var(--secondary); padding:8px 12px; cursor:pointer; }
+.subscribe-form[data-state="waiting"] input { opacity:.65; cursor:wait; }
+.subscribe-form[data-state="confirmed"] [data-subscribe-status] { color:var(--accent); font-weight:650; }
+.subscription-help { margin:24px 0 0; padding-top:20px; border-top:1px solid var(--rule); font-size:14px; color:var(--secondary); }

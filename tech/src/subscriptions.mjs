@@ -1,3 +1,4 @@
+import {emailTemplate} from './email-template.mjs';
 // Cloudflare Pages + private D1. No subscriber data belongs in the static build.
 export const CONSENT_VERSION = '2026-11-03';
 export const SITE = 'https://tech.teamhjd.com';
@@ -16,11 +17,11 @@ CREATE TABLE IF NOT EXISTS deliveries (
 );
 CREATE TABLE IF NOT EXISTS limits (bucket TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS delivery_time ON deliveries(created_at);
+CREATE TABLE IF NOT EXISTS subscription_sessions(token_hash TEXT PRIMARY KEY, subscriber_id TEXT NOT NULL, expires INTEGER NOT NULL);
 `;
 const encoder = new TextEncoder();
 const initialized = new WeakMap();
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer' } });
-const html = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const b64 = bytes => btoa(String.fromCharCode(...new Uint8Array(bytes))).replaceAll('+','-').replaceAll('/','_').replace(/=+$/, '');
 const unb64 = s => Uint8Array.from(atob(s.replaceAll('-','+').replaceAll('_','/')), c => c.charCodeAt(0));
 const random = () => b64(crypto.getRandomValues(new Uint8Array(32)));
@@ -42,11 +43,17 @@ async function init(db, now) {
   db.prepare("DELETE FROM subscribers WHERE status='pending' AND created_at < ?").bind(now - 7*86400),
   db.prepare('DELETE FROM deliveries WHERE created_at < ?').bind(now - 30*86400),
   db.prepare('DELETE FROM limits WHERE expires < ?').bind(now)
+  ,db.prepare('DELETE FROM subscription_sessions WHERE expires < ?').bind(now)
  ]);
 }
 async function limited(db, bucket, maximum, expires) {
  const result = await db.prepare('INSERT INTO limits(bucket,count,expires) VALUES(?,1,?) ON CONFLICT(bucket) DO UPDATE SET count=count+1 WHERE count < ?').bind(bucket, expires, maximum).run();
  return result.meta.changes === 1;
+}
+async function waitingSession(db, subscriberId, now) {
+ const token=random();
+ await db.prepare('INSERT INTO subscription_sessions(token_hash,subscriber_id,expires) VALUES(?,?,?)').bind(await digest(token),subscriberId,now+86400).run();
+ return json({message:'인증 메일을 보냈습니다. 메일에서 확인 버튼을 눌러 주세요. 이 창에서 완료 상태를 확인하실 수 있습니다.',waiting:true,watchToken:token,expiresAt:(now+86400)*1000});
 }
 async function readJson(request) {
  const contentType=request.headers.get('content-type') || '';
@@ -88,8 +95,8 @@ async function send(env, fetcher, db, {receipt, subscriber, purpose, now, subjec
  if (!current || (purpose === 'issue' && current.status !== 'active')) {
   await db.prepare("UPDATE deliveries SET state='cancelled' WHERE receipt=?").bind(receipt).run(); return 'cancelled';
  }
- const payload = {from: '겜붕이의 노트 <notes@news.teamhjd.com>', to: [subscriber.email], subject, text: `${text}\n\n${url}${unsubscribe ? `\n\n구독 해지: ${unsubscribe}` : ''}`, html: `<div style="background:#080f17;color:#f3f0e8;padding:28px;font-family:Arial,sans-serif;line-height:1.8"><p style="color:#d9eea6">겜붕이의 노트 <small>by TeamHJD</small></p><h1 style="font-size:24px">${html(subject)}</h1><p>${html(text).replaceAll('\n','<br>')}</p><p><a style="color:#d9eea6" href="${html(url)}">${purpose === 'confirm' ? '이메일 확인하기' : '오늘의 글 읽기'}</a></p>${unsubscribe ? `<p><a style="color:#a2afab" href="${html(unsubscribe)}">구독 해지하기</a></p>` : '<p>요청하지 않으셨다면 이 메일을 무시하셔도 됩니다. 확인 전에는 구독이 시작되지 않습니다.</p>'}</div>`};
- if (unsubscribe) payload.headers = {'List-Unsubscribe': `<${unsubscribe.replace('/subscription/unsubscribe/', '/api/unsubscribe')}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'};
+ const payload = {from: '겜붕이의 노트 <notes@news.teamhjd.com>', reply_to:'support@teamhjd.com', to: [subscriber.email], subject, text: `${text}\n\n${url}${unsubscribe ? `\n\n구독 해지: ${unsubscribe}` : ''}\n\n구독 관리·해지: ${SITE}/subscription/manage/\nby TeamHJD`, html:emailTemplate({purpose,subject,text,url,unsubscribe})};
+ if (unsubscribe && purpose==='issue') payload.headers = {'List-Unsubscribe': `<${unsubscribe.replace('/subscription/unsubscribe/', '/api/unsubscribe')}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'};
  try {
   const response = await fetcher('https://api.resend.com/emails', {method:'POST',headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':receipt},body:JSON.stringify(payload),signal:AbortSignal.timeout(15000)});
   if (!response.ok) {
@@ -107,7 +114,7 @@ export async function verifyActionsToken(token, fetcher = fetch, now = Date.now(
   const parts = token.split('.'); if(parts.length!==3 || token.length>20000) return false;
   const header = JSON.parse(new TextDecoder().decode(unb64(parts[0])));
   const claims = JSON.parse(new TextDecoder().decode(unb64(parts[1])));
-  if(header.alg!=='RS256' || claims.iss!=='https://token.actions.githubusercontent.com' || claims.aud!==SITE || claims.sub!=='repo:Team-HJD-21/team-hjd-site:ref:refs/heads/main' || claims.repository!=='Team-HJD-21/team-hjd-site' || claims.workflow_ref!=='Team-HJD-21/team-hjd-site/.github/workflows/publish-newsletter.yml@refs/heads/main' || claims.ref!=='refs/heads/main' || !Number.isFinite(claims.exp) || claims.exp<=now || !Number.isFinite(claims.nbf) || claims.nbf>now+30 || !Number.isFinite(claims.iat) || claims.iat>now+30 || claims.iat<now-900 || claims.exp-claims.iat>900) return false;
+  if(header.alg!=='RS256' || claims.iss!=='https://token.actions.githubusercontent.com' || claims.aud!==SITE || claims.sub!=='repo:Team-HJD-21@183283930/team-hjd-site@1403035183:ref:refs/heads/main' || claims.repository!=='Team-HJD-21/team-hjd-site' || claims.repository_id!=='1403035183' || claims.repository_owner_id!=='183283930' || claims.workflow_ref!=='Team-HJD-21/team-hjd-site/.github/workflows/publish-newsletter.yml@refs/heads/main' || claims.ref!=='refs/heads/main' || !Number.isFinite(claims.exp) || claims.exp<=now || !Number.isFinite(claims.nbf) || claims.nbf>now+30 || !Number.isFinite(claims.iat) || claims.iat>now+30 || claims.iat<now-900 || claims.exp-claims.iat>900) return false;
   const response = await fetcher('https://token.actions.githubusercontent.com/.well-known/jwks', {signal:AbortSignal.timeout(10000)});
   if(!response.ok) return false;
   const {keys} = await response.json();
@@ -131,6 +138,25 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
  try {
   await init(db,now);
   if(path==='/api/internal/check') return json({authenticated:true,databaseReady:true,mailConfigured:true});
+  if(path==='/api/subscription-status') {
+   if(typeof data.token!=='string' || !/^[\w-]{43}$/.test(data.token)) return json({error:'invalid_token'},400);
+   const session=await db.prepare('SELECT s.expires,u.status FROM subscription_sessions s LEFT JOIN subscribers u ON u.id=s.subscriber_id WHERE s.token_hash=?').bind(await digest(data.token)).first();
+   return json({state:!session || session.expires<now || !session.status ? 'expired' : session.status==='active' ? 'confirmed' : 'waiting'});
+  }
+  if(path==='/api/manage') {
+   const email=normalizeEmail(data.email);
+   if(!email)return json({error:'invalid_email',message:'이메일 주소를 확인해 주세요.'},400);
+   const bucket=await sign(env.TOKEN_SECRET,`rate:${request.headers.get('CF-Connecting-IP') || 'unknown'}:${Math.floor(now/3600)}`);
+   if(!await limited(db,bucket,5,now+86400))return json({error:'rate_limited',message:'요청이 많습니다. 한 시간 후 다시 시도해 주세요.'},429);
+   const subscriber=await db.prepare('SELECT id,email FROM subscribers WHERE email_hash=?').bind(await sign(env.TOKEN_SECRET,`email:${email}`)).first();
+   const message='등록된 주소라면 구독 관리·해지 링크를 보내드립니다. 메일에서 해지 버튼을 눌러 주세요.';
+   if(!subscriber)return json({message});
+   const unsubscribe=`${SITE}/subscription/unsubscribe/?token=${subscriber.id}.${await sign(env.TOKEN_SECRET,`unsubscribe:${subscriber.id}`)}`;
+   const receipt=`manage:${subscriber.id}:${Math.floor(now/600)}`;
+   const state=await send(env,fetcher,db,{receipt,subscriber,purpose:'manage',now,subject:'겜붕이의 노트 구독 관리·해지 안내',text:'구독을 해지하시려면 아래 버튼을 눌러 주세요. 해지 페이지에서 한 번 더 확인하시면 이메일 주소가 삭제됩니다.',url:unsubscribe,unsubscribe});
+   const accepted=state==='queued' || state==='duplicate' && (await db.prepare('SELECT state FROM deliveries WHERE receipt=?').bind(receipt).first())?.state==='queued';
+   return accepted ? json({message}) : json({error:'mail_unavailable',message:'관리 메일 발송을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.'},503);
+  }
   if(path==='/api/subscribe') {
    if(data.website) return json({message:'요청을 확인했습니다.'});
    const email=normalizeEmail(data.email);
@@ -139,8 +165,12 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
    if(!await limited(db,bucket,5,now+86400)) return json({error:'rate_limited',message:'요청이 많습니다. 한 시간 뒤 다시 시도해 주세요.'},429);
    const hash=await sign(env.TOKEN_SECRET,`email:${email}`);
    let subscriber=await db.prepare('SELECT * FROM subscribers WHERE email_hash=?').bind(hash).first();
-   const generic='인증 메일을 확인해 주세요. 이미 구독 중인 주소에는 다시 보내지 않습니다.';
-   if(subscriber && (subscriber.status==='active' || now-subscriber.last_request<600)) return json({message:generic});
+   const generic='구독 요청을 확인했습니다. 이미 구독 중인 주소에는 인증 메일을 다시 보내지 않습니다.';
+   if(subscriber?.status==='active') return json({message:generic,waiting:false});
+   if(subscriber && now-subscriber.last_request<600) {
+    const previous=await db.prepare("SELECT state FROM deliveries WHERE subscriber_id=? AND purpose='confirm' ORDER BY created_at DESC LIMIT 1").bind(subscriber.id).first();
+    return previous?.state==='queued' ? waitingSession(db,subscriber.id,now) : json({error:'mail_unavailable',message:'이전 발송을 확인하지 못했습니다. 10분 후 다시 신청해 주세요.'},503);
+   }
    const token=random(), tokenHash=await digest(token);
    if(subscriber) {
     const updated=await db.prepare("UPDATE subscribers SET confirm_hash=?,confirm_expires=?,last_request=?,consent_at=?,consent_version=?,privacy_consent=1,email_consent=1,overseas_consent=1 WHERE id=? AND status='pending' AND last_request<=?").bind(tokenHash,now+86400,now,now,CONSENT_VERSION,subscriber.id,now-600).run();
@@ -150,9 +180,10 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
     const inserted=await db.prepare("INSERT OR IGNORE INTO subscribers(id,email_hash,email,status,consent_version,consent_at,privacy_consent,email_consent,overseas_consent,confirm_hash,confirm_expires,last_request,created_at) VALUES(?,?,?,'pending',?,?,1,1,1,?,?,?,?)").bind(subscriber.id,hash,email,CONSENT_VERSION,now,tokenHash,now+86400,now,now).run();
     if(!inserted.meta.changes) return json({message:generic});
    }
-   const state=await send(env,fetcher,db,{receipt:`confirm:${subscriber.id}:${tokenHash}`,subscriber,purpose:'confirm',now,subject:'겜붕이의 노트 구독을 확인해 주세요',text:'반갑습니다! 아래 링크에서 이메일 확인 버튼을 눌러 주시면 구독이 시작됩니다. 링크는 24시간 동안 유효합니다.',url:`${SITE}/subscription/confirm/?token=${token}`});
+   const unsubscribe=`${SITE}/subscription/unsubscribe/?token=${subscriber.id}.${await sign(env.TOKEN_SECRET,`unsubscribe:${subscriber.id}`)}`;
+   const state=await send(env,fetcher,db,{receipt:`confirm:${subscriber.id}:${tokenHash}`,subscriber,purpose:'confirm',now,subject:'겜붕이의 노트 구독을 확인해 주세요',text:'반갑습니다! 아래 버튼을 눌러 이메일을 확인해 주세요. 확인이 끝나면 원래 신청 창에 완료 상태가 자동 반영됩니다. 링크는 24시간 동안 유효합니다.',url:`${SITE}/subscription/confirm/?token=${token}`,unsubscribe});
    if(state!=='queued') return json({error:'mail_unavailable',message:'인증 메일 발송을 확인하지 못했습니다. 10분 후 다시 시도해 주세요.'},503);
-   return json({message:generic});
+   return waitingSession(db,subscriber.id,now);
   }
   if(path==='/api/confirm') {
    if(typeof data.token!=='string' || !/^[\w-]{43}$/.test(data.token)) return json({error:'invalid_token'},400);
@@ -175,7 +206,7 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
    const issue=manifest.issues?.find(i=>i.id===data.issueId && i.date===today);
    if(!issue || typeof issue.title!=='string' || typeof issue.summary!=='string' || typeof issue.url!=='string' || !issue.url.startsWith(`${SITE}/${today}/`) || !/^\/[0-9]{4}-[0-9]{2}-[0-9]{2}\/[a-z0-9-]+\/$/.test(new URL(issue.url).pathname) || new URL(issue.url).origin!==SITE) return json({error:'issue_not_live'},409);
    if(Number(new Intl.DateTimeFormat('en',{timeZone:'Asia/Seoul',hour:'2-digit',hourCycle:'h23'}).format(new Date(now*1000)))<12) return json({error:'before_noon'},409);
-   const {results}=await db.prepare("SELECT id,email FROM subscribers WHERE status='active' AND confirmed_at IS NOT NULL AND privacy_consent=1 AND email_consent=1 AND overseas_consent=1 AND NOT EXISTS(SELECT 1 FROM deliveries WHERE receipt=? || subscribers.id) ORDER BY created_at LIMIT 10").bind(`issue:${issue.id}:`).all();
+   const {results}=await db.prepare("SELECT id,email FROM subscribers WHERE status='active' AND confirmed_at IS NOT NULL AND privacy_consent=1 AND email_consent=1 AND overseas_consent=1 AND NOT EXISTS(SELECT 1 FROM deliveries WHERE receipt=? || subscribers.id) ORDER BY created_at LIMIT 8").bind(`issue:${issue.id}:`).all();
    const counts={queued:0,duplicate:0,quota:0,rejected:0,uncertain:0,cancelled:0};
    // Bounded batches respect Workers' subrequest limit and Resend's sending rate.
    for(const subscriber of results) {

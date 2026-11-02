@@ -12,7 +12,7 @@ async function signedToken(overrides={}) {
  const keys=await crypto.subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
  const jwk=await crypto.subtle.exportKey('jwk',keys.publicKey);jwk.kid='test';
  const now=Date.parse('2026-11-03T03:00:00Z')/1000;
- const claims={iss:'https://token.actions.githubusercontent.com',aud:SITE,sub:'repo:Team-HJD-21/team-hjd-site:ref:refs/heads/main',repository:'Team-HJD-21/team-hjd-site',ref:'refs/heads/main',workflow_ref:'Team-HJD-21/team-hjd-site/.github/workflows/publish-newsletter.yml@refs/heads/main',iat:now,nbf:now-1,exp:now+300,...overrides};
+ const claims={iss:'https://token.actions.githubusercontent.com',aud:SITE,sub:'repo:Team-HJD-21@183283930/team-hjd-site@1403035183:ref:refs/heads/main',repository:'Team-HJD-21/team-hjd-site',repository_id:'1403035183',repository_owner_id:'183283930',ref:'refs/heads/main',workflow_ref:'Team-HJD-21/team-hjd-site/.github/workflows/publish-newsletter.yml@refs/heads/main',iat:now,nbf:now-1,exp:now+300,...overrides};
  const head=b64(JSON.stringify({alg:'RS256',kid:'test'})),body=b64(JSON.stringify(claims));
  const signature=await crypto.subtle.sign('RSASSA-PKCS1-v1_5',keys.privateKey,Buffer.from(`${head}.${body}`));
  return {token:`${head}.${body}.${b64(signature)}`,jwk,now};
@@ -56,6 +56,22 @@ test('active and recent pending subscriptions do not receive duplicate confirmat
  const f=fixture();await f.call('/api/subscribe',f.consent);await f.call('/api/subscribe',f.consent);assert.equal(f.sent.length,1);
  await f.call('/api/confirm',{token:f.token()});f.advance(700);await f.call('/api/subscribe',f.consent);assert.equal(f.sent.length,1);
 });
+test('original signup session observes confirmation without exposing email in status requests',async()=>{
+ const f=fixture();const started=await (await f.call('/api/subscribe',f.consent)).json();assert.equal(started.waiting,true);assert.match(started.watchToken,/^[\w-]{43}$/);
+ assert.equal((await (await f.call('/api/subscription-status',{token:started.watchToken})).json()).state,'waiting');
+ await f.call('/api/confirm',{token:f.token()});
+ assert.equal((await (await f.call('/api/subscription-status',{token:started.watchToken})).json()).state,'confirmed');
+ assert.equal((await (await f.call('/api/subscription-status',{token:'x'.repeat(43)})).json()).state,'expired');
+ f.advance(86401);assert.equal((await (await f.call('/api/subscription-status',{token:started.watchToken})).json()).state,'expired');
+});
+test('management email provides a real signed unsubscribe and deletes the registered address',async()=>{
+ const f=fixture();await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+ assert.equal((await f.call('/api/manage',{email:f.consent.email})).status,200);assert.equal(f.sent.length,2);
+ assert.ok(f.sent[1].html.includes('gambungi-email-logo.png'));assert.ok(f.sent[1].html.includes('구독 해지하기'));
+ const token=new URL(f.sent[1].text.match(/구독 해지: (.+)/)[1]).searchParams.get('token');
+ await f.call('/api/unsubscribe',{token});assert.equal((await f.db.prepare('SELECT COUNT(*) AS n FROM subscribers').first()).n,0);
+});
+test('management requests for unknown email never send mail',async()=>{const f=fixture();assert.equal((await f.call('/api/manage',{email:'unknown@example.com'})).status,200);assert.equal(f.sent.length,0);});
 test('expired confirmation cannot activate and a later request replaces its token',async()=>{
  const f=fixture();await f.call('/api/subscribe',f.consent);const old=f.token();f.advance(86401);
  assert.equal((await f.call('/api/confirm',{token:old})).status,400);await f.call('/api/subscribe',f.consent);assert.equal(f.sent.length,2);

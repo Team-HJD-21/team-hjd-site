@@ -5,19 +5,64 @@
     const response = await fetch(endpoint, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'same-origin'});
     const result = await response.json();
     if(!response.ok) throw new Error(result.message || '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.');
-    return result.message;
+    return result;
   }
   const subscribeForm = document.querySelector('[data-subscribe-form]');
+  const pendingStorage='gambungi-subscription-pending';
+  const subscriptionChannel=typeof BroadcastChannel==='function' ? new BroadcastChannel('gambungi-subscription') : null;
+  let pendingSubscription=null, pendingTimer=null, checkingSubscription=false;
+  const warnPending=event=>{event.preventDefault();event.returnValue='';};
+  const savePending=()=>{try{if(pendingSubscription)sessionStorage.setItem(pendingStorage,JSON.stringify(pendingSubscription));else sessionStorage.removeItem(pendingStorage);}catch{}};
+  const lockSubscription=locked=>subscribeForm?.querySelectorAll('input:not([type=hidden]),button[type=submit]').forEach(field=>field.disabled=locked);
+  const finishPending=(confirmed,message)=>{
+    pendingSubscription=null;clearTimeout(pendingTimer);savePending();window.removeEventListener('beforeunload',warnPending);
+    if(!subscribeForm)return;
+    lockSubscription(confirmed);subscribeForm.dataset.state=confirmed?'confirmed':'idle';
+    subscribeForm.querySelector('button[type=submit]').textContent=confirmed?'구독 완료':'구독하기';
+    subscribeForm.querySelector('[data-subscribe-status]').textContent=message;
+    subscribeForm.querySelector('[data-subscribe-reset]').hidden=true;
+    const manageLink=subscribeForm.querySelector('[data-subscribe-manage]');if(manageLink)manageLink.hidden=!confirmed;
+  };
+  async function checkSubscription(force=false){
+    if(!pendingSubscription || checkingSubscription)return;
+    clearTimeout(pendingTimer);
+    if(Date.now()>pendingSubscription.expiresAt){finishPending(false,'인증 대기 시간이 끝났습니다. 다시 신청해 주세요.');return;}
+    if(document.hidden && !force){pendingTimer=setTimeout(checkSubscription,5000);return;}
+    checkingSubscription=true;
+    try{
+      const result=await subscriptionPost('/api/subscription-status',{token:pendingSubscription.watchToken});
+      if(result.state==='confirmed')finishPending(true,'구독 확인이 완료됐습니다! 매일 새로운 게임 개발 이야기로 찾아뵙겠습니다.');
+      else if(result.state==='expired')finishPending(false,'인증 대기가 만료됐습니다. 다시 신청해 주세요.');
+    }catch{ /* Keep the pending state through temporary network failures. */ }
+    finally{checkingSubscription=false;if(pendingSubscription)pendingTimer=setTimeout(checkSubscription,3000);}
+  }
+  function beginPending(result,email){
+    pendingSubscription={watchToken:result.watchToken,expiresAt:result.expiresAt,email};savePending();lockSubscription(true);
+    subscribeForm.dataset.state='waiting';subscribeForm.querySelector('button[type=submit]').textContent='인증 대기 중';
+    subscribeForm.querySelector('[data-subscribe-status]').textContent=result.message;
+    subscribeForm.querySelector('[data-subscribe-reset]').hidden=false;
+    window.addEventListener('beforeunload',warnPending);clearTimeout(pendingTimer);checkSubscription();
+  }
+  if(subscribeForm){
+    const reset=document.createElement('button');reset.type='button';reset.className='subscribe-reset';reset.dataset.subscribeReset='';reset.hidden=true;reset.textContent='이메일 주소 다시 입력';
+    subscribeForm.append(reset);
+    reset.addEventListener('click',()=>{if(confirm('이 창의 인증 대기를 종료하고 이메일 주소를 다시 입력할까요?'))finishPending(false,'이메일 주소를 확인하고 다시 신청해 주세요.');});
+    try{const saved=JSON.parse(sessionStorage.getItem(pendingStorage)||'null');if(saved && /^[\w-]{43}$/.test(saved.watchToken) && saved.expiresAt>Date.now()){subscribeForm.elements.email.value=saved.email || '';beginPending({message:'이메일 인증을 기다리고 있습니다. 메일에서 확인 버튼을 눌러 주세요.',...saved},saved.email);}}catch{}
+    window.addEventListener('focus',()=>checkSubscription(true));document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkSubscription(true);});
+    if(subscriptionChannel)subscriptionChannel.onmessage=event=>{if(event.data?.type==='subscription-confirmed')checkSubscription(true);};
+  }
   subscribeForm?.addEventListener('submit', async event => {
     event.preventDefault();
     if(!subscribeForm.reportValidity()) return;
     const button=subscribeForm.querySelector('button[type=submit]'), status=subscribeForm.querySelector('[data-subscribe-status]');
     button.disabled=true; status.textContent='인증 메일을 준비하고 있습니다…';
     const values=new FormData(subscribeForm);
-    try {status.textContent=await subscriptionPost('/api/subscribe',{email:values.get('email'),website:values.get('website'),consentVersion:'2026-11-03',privacyConsent:values.has('privacyConsent'),emailConsent:values.has('emailConsent'),overseasConsent:values.has('overseasConsent')});}
-    catch(error){status.textContent=error.message;} finally{button.disabled=false;}
+    try {const result=await subscriptionPost('/api/subscribe',{email:values.get('email'),website:values.get('website'),consentVersion:'2026-11-03',privacyConsent:values.has('privacyConsent'),emailConsent:values.has('emailConsent'),overseasConsent:values.has('overseasConsent')});if(result.waiting && result.watchToken)beginPending(result,String(values.get('email')));else status.textContent=result.message;}
+    catch(error){status.textContent=error.message;} finally{if(!pendingSubscription)button.disabled=false;}
   });
   const actionForm=document.querySelector('[data-subscription-action]');
+  const manageForm=document.querySelector('[data-manage-form]');
+  manageForm?.addEventListener('submit',async event=>{event.preventDefault();if(!manageForm.reportValidity())return;const button=manageForm.querySelector('button'),status=manageForm.querySelector('[data-manage-status]');button.disabled=true;try{const result=await subscriptionPost('/api/manage',{email:new FormData(manageForm).get('email')});status.textContent=result.message;}catch(error){status.textContent=error.message;}finally{button.disabled=false;}});
   if(actionForm){
     // Merely loading an email link must never confirm or unsubscribe a reader.
     const token=new URLSearchParams(location.search).get('token') || '';
@@ -25,7 +70,7 @@
     actionForm.addEventListener('submit',async event=>{
       event.preventDefault();const button=actionForm.querySelector('button'),status=actionForm.querySelector('[data-subscription-status]');
       button.disabled=true;
-      try{status.textContent=await subscriptionPost(`/api/${actionForm.dataset.subscriptionAction}`,{token});}
+      try{const result=await subscriptionPost(`/api/${actionForm.dataset.subscriptionAction}`,{token});status.textContent=result.message;if(actionForm.dataset.subscriptionAction==='confirm'){subscriptionChannel?.postMessage({type:'subscription-confirmed'});status.textContent+=' 원래 신청 창에도 완료 상태가 자동 반영됩니다. 이 창은 닫으셔도 됩니다.';}}
       catch(error){status.textContent=error.message;button.disabled=false;}
     });
   }
