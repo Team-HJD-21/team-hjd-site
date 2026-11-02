@@ -1,6 +1,18 @@
 // GitHub Actions OIDC only; never print the bearer token or recipient data.
 const site='https://tech.teamhjd.com';
 const ids=(process.env.ISSUE_IDS||'').split(',').filter(Boolean);
+async function oidcToken(){
+ const auth=await fetch(`${process.env.ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${encodeURIComponent(site)}`,{headers:{Authorization:`Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`},signal:AbortSignal.timeout(15000)});
+ if(!auth.ok)throw new Error('Actions OIDC unavailable.');
+ const {value}=await auth.json();if(!value)throw new Error('Missing OIDC token.');
+ console.log(`::add-mask::${value}`);return value;
+}
+if(process.argv.includes('--check')){
+ const response=await fetch(`${site}/api/internal/check`,{method:'POST',headers:{Authorization:`Bearer ${await oidcToken()}`,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(30000)});
+ console.log(JSON.stringify(await response.json()));
+ if(!response.ok)throw new Error(`Authenticated connection check failed (${response.status}).`);
+ process.exit(0);
+}
 if(!ids.length) throw new Error('No released issue IDs.');
 for(const issueId of ids){
  let live=false;
@@ -11,10 +23,7 @@ for(const issueId of ids){
  }
  if(!live)throw new Error('The released issue is not live yet. No email sent.');
  for(let batch=0;batch<10;batch++){
-  const auth=await fetch(`${process.env.ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${encodeURIComponent(site)}`,{headers:{Authorization:`Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`},signal:AbortSignal.timeout(15000)});
-  if(!auth.ok)throw new Error('Actions OIDC unavailable.');
-  const {value}=await auth.json();if(!value)throw new Error('Missing OIDC token.');
-  console.log(`::add-mask::${value}`);
+  const value=await oidcToken();
   const response=await fetch(`${site}/api/internal/deliver`,{method:'POST',headers:{Authorization:`Bearer ${value}`,'Content-Type':'application/json'},body:JSON.stringify({issueId}),signal:AbortSignal.timeout(90000)});
   const result=await response.json();
   console.log(JSON.stringify(result)); // Aggregate counts only.

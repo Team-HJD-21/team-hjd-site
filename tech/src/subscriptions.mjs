@@ -115,7 +115,7 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
  if(path==='/api/status' && request.method==='GET') return json({configured:Boolean(env.DB && env.RESEND_API_KEY && env.TOKEN_SECRET?.length>=32)});
  if(!env.DB || !env.RESEND_API_KEY || typeof env.TOKEN_SECRET!=='string' || env.TOKEN_SECRET.length<32) return json({error:'integration_not_configured',message:'구독 연결을 준비하고 있습니다. 잠시 후 다시 시도해 주세요.'},503);
  if(request.method!=='POST') return json({error:'method_not_allowed'},405);
- const internal = path==='/api/internal/deliver';
+ const internal = path==='/api/internal/deliver' || path==='/api/internal/check';
  const oneClick = path==='/api/unsubscribe' && new URL(request.url).searchParams.has('token');
  if(!internal && !oneClick && !sameOrigin(request)) return json({error:'invalid_origin'},403);
  if(internal && !await verifyActionsToken((request.headers.get('authorization') || '').replace(/^Bearer /,''),fetcher,now)) return json({error:'unauthorized'},401);
@@ -124,6 +124,7 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
  const db=env.DB;
  try {
   await init(db,now);
+  if(path==='/api/internal/check') return json({authenticated:true,databaseReady:true,mailConfigured:true});
   if(path==='/api/subscribe') {
    if(data.website) return json({message:'요청을 확인했습니다.'});
    const email=normalizeEmail(data.email);

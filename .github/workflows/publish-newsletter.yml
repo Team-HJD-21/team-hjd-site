@@ -46,6 +46,9 @@ jobs:
           else
             node tech/scripts/release.mjs --write
           fi
+      - name: Check authenticated delivery connection without sending email
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        run: node tech/scripts/deliver.mjs --check
       - name: Build the exact release before committing
         if: steps.gate.outputs.changed == 'true'
         working-directory: tech
