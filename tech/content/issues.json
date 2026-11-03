@@ -26,5 +26,28 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-02T19:23:31.714Z"
+  },
+  {
+    "id": "note-2026-11-04-reversed-z",
+    "slug": "reversed-z",
+    "title": "멀리 있는 두 면은 왜 같은 깊이가 될까요?",
+    "description": "1km 앞에서 1cm 떨어진 두 면을 float32에 저장해 봅니다. 작은 계산과 두 장의 그림으로 Reversed-Z의 원리, 투영·비교·깊이 복원에서 확인할 지점을 알아봅니다.",
+    "question": "깊이를 저장하는 방향만 뒤집어서, 멀리 있는 두 면을 더 잘 구분할 수 있을까요?",
+    "summary": "원근 깊이와 부동소수점 표현의 분포를 맞추면 같은 비트 수로도 먼 영역의 깊이를 더 잘 구분할 수 있습니다. 두 평면의 저장 비트를 직접 비교하고 실제 렌더러의 설정으로 연결합니다.",
+    "date": "2026-11-04",
+    "status": "scheduled",
+    "publishAt": "2026-11-04T12:00:00+09:00",
+    "source": "content/issues/note-2026-11-04-reversed-z.md",
+    "assetDirectory": "assets/issues/note-2026-11-04-reversed-z",
+    "coverImage": "depth-mapping.png",
+    "format": "기술 해설",
+    "tags": [
+      "rendering",
+      "depth-buffer",
+      "reversed-z",
+      "floating-point-precision",
+      "perspective-projection",
+      "technical-explainer"
+    ]
   }
 ]
