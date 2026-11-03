@@ -18,3 +18,9 @@ Use case: text-localization. Asset type: transparent text-only lettering source 
 # 공통 탭 아이콘 v1 적용
 
 2026년 11월 3일 회사 사이트의 공통 favicon family를 적용했습니다. `assets/favicons/v1/notes/`는 회사 저장소의 같은 경로에서 바이트 변경 없이 복사한 배포본입니다. 원본 손그림 로켓·원형 바탕은 유지하고 좌상단 노트 배지로 구분합니다. SVG·PNG·ICO·Apple 아이콘의 공개 URL은 버전 경로를 사용합니다. `scripts/brand.mjs`도 기존 아이콘을 다시 그리지 않고 이 파일을 복사합니다. 헤더 워드마크의 크기와 원본 로켓은 유지합니다. 기준은 회사 `scripts/favicon-brand.md`, 해시는 회사 `assets/favicons/v1/manifest.json`입니다.
+
+# 링크 공유 미리보기
+
+카카오톡 등 링크 공유에는 `assets/brand/gambungi-share-v1.png`를 공통으로 사용합니다. 1200×630 PNG에 원본 손그림 로켓을 포함한 겜붕이의 노트 워드마크와 작은 by TeamHJD, ‘매일 12시에 읽는 노트들’을 넣었습니다. 회사 다크 팔레트를 사용하며 원본 로켓을 다시 그리지 않습니다. 기사 제목·설명은 각 글의 metadata를 사용하고, 공유 이미지는 같은 브랜드 이미지입니다.
+
+생성 원본 SVG는 글자를 경로로 변환해 글꼴 없이도 동일하게 보이며 PNG와 함께 보존합니다. 선택적 작성 도구 `scripts/create-share-image.mjs`는 기존 resvg-js 모듈 경로와 한국어 글꼴 경로를 인자로 받습니다. 배포에서는 렌더러·글꼴 설치 없이 커밋된 PNG를 사용합니다. Open Graph와 Twitter Card에 이미지 주소·설명을 지정하며 OG에는 크기·형식도 명시합니다. 이미지 디자인 개정 시 v2처럼 새 파일명으로 구분합니다.

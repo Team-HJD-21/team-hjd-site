@@ -125,6 +125,10 @@ button { border: 0; }
 .article-bottom-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; margin-top: 42px; padding-top: 22px; border-top: 1px solid var(--rule); font-size: 14px; }
 .article-bottom-nav a { text-decoration: none; }
 .company-footer { --ink: #f3f0e8; --muted: #a2afab; --line: #2c3b48; --surface: #13202c; --accent: #d9eea6; color: var(--ink); font-size: 14px; line-height: 1.7; }
+:root[data-theme="light"] .company-footer { --ink:#242a27; --muted:#59645e; --line:#dedfd8; --surface:#fcfbf8; --accent:#41652d; background:#f0f2ec; }
+:root[data-theme="light"] .company-footer .footer-business { background:#fcfbf8; }
+:root[data-theme="light"] .company-footer .wordmark img { filter:brightness(.27) sepia(.25) hue-rotate(50deg); }
+:root[data-theme="light"] .company-footer .related-sites ul { box-shadow:0 8px 24px #1825161a; }
 .company-footer a { color: inherit; text-decoration: none; }
 .company-footer a:hover { color: var(--accent); }
 .company-footer .business-info-link { color: var(--muted); text-decoration: underline; }

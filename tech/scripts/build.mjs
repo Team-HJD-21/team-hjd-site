@@ -48,7 +48,7 @@ async function writePage(path, html) {
 }
 
 const publicIssues = issues.map(({ id, slug, title, description, date, status, tags }) => ({ id, slug, title, description, date, status, tags }));
-await writePage('index.html', page({ title: SITE_NAME, description: '게임 클라이언트 개발을 위한 기술 이야기. 렌더링, 엔진, 네트워킹의 원리부터 구현까지 읽습니다.', active: 'index', content: indexContent(issues, tags) }));
+await writePage('index.html', page({ title: SITE_NAME, description: '매일 12시에 읽는 노트들. 하루 10분의 호기심으로 게임 개발의 원리를 알아갑니다.', active: 'index', content: indexContent(issues, tags) }));
 await writePage('tags/index.html', page({ title: '태그로 찾기', description: '한글과 영어 태그로 게임 개발 기술 글을 찾아보세요.', path: '/tags/', active: 'tags', content: searchContent(issues, tags), data: { tags, issues: publicIssues } }));
 await writePage('subscribe/index.html', page({title:'구독하기',description:'겜붕이의 노트를 이메일로 받아보세요.',path:'/subscribe/',active:'subscribe',content:subscribeContent()}));
 for (const [name, detail] of Object.entries(subscriptionPages)) await writePage(`subscription/${name}/index.html`, page({title:detail.title,description:detail.title,path:`/subscription/${name}/`,content:detail.content}));
@@ -135,8 +135,7 @@ for (const issue of issues) {
     const decoded = tex.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim().replace(/^\\[([]/, '').replace(/\\[)\]]$/, '');
     return `<span class="math ${mode}">${katex.renderToString(decoded, { displayMode: mode === 'display', throwOnError: true, output: 'htmlAndMathml', strict: 'warn' })}</span>`;
   });
-  const firstImage = issue.coverImage ? `/${issue.assetDirectory}/${issue.coverImage}?v=${assetVersions.get(issue.coverImage)}` : '/assets/brand/teamhjd-original.png';
-  await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, articleImage: firstImage, content: articleContent(issue, tags, body, toc) }));
+  await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, content: articleContent(issue, tags, body, toc) }));
   const downloads = join(dist, 'downloads');
   await mkdir(downloads, { recursive: true });
   // Standalone Markdown works outside the ZIP; ZIP retains portable relative paths.

@@ -33,7 +33,7 @@ export function issueCard(issue, tags) {
   </article>`;
 }
 
-export function page({ title, description, path = '/', active, content, math = false, data = null, articleImage = null, footer = '', assetVersion = '1' }) {
+export function page({ title, description, path = '/', active, content, math = false, data = null, footer = '', assetVersion = '1' }) {
   const canonical = `${SITE_URL}${path}`;
   const pageTitle = title === SITE_NAME ? SITE_NAME : `${title} · ${SITE_NAME}`;
   return `<!doctype html>
@@ -53,8 +53,16 @@ export function page({ title, description, path = '/', active, content, math = f
   <meta property="og:title" content="${escapeHtml(pageTitle)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
-  <meta property="og:image" content="${SITE_URL}${escapeHtml(articleImage || '/assets/brand/teamhjd-original.png')}">
+  <meta property="og:image" content="${SITE_URL}/assets/brand/gambungi-share-v1.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="겜붕이의 노트 by TeamHJD · 매일 12시에 읽는 노트들">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(pageTitle)}">
+  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${SITE_URL}/assets/brand/gambungi-share-v1.png">
+  <meta name="twitter:image:alt" content="겜붕이의 노트 by TeamHJD · 매일 12시에 읽는 노트들">
   <link rel="icon" href="/assets/favicons/v1/notes/favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/v1/notes/favicon-32.png">
   <link rel="icon" type="image/svg+xml" sizes="any" href="/assets/favicons/v1/notes/favicon.svg">
