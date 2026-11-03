@@ -37,7 +37,7 @@ ID와 slug는 소문자 영문·숫자·단어 사이 하이픈을 사용합니�
 
 상태는 `draft`, `scheduled`, `sample`, `published` 중 하나다. draft와 scheduled는 검증하지만 웹·다운로드·공개 자산에 포함하지 않습니다. sample은 샘플 표시와 함께 웹에만 공개하며 RSS·발행 매니페스트에서 제외합니다. published만 실제 발행 기록에 들어갑니다. 공개 Git의 draft/scheduled는 비공개 저장이 아니다. 민감한 초안은 이 저장소에 넣지 않습니다.
 
-ChatGPT의 일일 원고는 `status: "scheduled"`, `publishAt: "YYYY-MM-DDT12:00:00+09:00"`로 반영합니다. 날짜와 timestamp의 날짜가 일치해야 합니다. 한국 시간 정오의 GitHub Actions가 당일 한 호만 published로 바꾸고, Cloudflare Git 연결이 main의 변경을 빌드·배포합니다. 같은 날 이미 published가 있으면 재발행하지 않습니다. 12:30까지 준비되지 않거나 유효하지 않으면 지난 호를 대신 발행하지 않고 실패를 남긴다. GitHub와 Cloudflare의 큐 지연으로 실제 반영은 12시보다 늦을 수 있습니다.
+ChatGPT는 매일 11:00 Asia/Seoul에 원고를 준비하고, 일일 원고는 `status: "scheduled"`, `publishAt: "YYYY-MM-DDT11:57:00+09:00"`로 반영합니다. 날짜와 timestamp의 날짜가 일치해야 합니다. 한국 시간 11:57의 GitHub Actions가 당일 한 호만 published로 바꾸고, Cloudflare Git 연결이 main의 변경을 빌드·배포합니다. 운영 publication.json에 해당 호가 나타난 뒤 실제 메일 발송을 요청합니다. 같은 날 이미 published가 있으면 재발행하지 않습니다. 12:03에는 같은 호의 미시도 대상을 재점검하며, 같은 호·구독자 조합에 receipt가 있으면 재발송하지 않습니다. 불명확한 기록도 지우거나 자동 재전송하지 않습니다. 새 공개의 마감은 12:30이며, 그때까지 준비되지 않거나 유효하지 않으면 지난 호를 대신 발행하지 않고 실패를 남깁니다. 목표는 정오까지 하루 한 호를 한 번 수신하는 것이며, GitHub·배포·메일 큐 지연으로 도착 시각을 절대 보장하지는 않습니다.
 
 ## Markdown
 

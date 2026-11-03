@@ -24,18 +24,20 @@ scripts/cloudflare-build.mjs는 Pandoc이 없으면 공식 Pandoc 3.13 Linux 배
 
 Pages Custom domains에 tech.teamhjd.com을 먼저 등록하고, 안내한 CNAME tech → gambungi-notes.pages.dev만 추가했다. 기존 tech 레코드는 없었다. 회사 루트 DNS·MX·메일 인증 TXT는 변경하지 않았다. DNS 캐시와 인증서 발급이 완료되어 기본 TLS 검증의 HTTPS 200을 확인한 경우에만 운영 도메인 완료라고 보고합니다.
 
-## 매일 정오 공개
+## 매일 공개와 이메일 발송
 
-ChatGPT는 매일 10:30 Asia/Seoul에 원고를 준비하는 구성을 권장합니다. 원고는 scheduled 상태와 publishAt=YYYY-MM-DDT12:00:00+09:00으로 main에 반영합니다. 그 상태에서는 사이트에 공개하지 않습니다.
+ChatGPT의 기존 클라우드 예약은 매일 11:00 Asia/Seoul에 원고를 준비합니다. 원고는 scheduled 상태와 publishAt=YYYY-MM-DDT11:57:00+09:00으로 main에 반영합니다. 그 상태에서는 사이트에 공개하지 않습니다.
 
-.github/workflows/publish-newsletter.yml의 Publish newsletter at noon KST가 매일 정오와 10·20·30분 후에 상태를 확인합니다. 당일의 준비된 한 호만 published로 바꾸고, 검사·빌드 후 그 상태 변경을 main에 커밋합니다. Cloudflare가 이를 배포합니다. 이미 당일 발행 호가 있으면 다시 공개하지 않습니다. 원고 미준비·검사 실패·복수 후보·공개 시간창 초과는 지난 호로 대체하지 않습니다.
+.github/workflows/publish-newsletter.yml의 Publish newsletter at noon KST가 매일 11:57에 첫 공개·발송 절차를 시작하고 12:03에 재점검합니다. cron은 각각 UTC `57 2 * * *`, `3 3 * * *`입니다. 당일의 준비된 한 호만 published로 바꾸고, 검사·빌드 후 그 상태 변경을 main에 커밋합니다. Cloudflare가 이를 배포합니다. 이미 당일 발행 호가 있으면 다시 공개하지 않습니다. 원고 미준비·검사 실패·복수 후보·공개 시간창 초과는 지난 호로 대체하지 않습니다.
 
-GitHub Actions의 시간 예약과 Cloudflare 빌드 큐는 지연될 수 있습니다. 목표는 정오 공개이며 초 단위·정확한 12:00 반영을 보장하지 않습니다. 12:30 이후에는 자동 지연 공개를 멈춘다. GitHub 공개 저장소의 예약 workflow는 장기간 활동이 없으면 비활성화될 수 있으므로 운영자가 상태를 확인합니다.
+메일 단계는 운영 publication.json에 해당 호가 나타난 뒤 실제 발송을 요청합니다. 12:03에는 같은 호의 미시도 대상만 점검합니다. 같은 호·구독자 조합에 receipt가 있으면 재발송하지 않으며, 불명확한 기록도 지우거나 자동 재전송하지 않습니다.
+
+목표는 정오까지 하루 한 호를 한 번 수신하는 것입니다. GitHub Actions·Cloudflare 빌드·메일 큐가 지연될 수 있어 정오까지 도착을 절대 보장하지는 않습니다. 새 공개의 마감은 12:30이며, 이후에는 자동 지연 공개를 멈춥니다. GitHub 공개 저장소의 예약 workflow는 장기간 활동이 없으면 비활성화될 수 있으므로 운영자가 상태를 확인합니다.
 
 ## 수동 점검
 
-Actions → Publish newsletter at noon KST → Run workflow → dry_run=true는 상태를 쓰지 않는 점검입니다. 정오 전에는 before_noon, 당일 이미 발행되었으면 already_published가 정상입니다. 실제 공개는 dry_run=false도 시간 제한과 콘텐츠 검증을 지킨다.
+Actions → Publish newsletter at noon KST → Run workflow → dry_run=true는 상태를 쓰지 않는 점검입니다. 11:57 전에는 before_release_time, 당일 이미 발행되었으면 already_published가 정상입니다. 실제 공개는 dry_run=false도 시간 제한과 콘텐츠 검증을 지킵니다.
 
-게시 후 /publication.json의 호 ID·날짜/제목 주소의 기사·그림·Markdown·ZIP을 확인합니다. CI 성공과 사이트 반영, 이메일 API 수락과 받은편지함 도착은 서로 다른 상태입니다. 현재는 Pages Functions·D1·Resend를 사용하는 실제 구독과 정오 메일 발송 경로도 구현했습니다. 연결·권한·비밀값·한도·중복 방지에 관한 운영 지침은 ../docs/SUBSCRIPTIONS.md를 읽어 주세요. /api/status의 configured=true만으로 실제 메일 수신이 검증됐다고 판단하지 않습니다.
+게시 후 /publication.json의 호 ID·날짜/제목 주소의 기사·그림·Markdown·ZIP을 확인합니다. CI 성공과 사이트 반영, 이메일 API 수락과 받은편지함 도착은 서로 다른 상태입니다. 현재는 Pages Functions·D1·Resend를 사용하는 실제 구독과 정기 메일 발송 경로도 구현했습니다. 연결·권한·비밀값·한도·중복 방지에 관한 운영 지침은 ../docs/SUBSCRIPTIONS.md를 읽어 주세요. /api/status의 configured=true만으로 실제 메일 수신이 검증됐다고 판단하지 않습니다.
 
 공식 근거: [Cloudflare Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/), [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/), [GitHub schedule의 지연·비활성화 조건](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).

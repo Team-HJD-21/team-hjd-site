@@ -102,6 +102,21 @@ test('only confirmed readers receive an issue; receipts prevent duplicates and u
  assert.equal((await f.call('/api/unsubscribe',{token})).status,200);assert.equal((await f.db.prepare('SELECT COUNT(*) AS n FROM subscribers').first()).n,0);
  assert.equal((await f.db.prepare('SELECT COUNT(*) AS n FROM deliveries').first()).n,2);
 });
+test('issue delivery starts at 11:57 Seoul and the 12:03 retry does not send it again',async()=>{
+ const issuedAt=Date.parse('2026-11-03T02:56:00Z')/1000;
+ const auth=await signedToken({iat:issuedAt,nbf:issuedAt-1,exp:issuedAt+900}),f=fixture({auth}),headers={authorization:`Bearer ${auth.token}`};
+ f.advance(-181); // 11:56:59 Asia/Seoul.
+ await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+ const early=await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers);
+ assert.equal(early.status,409);assert.equal((await early.json()).error,'before_release_time');assert.equal(f.sent.length,1);
+ f.advance(1); // 11:57:00 Asia/Seoul.
+ const first=await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers);
+ assert.equal(first.status,200);assert.equal((await first.json()).queued,1);assert.equal(f.sent.length,2);
+ f.advance(360); // 12:03:00 Asia/Seoul.
+ const retry=await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers);
+ assert.equal(retry.status,200);assert.equal((await retry.json()).queued,0);assert.equal(f.sent.length,2);
+ assert.equal((await f.db.prepare("SELECT COUNT(*) AS n FROM deliveries WHERE purpose='issue'").first()).n,1);
+});
 test('untrusted delivery requests and unknown or stale issues are rejected',async()=>{
  const f=fixture();assert.equal((await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'})).status,401);
  const auth=await signedToken(),g=fixture({auth});assert.equal((await g.call('/api/internal/deliver',{issueId:'unknown'},{authorization:`Bearer ${auth.token}`})).status,409);

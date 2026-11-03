@@ -36,7 +36,7 @@
     "summary": "원근 깊이와 부동소수점 표현의 분포를 맞추면 같은 비트 수로도 먼 영역의 깊이를 더 잘 구분할 수 있습니다. 두 평면의 저장 비트를 직접 비교하고 실제 렌더러의 설정으로 연결합니다.",
     "date": "2026-11-04",
     "status": "scheduled",
-    "publishAt": "2026-11-04T12:00:00+09:00",
+    "publishAt": "2026-11-04T11:57:00+09:00",
     "source": "content/issues/note-2026-11-04-reversed-z.md",
     "assetDirectory": "assets/issues/note-2026-11-04-reversed-z",
     "coverImage": "depth-mapping.png",

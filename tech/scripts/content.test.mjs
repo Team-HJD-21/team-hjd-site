@@ -19,10 +19,10 @@ test('future published issues are blocked while future drafts are valid', () => 
   assert.throws(() => metadata({ date: '2026-11-04' }));
   metadata({ date: '2026-11-04', status: 'draft' });
 });
-test('scheduled content requires an explicit noon timestamp and stays out of public states', () => {
-  metadata({ status: 'scheduled', date: '2026-11-04', publishAt: '2026-11-04T12:00:00+09:00' });
+test('scheduled content requires an explicit 11:57 Seoul timestamp', () => {
+  metadata({ status: 'scheduled', date: '2026-11-04', publishAt: '2026-11-04T11:57:00+09:00' });
   assert.throws(() => metadata({ status: 'scheduled' }), /publishAt/);
-  assert.throws(() => metadata({ status: 'scheduled', publishAt: '2026-11-03T10:30:00+09:00' }), /publishAt/);
+  for (const publishAt of ['2026-11-03T11:56:59+09:00', '2026-11-03T12:00:00+09:00', '2026-11-04T11:57:00+09:00']) assert.throws(() => metadata({ status: 'scheduled', publishAt }), /publishAt/);
 });
 test('body marker permits flexible headings and preserves the old sample contract', () => {
   assert.match(articleBody(markdown), /^## 질문/);
@@ -57,10 +57,12 @@ test('WebP assets load and missing cover/figure references stop publication', as
   await rm(join(root, issue.assetDirectory, 'figure.webp'));
   await assert.rejects(loadContent(root, { today: issue.date }), /Missing figure/);
 });
-test('draft metadata remains out of public issues and SVG scripts are rejected', async (t) => {
+test('draft and scheduled metadata remain out of public issues and SVG scripts are rejected', async (t) => {
   const root = await fixture(t);
-  await writeFile(join(root, 'content/issues.json'), JSON.stringify([{ ...issue, status: 'draft' }]));
-  assert.equal((await loadContent(root)).issues.length, 0);
+  for (const status of ['draft', 'scheduled']) {
+    await writeFile(join(root, 'content/issues.json'), JSON.stringify([{ ...issue, status, publishAt: `${issue.date}T11:57:00+09:00` }]));
+    assert.equal((await loadContent(root)).issues.length, 0);
+  }
   await writeFile(join(root, issue.assetDirectory, 'active.svg'), '<svg><script>alert(1)</script></svg>');
   await assert.rejects(loadContent(root), /Active or external SVG/);
 });

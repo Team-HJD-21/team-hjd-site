@@ -2,7 +2,9 @@ name: Publish newsletter at noon KST
 
 on:
   schedule:
-    - cron: '0,10,20,30 3 * * *'
+    # Asia/Seoul: first attempt 11:57; check unattempted recipients at 12:03.
+    - cron: '57 2 * * *'
+    - cron: '3 3 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -36,7 +38,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends pandoc
       - name: Check release and content contracts
         run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/src/subscriptions.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
-      - name: Apply the Seoul noon gate
+      - name: Apply the Seoul 11:57 release gate
         id: gate
         env:
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}

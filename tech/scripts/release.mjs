@@ -9,7 +9,7 @@ export function planRelease(issues, now = new Date()) {
   const today = `${parts.year}-${parts.month}-${parts.day}`;
   const minutes = Number(parts.hour) * 60 + Number(parts.minute);
   const alreadyPublished = issues.filter((issue) => issue.date === today && issue.status === 'published');
-  if (minutes < 720) return { state: 'before_noon', today, ids: [] };
+  if (minutes < 11 * 60 + 57) return { state: 'before_release_time', today, ids: [] };
   if (alreadyPublished.length > 1) throw new Error(`Multiple published issues for ${today}.`);
   if (alreadyPublished.length) return { state: 'already_published', today, ids: alreadyPublished.map(issue=>issue.id) };
   if (minutes > 750) throw new Error(`Release window ended for ${today}; no previous issue is republished.`);
@@ -36,5 +36,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const result = await release({ project: fileURLToPath(new URL('../', import.meta.url)), write: args.includes('--write') });
   console.log(JSON.stringify(result));
   if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `changed=${result.changed}\nissue_ids=${result.ids.join(',')}\n`);
-  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, `## 정오 웹 발행\n\n${JSON.stringify(result)}\n\n이 결과는 메일 발송 결과가 아닙니다.\n`);
+  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, `## 뉴스레터 웹 발행\n\n${JSON.stringify(result)}\n\n이 결과는 메일 발송 결과가 아닙니다.\n`);
 }

@@ -214,7 +214,8 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
    const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now*1000));
    const issue=manifest.issues?.find(i=>i.id===data.issueId && i.date===today);
    if(!issue || typeof issue.title!=='string' || typeof issue.summary!=='string' || typeof issue.url!=='string' || !issue.url.startsWith(`${SITE}/${today}/`) || !/^\/[0-9]{4}-[0-9]{2}-[0-9]{2}\/[a-z0-9-]+\/$/.test(new URL(issue.url).pathname) || new URL(issue.url).origin!==SITE) return json({error:'issue_not_live'},409);
-   if(Number(new Intl.DateTimeFormat('en',{timeZone:'Asia/Seoul',hour:'2-digit',hourCycle:'h23'}).format(new Date(now*1000)))<12) return json({error:'before_noon'},409);
+   const releaseClock=Object.fromEntries(new Intl.DateTimeFormat('en',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(now*1000)).map(({type,value})=>[type,value]));
+   if(Number(releaseClock.hour)*60+Number(releaseClock.minute)<11*60+57) return json({error:'before_release_time'},409);
    const {results}=await db.prepare("SELECT id,email FROM subscribers WHERE status='active' AND confirmed_at IS NOT NULL AND privacy_consent=1 AND email_consent=1 AND overseas_consent=1 AND NOT EXISTS(SELECT 1 FROM deliveries WHERE receipt=? || subscribers.id) ORDER BY created_at LIMIT 6").bind(`issue:${issue.id}:`).all();
    const counts={queued:0,duplicate:0,quota:0,rejected:0,uncertain:0,cancelled:0};
    // Bounded batches respect Workers' subrequest limit and Resend's sending rate.
