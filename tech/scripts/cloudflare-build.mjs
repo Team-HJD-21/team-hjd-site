@@ -27,7 +27,7 @@ try {
     run('tar', ['-xzf', archivePath, '--strip-components=2', '-C', directory, `pandoc-${version}/bin/pandoc`]);
     process.env.PANDOC_PATH = join(directory, 'pandoc');
   }
-  run(process.execPath, ['--test', 'scripts/content.test.mjs', 'scripts/release.test.mjs', 'src/subscriptions.test.mjs', 'src/monitor.test.mjs', 'deploy/ensure-pages-project.test.mjs', 'integrations/cloudflare-email.test.mjs']);
+  run(process.execPath, ['--test', 'scripts/content.test.mjs', 'scripts/release.test.mjs', 'src/subscriptions.test.mjs', 'src/monitor.test.mjs', '../tools/newsletter-monitor/server.test.mjs', 'deploy/ensure-pages-project.test.mjs', 'integrations/cloudflare-email.test.mjs']);
   run(process.execPath, ['scripts/build.mjs']);
 } finally {
   if (directory) await rm(directory, { recursive: true, force: true });
