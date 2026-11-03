@@ -1,9 +1,52 @@
+import {selectPeople,pagePeople,duration} from './audience.mjs';
 (()=>{'use strict';
 const $=id=>document.getElementById(id),num=n=>Number(n||0).toLocaleString('ko-KR'),time=s=>new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(new Date(s));
 const purpose={confirm:'구독 인증',issue:'정기 메일',manage:'구독 관리'},states={queued:'API 수락',pending:'처리 확인 필요',uncertain:'응답 확인 필요',rejected:'제공자 거절',quota:'한도 차단',cancelled:'발송 취소'};
-let initialized=false,lastGenerated='',lastRefresh=0;
+let initialized=false,lastGenerated='',lastRefresh=0,report=null,personStatus='active',personPage=1,detailId=null;
+const fullTime=value=>value?new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(value)):'—';
+function emptyRow(target,text,columns){const tr=document.createElement('tr');cell(tr,text,'empty').colSpan=columns;target.append(tr);}
+function badge(target,text,ok=true){const span=document.createElement('span');span.className='badge '+(ok?'ok':'warn');span.textContent=text;target.append(span);}
+function setView(view){for(const name of ['overview','people','mail']){const selected=name===view;$(name+'-view').hidden=!selected;$(name+'-tab').setAttribute('aria-selected',String(selected));$(name+'-tab').tabIndex=selected?0:-1;}}
+function setPeopleStatus(value){personStatus=value;personPage=1;for(const name of ['active','pending','all'])$('filter-'+name).setAttribute('aria-pressed',String(name===value));renderPeople();}
+function openPeople(status){setView('people');setPeopleStatus(status);}
+function renderPeople(){
+ const people=report?.audience?.people;if(!people)return;
+ const selected=selectPeople(people,{status:personStatus,search:$('people-search').value,sort:$('people-sort').value}),page=pagePeople(selected,personPage);personPage=page.page;
+ $('people-count').textContent=`${num(page.total)}명`;$('people-page').textContent=`${num(page.start)}–${num(page.end)} / ${num(page.total)}명 · ${page.page}/${page.pages}페이지`;$('people-prev').disabled=page.page<=1;$('people-next').disabled=page.page>=page.pages;
+ $('people-rows').replaceChildren();if(!page.rows.length)emptyRow($('people-rows'),$('people-search').value?'검색 결과가 없습니다. 이메일 검색어나 상태를 바꿔 주세요.':'이 상태에 해당하는 구독자가 없습니다.',5);
+ for(const person of page.rows){const tr=document.createElement('tr'),identity=cell(tr,'');const email=document.createElement('strong');email.className='person-email';email.textContent=$('show-emails').checked?person.email:person.maskedEmail;identity.append(email);badge(identity,person.status==='active'?'구독 중':'인증 대기',person.status==='active');cell(tr,fullTime(person.createdAt));const confirmation=cell(tr,person.status==='active'?fullTime(person.confirmedAt):`${duration(person.waitingSeconds)} 대기`);if(person.status==='pending'){const note=document.createElement('small');note.textContent=person.confirmationExpiresAt&&Date.parse(person.confirmationExpiresAt)>=Date.parse(report.generatedAt)?'인증 링크 유효':'인증 링크 만료·없음';confirmation.append(note);}const mail=cell(tr,'');const latest=person.mail.recent[0];mail.textContent=latest?`${purpose[latest.purpose]||latest.purpose} · ${states[latest.state]||latest.state}`:'최근 발송 기록 없음';if(latest){const when=document.createElement('small');when.textContent=fullTime(latest.createdAt);mail.append(when);}const detail=cell(tr,'');const button=document.createElement('button');button.textContent='상세 보기';button.addEventListener('click',()=>{detailId=person.id;renderPerson();$('person-detail').showModal();});detail.append(button);$('people-rows').append(tr);}
+}
+function renderPerson(){
+ const person=report?.audience?.people.find(item=>item.id===detailId);if(!person){if($('person-detail').open)$('person-detail').close();return;}
+ const body=$('person-body');body.replaceChildren();const address=document.createElement('p');address.className='detail-email';address.textContent=$('show-emails').checked?person.email:person.maskedEmail;body.append(address);badge(body,person.status==='active'?'구독 중':'인증 대기',person.status==='active');
+ const dl=document.createElement('dl');dl.className='person-fields';
+ const field=(label,value)=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;dl.append(dt,dd);};
+ field('가입일 · KST',fullTime(person.createdAt));field('이메일 인증일',fullTime(person.confirmedAt));field('최근 인증 요청',fullTime(person.lastRequestedAt));
+ if(person.status==='pending'){field('가입 후 대기 시간',duration(person.waitingSeconds));field('인증 링크 만료 시각',fullTime(person.confirmationExpiresAt));}
+ field('개인정보 수집·이용 동의',person.consent.privacy?'동의함':'동의 없음');field('이메일 수신 동의',person.consent.email?'동의함':'동의 없음');field('국외 이전 동의',person.consent.overseas?'동의함':'동의 없음');field('동의 버전 / 시각',`${person.consent.version} / ${fullTime(person.consent.at)}`);
+ field('최근 30일 메일 시도 / API 수락',`${num(person.mail.attempts)}건 / ${num(person.mail.accepted)}건`);field('정기 메일 API 수락',`${num(person.mail.issuesAccepted)}건`);body.append(dl);
+ const heading=document.createElement('h3');heading.textContent='최근 발송 기록 · 최대 10개';body.append(heading);const wrap=document.createElement('div');wrap.className='table-wrap';const table=document.createElement('table'),head=document.createElement('thead'),hr=document.createElement('tr');for(const name of ['시각 · KST','종류','상태']){const th=document.createElement('th');th.textContent=name;hr.append(th);}head.append(hr);const tbody=document.createElement('tbody');for(const item of person.mail.recent){const tr=document.createElement('tr');cell(tr,fullTime(item.createdAt));cell(tr,purpose[item.purpose]||item.purpose);cell(tr,states[item.state]||item.state);tbody.append(tr);}if(!person.mail.recent.length)emptyRow(tbody,'최근 30일 발송 기록이 없습니다.',3);table.append(head,tbody);wrap.append(table);body.append(wrap);
+ const note=document.createElement('p');note.className='muted';note.textContent='조회 전용입니다. API 수락은 실제 받은편지함 도착과 다릅니다. 인증·해지 링크와 원본 토큰은 제공하지 않습니다.';body.append(note);
+}
+function renderGrowth(){
+ const audience=report?.audience;if(!audience)return;const rows=audience.daily.slice(-Number($('growth-range').value));$('growth-rows').replaceChildren();for(const row of rows){const tr=document.createElement('tr');cell(tr,row.date);cell(tr,num(row.joined));cell(tr,num(row.confirmed));$('growth-rows').append(tr);}
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 720 210');svg.setAttribute('role','img');svg.setAttribute('aria-label',`최근 ${rows.length}일 가입 신청과 인증 완료. 상세 수치는 일별 숫자 보기에서 확인할 수 있습니다.`);
+ const add=(tag,attrs,text)=>{const node=document.createElementNS(ns,tag);for(const [key,value] of Object.entries(attrs))node.setAttribute(key,value);if(text!==undefined)node.textContent=text;svg.append(node);return node;};
+ const maximum=Math.max(2,Math.ceil(Math.max(0,...rows.flatMap(row=>[row.joined,row.confirmed]))/2)*2),step=660/rows.length;
+ for(let i=0;i<=2;i++){const y=170-i*70;add('line',{x1:40,y1:y,x2:710,y2:y,class:'chart-grid'});add('text',{x:30,y:y+4,'text-anchor':'end',class:'chart-label'},num(Math.ceil(maximum*i/2)));}
+ rows.forEach((row,index)=>{const x=40+index*step,width=Math.max(2,Math.min(20,step*.32));for(const [offset,key] of [[0,'joined'],[width+2,'confirmed']]){const height=row[key]/maximum*140;const rect=add('rect',{x:x+offset+step*.1,y:170-height,width,height,class:key+'-bar'});const title=document.createElementNS(ns,'title');title.textContent=`${row.date} ${key==='joined'?'가입 신청':'인증 완료'} ${num(row[key])}명`;rect.append(title);}if(rows.length<=7||index%5===0||index===rows.length-1)add('text',{x:x+step/2,y:195,'text-anchor':'middle',class:'chart-label'},row.date.slice(5));});$('growth-chart').replaceChildren(svg);
+}
+function renderAudience(){
+ const audience=report?.audience;if(!audience){$('people-limit').hidden=false;$('people-limit').textContent='새 목록 데이터를 준비 중입니다. 업데이트 배포 후 지금 새로고침을 눌러 주세요.';return;}
+ const m=audience.metrics;$('joined-7').textContent=num(m.joined7)+'명';$('confirmed-7').textContent=num(m.confirmed7)+'명';$('joined-comparison').textContent=`직전 7일 ${num(m.joinedPrevious7)}명 · ${m.joined7-m.joinedPrevious7>=0?'+':''}${num(m.joined7-m.joinedPrevious7)}명`;$('joined-30').textContent=`최근 30일 가입 ${num(m.joined30)}명 · 인증 ${num(m.confirmed30)}명`;$('completion-rate').textContent=num(m.completionRate)+'%';$('audience-total').textContent=`현재 명단 총 ${num(m.total)}명 중 인증 완료 ${num(m.active)}명`;$('confirmation-average').textContent=duration(m.averageConfirmationSeconds);$('confirmation-sample').textContent=`가입 → 인증 완료 · 현재 ${num(m.confirmationSample)}명 기준`;$('waiting-old').textContent=num(m.waitingOver24h)+'명';$('waiting-expired').textContent=num(m.expiredLinks)+'명';$('selected-signups').textContent=`${m.selectedDay.date} · 현재 명단에서 해당 날짜에 가입 ${num(m.selectedDay.joined)}명 / 인증 완료 ${num(m.selectedDay.confirmed)}명`;
+ for(const [id,count] of [['active-count',report.subscribers.active],['pending-count',report.subscribers.pending],['all-count',report.subscribers.total]])$(id).textContent=num(count);
+ $('people-limit').hidden=!audience.truncated&&!audience.historyLimited;$('people-limit').textContent=audience.truncated?`명단은 최근 ${num(audience.limit)}명까지 표시합니다. 통계는 현재 전체 명단 기준입니다.`:'최근 발송 이력이 많아 개별 상세 이력은 최신 5,000건 안에서 조회합니다. 집계 통계는 전체 보관 기록 기준입니다.';
+ $('domain-rows').replaceChildren();for(const row of audience.domains){const tr=document.createElement('tr');cell(tr,row.domain);cell(tr,num(row.active));cell(tr,num(row.pending));cell(tr,`${num(m.total?Math.round(row.total/m.total*1000)/10:0)}%`);$('domain-rows').append(tr);}if(!audience.domains.length)emptyRow($('domain-rows'),'등록된 이메일이 없습니다.',4);
+ renderGrowth();renderPeople();if($('person-detail').open)renderPerson();
+}
 function cell(tr,text,className){const td=document.createElement('td');td.textContent=text;if(className)td.className=className;tr.append(td);return td;}
 function render(r){
+ report=r;renderAudience();
  $('updated').textContent=time(r.generatedAt);$('active').textContent=num(r.subscribers.active)+'명';$('pending').textContent=num(r.subscribers.pending)+'명';$('forecast').textContent=num(r.subscribers.active)+'통';$('quota').textContent=`${num(r.quota.appUsed)} / ${num(r.quota.appDailyLimit)}통`;$('budget').value=r.quota.appUsed;
  $('quota-detail').textContent=`앱 예산 ${num(r.quota.appRemaining)}통 남음 · 같은 한도 기간의 API 수락 ${num(r.quota.accepted)}통 · 집계 ${time(r.quota.startsAt)} ~ ${time(r.quota.resetsAt)} KST`;
  const risk=r.quota.appUsed>=72||r.subscribers.active>r.quota.appRemaining;
@@ -26,4 +69,9 @@ async function poll(){try{const response=await fetch('/api/state',{cache:'no-sto
  }catch{$('status').textContent='로컬 관리 서비스 연결을 확인해 주세요.';}
 }
 $('refresh').addEventListener('click',refresh);$('report-date').addEventListener('change',refresh);$('preview').addEventListener('close',()=>{$('mail-frame').src='about:blank';});setInterval(poll,2000);poll();
+for(const view of ['overview','people','mail']){$(view+'-tab').addEventListener('click',()=>setView(view));$(view+'-tab').addEventListener('keydown',event=>{const names=['overview','people','mail'],index=names.indexOf(view);let next;if(event.key==='ArrowRight')next=names[(index+1)%3];if(event.key==='ArrowLeft')next=names[(index+2)%3];if(event.key==='Home')next=names[0];if(event.key==='End')next=names[2];if(next){event.preventDefault();setView(next);$(next+'-tab').focus();}});}
+for(const state of ['active','pending','all'])$('filter-'+state).addEventListener('click',()=>setPeopleStatus(state));
+$('active-card').addEventListener('click',()=>openPeople('active'));$('pending-card').addEventListener('click',()=>openPeople('pending'));$('waiting-open').addEventListener('click',()=>openPeople('pending'));
+for(const [id,event] of [['people-search','input'],['people-sort','change'],['show-emails','change']])$(id).addEventListener(event,()=>{personPage=1;renderPeople();if($('person-detail').open)renderPerson();});
+$('people-prev').addEventListener('click',()=>{personPage--;renderPeople();});$('people-next').addEventListener('click',()=>{personPage++;renderPeople();});$('growth-range').addEventListener('change',renderGrowth);$('person-detail').addEventListener('close',()=>{detailId=null;});
 })();

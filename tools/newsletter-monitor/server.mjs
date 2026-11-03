@@ -38,7 +38,7 @@ const server=http.createServer(async(req,res)=>{
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))){respond(res,{error:'invalid_date'},400);return;}
    if(state.busy){respond(res,{busy:true},202);return;}refresh(date);respond(res,{busy:true},202);return;
   }
-  const files={'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8'],'/logo.png':['../../tech/assets/brand/gambungi-email-logo.png','image/png']};
+  const files={'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/audience.mjs':['audience.mjs','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8'],'/logo.png':['../../tech/assets/brand/gambungi-email-logo.png','image/png']};
   if(req.method==='GET'&&files[url.pathname]){
    const [file,type]=files[url.pathname];res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; img-src 'self' https://tech.teamhjd.com; style-src 'self'; script-src 'self'; object-src 'none'; frame-src 'self' about:; base-uri 'none'; form-action 'self'"});res.end(await readFile(join(here,file)));return;
   }
