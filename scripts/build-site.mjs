@@ -3,6 +3,7 @@ import {cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync}
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {generateTeamPages} from './render-team.mjs';
+import {createSitemap} from './sitemap.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.resolve(process.argv[2] || path.join(root, '_site'));
@@ -21,6 +22,7 @@ cpSync(path.join(root, 'assets'), path.join(output, 'assets'), {recursive:true})
 mkdirSync(path.join(output, 'privacy'), {recursive:true});
 for (const name of pages) mkdirSync(path.dirname(path.join(output, name)), {recursive:true});
 cpSync(path.join(root, 'robots.txt'), path.join(output, 'robots.txt'));
+writeFileSync(path.join(output, 'sitemap.xml'), createSitemap(root, pages));
 const fingerprinted = new Map();
 function versionImages(source) {
   // Includes literal and template-string sprite URLs such as slime-${kind}.
