@@ -13,6 +13,7 @@ on:
       - '.github/workflows/publish-newsletter.yml'
       - '.github/workflows/monitor-newsletter.yml'
       - 'tools/newsletter-monitor/**'
+      - 'tools/Open-NewsletterMonitor.ps1'
   push:
     branches: [main]
     paths:
@@ -25,6 +26,7 @@ on:
       - '.github/workflows/publish-newsletter.yml'
       - '.github/workflows/monitor-newsletter.yml'
       - 'tools/newsletter-monitor/**'
+      - 'tools/Open-NewsletterMonitor.ps1'
   workflow_dispatch:
 
 permissions:
