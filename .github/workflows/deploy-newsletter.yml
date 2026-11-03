@@ -11,6 +11,8 @@ on:
       - 'assets/favicons/v1/**'
       - '.github/workflows/deploy-newsletter.yml'
       - '.github/workflows/publish-newsletter.yml'
+      - '.github/workflows/monitor-newsletter.yml'
+      - 'tools/newsletter-monitor/**'
   push:
     branches: [main]
     paths:
@@ -21,6 +23,8 @@ on:
       - 'assets/favicons/v1/**'
       - '.github/workflows/deploy-newsletter.yml'
       - '.github/workflows/publish-newsletter.yml'
+      - '.github/workflows/monitor-newsletter.yml'
+      - 'tools/newsletter-monitor/**'
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,14 @@
+import {writeFile} from 'node:fs/promises';
+const site='https://tech.teamhjd.com';
+const publicKey=JSON.parse(Buffer.from(process.env.MONITOR_PUBLIC_KEY||'','base64url').toString());
+const requestId=process.env.MONITOR_REQUEST_ID,date=process.env.MONITOR_DATE;
+if(!/^[a-f0-9-]{36}$/.test(requestId)||!/^\d{4}-\d{2}-\d{2}$/.test(date))throw new Error('Invalid monitor input');
+const auth=await fetch(`${process.env.ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${encodeURIComponent(site)}`,{headers:{Authorization:`Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`},signal:AbortSignal.timeout(15000)});
+if(!auth.ok)throw new Error('OIDC unavailable');
+const {value}=await auth.json();
+const response=await fetch(`${site}/api/internal/monitor`,{method:'POST',headers:{Authorization:`Bearer ${value}`,'Content-Type':'application/json'},body:JSON.stringify({publicKey,requestId,date}),signal:AbortSignal.timeout(45000)});
+if(!response.ok)throw new Error(`Monitor request failed: HTTP ${response.status}`);
+const envelope=await response.json();
+if(envelope.version!==1||envelope.requestId!==requestId||typeof envelope.ciphertext!=='string')throw new Error('Invalid encrypted report');
+await writeFile('monitor-report.json',JSON.stringify(envelope));
+console.log('Encrypted report prepared. No subscriber data or decryption key is logged.');

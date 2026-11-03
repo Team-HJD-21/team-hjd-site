@@ -1,4 +1,5 @@
 import {emailTemplate} from './email-template.mjs';
+import {monitorSnapshot,encryptMonitorReport,redactMailTokens} from './monitor.mjs';
 // Cloudflare Pages + private D1. No subscriber data belongs in the static build.
 export const CONSENT_VERSION = '2026-11-03';
 export const SITE = 'https://tech.teamhjd.com';
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS deliveries (
 CREATE TABLE IF NOT EXISTS limits (bucket TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS delivery_time ON deliveries(created_at);
 CREATE TABLE IF NOT EXISTS subscription_sessions(token_hash TEXT PRIMARY KEY, subscriber_id TEXT NOT NULL, expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS mail_messages(receipt TEXT PRIMARY KEY,subject TEXT NOT NULL,html TEXT NOT NULL,text TEXT NOT NULL,created_at INTEGER NOT NULL);
 `;
 const encoder = new TextEncoder();
 const initialized = new WeakMap();
@@ -44,6 +46,7 @@ async function init(db, now) {
   db.prepare('DELETE FROM deliveries WHERE created_at < ?').bind(now - 30*86400),
   db.prepare('DELETE FROM limits WHERE expires < ?').bind(now)
   ,db.prepare('DELETE FROM subscription_sessions WHERE expires < ?').bind(now)
+  ,db.prepare('DELETE FROM mail_messages WHERE created_at < ?').bind(now-30*86400)
  ]);
 }
 async function limited(db, bucket, maximum, expires) {
@@ -97,6 +100,7 @@ async function send(env, fetcher, db, {receipt, subscriber, purpose, now, subjec
  }
  const payload = {from: '겜붕이의 노트 <notes@news.teamhjd.com>', reply_to:'support@teamhjd.com', to: [subscriber.email], subject, text: `${text}\n\n${url}${unsubscribe ? `\n\n구독 해지: ${unsubscribe}` : ''}\n\n구독 관리·해지: ${SITE}/subscription/manage/\nby TeamHJD`, html:emailTemplate({purpose,subject,text,url,unsubscribe})};
  if (unsubscribe && purpose==='issue') payload.headers = {'List-Unsubscribe': `<${unsubscribe.replace('/subscription/unsubscribe/', '/api/unsubscribe')}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'};
+ await db.prepare('INSERT OR IGNORE INTO mail_messages(receipt,subject,html,text,created_at) VALUES(?,?,?,?,?)').bind(receipt,subject,redactMailTokens(payload.html),redactMailTokens(payload.text),now).run();
  try {
   const response = await fetcher('https://api.resend.com/emails', {method:'POST',headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':receipt},body:JSON.stringify(payload),signal:AbortSignal.timeout(15000)});
   if (!response.ok) {
@@ -109,12 +113,13 @@ async function send(env, fetcher, db, {receipt, subscriber, purpose, now, subjec
   await db.prepare("UPDATE deliveries SET state='uncertain' WHERE receipt=?").bind(receipt).run(); return 'uncertain';
  }
 }
-export async function verifyActionsToken(token, fetcher = fetch, now = Date.now()/1000) {
+export async function verifyActionsToken(token, fetcher = fetch, now = Date.now()/1000, workflow = 'publish-newsletter.yml') {
  try {
   const parts = token.split('.'); if(parts.length!==3 || token.length>20000) return false;
   const header = JSON.parse(new TextDecoder().decode(unb64(parts[0])));
   const claims = JSON.parse(new TextDecoder().decode(unb64(parts[1])));
-  if(header.alg!=='RS256' || claims.iss!=='https://token.actions.githubusercontent.com' || claims.aud!==SITE || claims.sub!=='repo:Team-HJD-21@183283930/team-hjd-site@1403035183:ref:refs/heads/main' || claims.repository!=='Team-HJD-21/team-hjd-site' || claims.repository_id!=='1403035183' || claims.repository_owner_id!=='183283930' || claims.workflow_ref!=='Team-HJD-21/team-hjd-site/.github/workflows/publish-newsletter.yml@refs/heads/main' || claims.ref!=='refs/heads/main' || !Number.isFinite(claims.exp) || claims.exp<=now || !Number.isFinite(claims.nbf) || claims.nbf>now+30 || !Number.isFinite(claims.iat) || claims.iat>now+30 || claims.iat<now-900 || claims.exp-claims.iat>900) return false;
+  if(!['publish-newsletter.yml','monitor-newsletter.yml'].includes(workflow)||workflow==='monitor-newsletter.yml'&&claims.event_name!=='workflow_dispatch')return false;
+  if(header.alg!=='RS256' || claims.iss!=='https://token.actions.githubusercontent.com' || claims.aud!==SITE || claims.sub!=='repo:Team-HJD-21@183283930/team-hjd-site@1403035183:ref:refs/heads/main' || claims.repository!=='Team-HJD-21/team-hjd-site' || claims.repository_id!=='1403035183' || claims.repository_owner_id!=='183283930' || claims.workflow_ref!==`Team-HJD-21/team-hjd-site/.github/workflows/${workflow}@refs/heads/main` || claims.ref!=='refs/heads/main' || !Number.isFinite(claims.exp) || claims.exp<=now || !Number.isFinite(claims.nbf) || claims.nbf>now+30 || !Number.isFinite(claims.iat) || claims.iat>now+30 || claims.iat<now-900 || claims.exp-claims.iat>900) return false;
   const response = await fetcher('https://token.actions.githubusercontent.com/.well-known/jwks', {signal:AbortSignal.timeout(10000)});
   if(!response.ok) return false;
   const {keys} = await response.json();
@@ -128,15 +133,19 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
  if(path==='/api/status' && request.method==='GET') return json({configured:Boolean(env.DB && env.RESEND_API_KEY && env.TOKEN_SECRET?.length>=32)});
  if(!env.DB || !env.RESEND_API_KEY || typeof env.TOKEN_SECRET!=='string' || env.TOKEN_SECRET.length<32) return json({error:'integration_not_configured',message:'구독 연결을 준비하고 있습니다. 잠시 후 다시 시도해 주세요.'},503);
  if(request.method!=='POST') return json({error:'method_not_allowed'},405);
- const internal = path==='/api/internal/deliver' || path==='/api/internal/check';
+ const internal = path==='/api/internal/deliver' || path==='/api/internal/check' || path==='/api/internal/monitor';
  const oneClick = path==='/api/unsubscribe' && new URL(request.url).searchParams.has('token');
  if(!internal && !oneClick && !sameOrigin(request)) return json({error:'invalid_origin'},403);
- if(internal && !await verifyActionsToken((request.headers.get('authorization') || '').replace(/^Bearer /,''),fetcher,now)) return json({error:'unauthorized'},401);
+ if(internal && !await verifyActionsToken((request.headers.get('authorization') || '').replace(/^Bearer /,''),fetcher,now,path==='/api/internal/monitor'?'monitor-newsletter.yml':'publish-newsletter.yml')) return json({error:'unauthorized'},401);
  let data;
  try {data=oneClick ? {token:new URL(request.url).searchParams.get('token')} : await readJson(request);} catch {return json({error:'invalid_body'},400);}
  const db=env.DB;
  try {
   await init(db,now);
+  if(path==='/api/internal/monitor'){
+   try{return json(await encryptMonitorReport(await monitorSnapshot(db,{date:data.date,now}),data.publicKey,data.requestId));}
+   catch{return json({error:'invalid_monitor_request'},400);}
+  }
   if(path==='/api/internal/check') return json({authenticated:true,databaseReady:true,mailConfigured:true});
   if(path==='/api/subscription-status') {
    if(typeof data.token!=='string' || !/^[\w-]{43}$/.test(data.token)) return json({error:'invalid_token'},400);
@@ -206,7 +215,7 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
    const issue=manifest.issues?.find(i=>i.id===data.issueId && i.date===today);
    if(!issue || typeof issue.title!=='string' || typeof issue.summary!=='string' || typeof issue.url!=='string' || !issue.url.startsWith(`${SITE}/${today}/`) || !/^\/[0-9]{4}-[0-9]{2}-[0-9]{2}\/[a-z0-9-]+\/$/.test(new URL(issue.url).pathname) || new URL(issue.url).origin!==SITE) return json({error:'issue_not_live'},409);
    if(Number(new Intl.DateTimeFormat('en',{timeZone:'Asia/Seoul',hour:'2-digit',hourCycle:'h23'}).format(new Date(now*1000)))<12) return json({error:'before_noon'},409);
-   const {results}=await db.prepare("SELECT id,email FROM subscribers WHERE status='active' AND confirmed_at IS NOT NULL AND privacy_consent=1 AND email_consent=1 AND overseas_consent=1 AND NOT EXISTS(SELECT 1 FROM deliveries WHERE receipt=? || subscribers.id) ORDER BY created_at LIMIT 8").bind(`issue:${issue.id}:`).all();
+   const {results}=await db.prepare("SELECT id,email FROM subscribers WHERE status='active' AND confirmed_at IS NOT NULL AND privacy_consent=1 AND email_consent=1 AND overseas_consent=1 AND NOT EXISTS(SELECT 1 FROM deliveries WHERE receipt=? || subscribers.id) ORDER BY created_at LIMIT 6").bind(`issue:${issue.id}:`).all();
    const counts={queued:0,duplicate:0,quota:0,rejected:0,uncertain:0,cancelled:0};
    // Bounded batches respect Workers' subrequest limit and Resend's sending rate.
    for(const subscriber of results) {

@@ -1,0 +1,43 @@
+name: Newsletter monitor
+run-name: Newsletter monitor ${{ inputs.request_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        required: true
+        type: string
+      date:
+        required: true
+        type: string
+      public_key:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  report:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+      - name: Request an encrypted private snapshot
+        env:
+          MONITOR_REQUEST_ID: ${{ inputs.request_id }}
+          MONITOR_DATE: ${{ inputs.date }}
+          MONITOR_PUBLIC_KEY: ${{ inputs.public_key }}
+        run: node tech/scripts/monitor-report.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: newsletter-monitor-${{ inputs.request_id }}
+          path: monitor-report.json
+          retention-days: 1
+          if-no-files-found: error
