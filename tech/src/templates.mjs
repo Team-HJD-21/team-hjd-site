@@ -94,7 +94,7 @@ export function page({ title, description, path = '/', active, content, math = f
 
 export function indexContent(issues, tags) {
   return `<div class="archive-shell">
-    <header class="archive-heading"><h1>매일 하나씩 알아가는<br><em>호기심 가득한 게임 개발.</em></h1></header>
+    <header class="archive-heading"><h1>매일 하나씩 알아가는<br><em>호기심 가득한 게임 개발.</em></h1><p>하루 10분의 호기심이 쌓여, 게임 개발을 바라보는 깊이가 달라집니다.</p><p class="publish-schedule">매일 낮 12시, 새로운 노트를 이메일로 보내드립니다.</p></header>
     <div class="archive-count">글 ${issues.length}개</div>
     <div class="issue-list">${issues.map((issue) => issueCard(issue, tags)).join('')}</div>
   </div>`;
@@ -102,7 +102,7 @@ export function indexContent(issues, tags) {
 
 export function subscribeContent() {
   return `<div class="archive-shell subscribe-shell">
-    <header class="archive-heading"><h1>구독하기</h1><p>매일 새로운 게임 개발 이야기를 이메일로 받아보세요.</p></header>
+    <header class="archive-heading"><h1>구독하기</h1><p>매일 낮 12시, 새로운 게임 개발 이야기를 이메일로 받아보세요.</p></header>
     <section class="subscription-panel" aria-label="이메일 구독 신청">
       <form class="subscribe-form" action="/api/subscribe" method="post" data-subscribe-form>
         <input type="hidden" name="consentVersion" value="2026-11-03">

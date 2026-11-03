@@ -62,6 +62,7 @@ button { border: 0; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px #d9eea610; }
 .publisher-link { font-size: 11px; text-decoration: none; }
 .archive-heading > p:not(.eyebrow) { font-size: 17px; line-height: 1.75; color: var(--secondary); margin: 0; }
+.archive-heading > p.publish-schedule { margin-top:14px; font-size:14px; }
 .eyebrow { color: var(--accent); font-size: 11px; letter-spacing: .14em; font-weight: 600; margin: 0 0 15px; }
 .archive-count { color: var(--secondary); font-size: 13px; margin: 0; padding: 16px 0; }
 .issue-list, .search-results { display: grid; gap: 16px; }
