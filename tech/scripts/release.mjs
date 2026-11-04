@@ -1,4 +1,5 @@
-import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, readFile, writeFile, rename, rm } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolve, join } from 'node:path';
@@ -56,6 +57,7 @@ export function planRelease(issues, now = new Date(), { recovery = null } = {}) 
     const target = issues.find(issue => issue.id === approval.issueId && issue.date === today);
     if (!target || !['scheduled', 'published'].includes(target.status)) fail('Recovery target must be an existing scheduled or published issue for today.');
     if (published.length && published[0].id !== approval.issueId) fail('A different issue is already published today; recovery cannot create a second issue.');
+    if (issues.filter(issue => issue.date === today && issue.status === 'scheduled').length > 1) fail('Multiple scheduled issues; resolve the ambiguity before recovery.');
   }
   if (minutes < 11 * 60 + 57) return { state: 'before_release_time', today, ids: [] };
   // Repeating delivery uses exactly the original issue ID and existing server-side receipts.
@@ -69,14 +71,18 @@ export function planRelease(issues, now = new Date(), { recovery = null } = {}) 
 
 export async function release({ project, write = false, now = new Date(), recovery = null }) {
   const { loadContent } = await import('./content.mjs');
-  const { allIssues } = await loadContent(project);
+  const { allIssues } = await loadContent(project, { today: seoulDate(now) });
   const plan = planRelease(allIssues, now, { recovery });
   if (write && recovery?.dryRun) fail('Dry-run recovery cannot write a publication.');
   if (write && plan.state === 'not_ready') fail(`No scheduled issue is ready for ${plan.today}.`);
   const changed = write && plan.state === 'ready';
   if (changed) {
     for (const issue of allIssues) if (plan.ids.includes(issue.id)) { issue.status = 'published'; issue.publishedAt = now.toISOString(); }
-    await writeFile(join(project, 'content/issues.json'), `${JSON.stringify(allIssues, null, 2)}\n`);
+    const destination = join(project, 'content/issues.json'), temporary = `${destination}.${randomUUID()}.tmp`;
+    try {
+      await writeFile(temporary, `${JSON.stringify(allIssues, null, 2)}\n`, { flag: 'wx' });
+      await rename(temporary, destination);
+    } finally { await rm(temporary, { force: true }); }
   }
   return { ...plan, changed, dryRun: !write, recovery: recovery ? { requestId: recovery.requestId, issueId: recovery.issueId, allowLate: recovery.allowLate, reason: recovery.reason } : null };
 }
@@ -88,9 +94,10 @@ export async function contextFromEvent(project, env = process.env, now = new Dat
   if (env.GITHUB_EVENT_NAME === 'workflow_dispatch') {
     const inputs = event.inputs || {};
     const bool = (value, fallback) => value === undefined ? fallback : value === true || value === 'true' ? true : value === false || value === 'false' ? false : fail('Invalid boolean workflow input.');
-    const dryRun = bool(inputs.dry_run, true), allowLate = bool(inputs.allow_late, false);
+    const dryRun = bool(inputs.dry_run, true), allowLate = bool(inputs.allow_late, false), confirmed = bool(inputs.confirm_recovery, false);
     const hasTarget = [inputs.recovery_issue_id, inputs.recovery_date, inputs.recovery_reason].some(Boolean);
-    if (!allowLate && !hasTarget) return { write: !dryRun, recovery: null };
+    if (!allowLate && !hasTarget && !confirmed) return { write: !dryRun, recovery: null };
+    if (!confirmed) fail('Manual recovery requires confirm_recovery=true.');
     const recovery = validateRecovery({ version: 1, requestId: `dispatch-${env.GITHUB_RUN_ID}`, date: inputs.recovery_date, issueId: inputs.recovery_issue_id,
       reason: inputs.recovery_reason, requestedAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3600000).toISOString(), allowLate, dryRun, confirm: 'publish-and-send-once' }, now);
     return { write: !dryRun, recovery };
@@ -114,7 +121,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const options = args[0] === '--from-event' ? await contextFromEvent(project) : { write: args.includes('--write') };
     const result = await release({ project, ...options });
     console.log(JSON.stringify(result));
-    if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `changed=${result.changed}\nissue_ids=${result.ids.join(',')}\ndry_run=${result.dryRun}\n`);
+    if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `changed=${result.changed}\nissue_ids=${result.ids.join(',')}\nissue_date=${result.today}\ndry_run=${result.dryRun}\n`);
     if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, `## 뉴스레터 웹 발행\n\n\`\`\`json\n${JSON.stringify(result, null, 2)}\n\`\`\`\n\n메일 수락과 실제 수신은 별도 확인합니다.\n`);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown release failure';

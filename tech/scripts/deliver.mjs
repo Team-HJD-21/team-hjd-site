@@ -1,6 +1,11 @@
 // GitHub Actions OIDC only; never print the bearer token or recipient data.
+import { appendFile } from 'node:fs/promises';
+import { loadContent } from './content.mjs';
+import { fileURLToPath } from 'node:url';
+import { waitForLiveIssue, deliverBatches } from './delivery-client.mjs';
 const site='https://tech.teamhjd.com';
 const ids=(process.env.ISSUE_IDS||'').split(',').filter(Boolean);
+const expectedDate=process.env.ISSUE_DATE;
 async function oidcToken(){
  const auth=await fetch(`${process.env.ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${encodeURIComponent(site)}`,{headers:{Authorization:`Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`},signal:AbortSignal.timeout(15000)});
  if(!auth.ok)throw new Error('Actions OIDC unavailable.');
@@ -18,22 +23,21 @@ if(process.argv.includes('--check')){
  if(!response.ok)throw new Error(`Authenticated connection check failed (${response.status}).`);
  process.exit(0);
 }
-if(!ids.length) throw new Error('No released issue IDs.');
+if(ids.length!==1) throw new Error('Exactly one released issue ID is required.');
+const {allIssues}=await loadContent(fileURLToPath(new URL('../',import.meta.url)));
 for(const issueId of ids){
- let live=false;
- for(let attempt=0;attempt<24;attempt++){
-  const response=await fetch(`${site}/publication.json?release=${Date.now()}`,{signal:AbortSignal.timeout(15000)});
-  if(response.ok && (await response.json()).issues?.some(issue=>issue.id===issueId)){live=true;break;}
-  await new Promise(resolve=>setTimeout(resolve,10000));
- }
- if(!live)throw new Error('The released issue is not live yet. No email sent.');
- for(let batch=0;batch<16;batch++){
-  const value=await oidcToken();
-  const response=await fetch(`${site}/api/internal/deliver`,{method:'POST',headers:{Authorization:`Bearer ${value}`,'Content-Type':'application/json'},body:JSON.stringify({issueId}),signal:AbortSignal.timeout(90000)});
-  const result=await response.json();
-  console.log(JSON.stringify(result)); // Aggregate counts only.
-  if(!response.ok)throw new Error(`Email delivery needs attention (${response.status}). Existing receipts are never replayed automatically.`);
-  if(!result.remaining)break;
-  if(batch===15)throw new Error('Pending recipients exceed this free-plan run capacity.');
- }
+ const source=allIssues.find(issue=>issue.id===issueId && issue.date===expectedDate && issue.status==='published');
+ if(!source)throw new Error('The delivery target must be the validated published issue for the release date.');
+ const issue=await waitForLiveIssue(issueId,{
+  expectedDate,expectedArticleUrl:`${site}/${source.date}/${source.slug}/`,expectedTitle:source.title,
+  onProgress:result=>console.log(JSON.stringify(result))
+ });
+ console.log(JSON.stringify({stage:'web_publication_verified',issueId,url:issue.url}));
+ const result=await deliverBatches(issueId,{
+  expectedDate,tokenProvider:oidcToken,
+  onResult:counts=>console.log(JSON.stringify(counts))
+ });
+ console.log(JSON.stringify({stage:'delivery_processing_complete',...result}));
+ if(process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY,
+  `## 메일 발송 처리\n\n호: ${issueId}\n\n이번 실행 API 수락: ${result.acceptedThisRun}건 / 미시도: 0건 / 미해결: 0건\n\nAPI 수락은 받은편지함 도착과 다릅니다. 0건이면 기존 실행 기록 또는 수신 대상 유무를 함께 확인하세요.\n`);
 }
