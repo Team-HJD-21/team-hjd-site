@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { join, resolve } from 'node:path';
+import {publicationVersion} from './publication-version.mjs';
 const site = 'https://tech.teamhjd.com';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const escapeHtml = s => s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -26,9 +27,12 @@ export async function inspectLive(project, issueId, fetcher = fetch) {
   assert.ok(live, 'Published issue missing from production manifest');
   assert.equal(live.date, issue.date); assert.equal(live.title, issue.title);
   assert.equal(live.url, `${site}/${issue.date}/${issue.slug}/`);
+  const contentVersion=await publicationVersion(project,issue,documents.get(issueId));
+  assert.equal(live.contentVersion,contentVersion,'Live manifest content version differs from validated source');
   const html = (await get(live.url)).toString('utf8');
   assert.ok(html.includes(escapeHtml(issue.title)), 'Article title not present');
   assert.ok(html.includes('오늘 얻어갈 것'), 'Takeaway section not present');
+  assert.ok(html.includes(`<meta name="note-content-version" content="${contentVersion}">`),'Article content version differs from validated source');
   const document = documents.get(issueId), versions = new Map();
   for (const name of document.assets) {
     const local = await readFile(join(project, issue.assetDirectory, name));

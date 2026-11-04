@@ -14,7 +14,7 @@ function checkIssueId(issueId) {
 
 /** Wait for the exact live manifest entry AND its dated article, with a deadline. */
 export async function waitForLiveIssue(issueId, {
-  expectedDate, expectedArticleUrl, expectedTitle, fetcher = fetch, clock = Date.now, pause = sleep,
+  expectedDate, expectedArticleUrl, expectedTitle, expectedVersion, fetcher = fetch, clock = Date.now, pause = sleep,
   maxWaitMs = 360000, pollMs = 10000, onProgress = () => {}
 } = {}) {
   checkIssueId(issueId);
@@ -46,15 +46,16 @@ export async function waitForLiveIssue(issueId, {
               address.search || address.hash || !validPath.test(address.pathname)) {
             throw new Error('Unexpected article address.');
           }
-          if ((expectedArticleUrl && address.href !== expectedArticleUrl) || (expectedTitle && issue.title !== expectedTitle)) throw new Error('The live issue differs from the validated source.');
+          if ((expectedArticleUrl && address.href !== expectedArticleUrl) || (expectedTitle && issue.title !== expectedTitle) || (expectedVersion && issue.contentVersion!==expectedVersion)) throw new Error('The live issue differs from the validated source.');
           if (clock() >= deadline || getRequests >= 60) break;
           getRequests++;
           const article = await fetcher(address.href, {
             headers: { 'Cache-Control': 'no-cache' }, redirect: 'error',
             signal: AbortSignal.timeout(Math.max(1, Math.min(15000, deadline - clock())))
           });
-          const ready = article.ok && (article.headers.get('content-type') || '').includes('text/html');
-          await article.body?.cancel();
+          let ready = article.ok && (article.headers.get('content-type') || '').includes('text/html');
+          if(ready&&expectedVersion)ready=(await article.text()).includes(`<meta name="note-content-version" content="${expectedVersion}">`);
+          else await article.body?.cancel();
           if (ready && clock() < deadline && dateInSeoul(clock()) === expectedDate) return issue;
         }
       } else {
@@ -84,7 +85,7 @@ function safeCounts(result, issueId) {
 /** This does not receive recipients or mail contents and never resets receipts. */
 export async function deliverBatches(issueId, {
   tokenProvider, fetcher = fetch, maxBatches = 16, onResult = () => {},
-  expectedDate, clock = Date.now
+  expectedDate, contentVersion, clock = Date.now
 } = {}) {
   checkIssueId(issueId);
   if (typeof tokenProvider !== 'function' || !Number.isSafeInteger(maxBatches) || maxBatches < 1 || maxBatches > 16) {
@@ -99,7 +100,7 @@ export async function deliverBatches(issueId, {
     try {
       response = await fetcher(`${SITE}/api/internal/deliver`, {
         method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ issueId }), redirect: 'error', signal: AbortSignal.timeout(90000)
+        body: JSON.stringify({ issueId, ...(contentVersion?{contentVersion}:{}) }), redirect: 'error', signal: AbortSignal.timeout(90000)
       });
       result = await response.json();
     } catch {

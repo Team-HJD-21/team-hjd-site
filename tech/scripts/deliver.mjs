@@ -1,6 +1,7 @@
 // GitHub Actions OIDC only; never print the bearer token or recipient data.
 import { appendFile } from 'node:fs/promises';
 import { loadContent } from './content.mjs';
+import { publicationVersion } from './publication-version.mjs';
 import { fileURLToPath } from 'node:url';
 import { waitForLiveIssue, deliverBatches } from './delivery-client.mjs';
 const site='https://tech.teamhjd.com';
@@ -24,17 +25,19 @@ if(process.argv.includes('--check')){
  process.exit(0);
 }
 if(ids.length!==1) throw new Error('Exactly one released issue ID is required.');
-const {allIssues}=await loadContent(fileURLToPath(new URL('../',import.meta.url)));
+const project=fileURLToPath(new URL('../',import.meta.url));
+const {allIssues,documents}=await loadContent(project);
 for(const issueId of ids){
  const source=allIssues.find(issue=>issue.id===issueId && issue.date===expectedDate && issue.status==='published');
  if(!source)throw new Error('The delivery target must be the validated published issue for the release date.');
+ const contentVersion=await publicationVersion(project,source,documents.get(source.id));
  const issue=await waitForLiveIssue(issueId,{
-  expectedDate,expectedArticleUrl:`${site}/${source.date}/${source.slug}/`,expectedTitle:source.title,
+  expectedDate,expectedArticleUrl:`${site}/${source.date}/${source.slug}/`,expectedTitle:source.title,expectedVersion:contentVersion,
   onProgress:result=>console.log(JSON.stringify(result))
  });
  console.log(JSON.stringify({stage:'web_publication_verified',issueId,url:issue.url}));
  const result=await deliverBatches(issueId,{
-  expectedDate,tokenProvider:oidcToken,
+  expectedDate,contentVersion,tokenProvider:oidcToken,
   onResult:counts=>console.log(JSON.stringify(counts))
  });
  console.log(JSON.stringify({stage:'delivery_processing_complete',...result}));

@@ -24,6 +24,7 @@ function fixture({provider='ok',auth}={}) {
   if(url.includes('/.well-known/jwks'))return Response.json({keys:[auth.jwk]});
   if(url.endsWith('/publication.json'))return Response.json({issues:[{id:'note-2026-11-03',date:'2026-11-03',title:'오늘의 글입니다',summary:'게임 개발을 알아볼까요?',url:`${SITE}/2026-11-03/today/`}]});
   assert.equal(url,'https://api.resend.com/emails');sent.push(JSON.parse(options.body));
+  if(typeof provider==='function')return provider(options,sent);
   if(provider==='lost')throw new Error('lost response');
   return provider==='rejected' ? Response.json({error:'no'}, {status:429}) : Response.json({id:`mock-${sent.length}`});
  };
@@ -120,4 +121,61 @@ test('issue delivery starts at 11:57 Seoul and the 12:03 retry does not send it 
 test('untrusted delivery requests and unknown or stale issues are rejected',async()=>{
  const f=fixture();assert.equal((await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'})).status,401);
  const auth=await signedToken(),g=fixture({auth});assert.equal((await g.call('/api/internal/deliver',{issueId:'unknown'},{authorization:`Bearer ${auth.token}`})).status,409);
+});
+
+test('manifest content version mismatch blocks provider calls',async()=>{
+ const auth=await signedToken(),f=fixture({auth});
+ const result=await f.call('/api/internal/deliver',{issueId:'note-2026-11-03',contentVersion:'a'.repeat(64)},{authorization:`Bearer ${auth.token}`});
+ assert.equal(result.status,409);assert.equal((await result.json()).error,'publication_version_mismatch');assert.equal(f.sent.length,0);
+});
+
+test('concurrent worker and repeated runs cannot reserve a second receipt',async()=>{
+ let entered,finish;const reached=new Promise(r=>entered=r),barrier=new Promise(r=>finish=r);
+ const auth=await signedToken(),f=fixture({auth,provider:async(options,sent)=>{if(sent.length===2){entered();await barrier;}return Response.json({id:'mock'});}}),headers={authorization:`Bearer ${auth.token}`};
+ await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+ const first=f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers);await reached;
+ const concurrent=await (await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers)).json();
+ assert.equal(concurrent.queued,0);assert.equal(concurrent.unresolved,1);finish();await first;
+ await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers);
+ assert.equal(f.sent.length,2);assert.equal((await f.db.prepare("SELECT COUNT(*) AS n FROM deliveries WHERE purpose='issue'").first()).n,1);
+});
+
+test('provider rejection and lost response persist and are never automatically retried',async()=>{
+ for(const provider of ['lost','rejected']){
+  const auth=await signedToken(),f=fixture({auth}),headers={authorization:`Bearer ${auth.token}`};
+  await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+  f.env.RESEND_API_KEY='fake-test-only';
+  const original=f.call;
+  // Force provider failure only after the confirmed signup, in the isolated DB.
+  const failedFetch=async(url,options)=>url.includes('/.well-known/jwks')?Response.json({keys:[auth.jwk]}):url.endsWith('/publication.json')?Response.json({issues:[{id:'note-2026-11-03',date:'2026-11-03',title:'검수',summary:'검수',url:`${SITE}/2026-11-03/today/`}]}):provider==='lost'?Promise.reject(new Error('lost')):Response.json({error:'rate'},{status:429});
+  const request=()=>new Request(`${SITE}/api/internal/deliver`,{method:'POST',headers:{'content-type':'application/json',authorization:headers.authorization},body:JSON.stringify({issueId:'note-2026-11-03'})});
+  const one=await (await handleSubscription(request(),f.env,{fetcher:failedFetch,clock:()=>auth.now*1000,pause:async()=>{}})).json();
+  assert.equal(one.unresolved,1);
+  const again=await (await original('/api/internal/deliver',{issueId:'note-2026-11-03'},headers)).json();
+  assert.equal(again.queued,0);assert.equal(again.unresolved,1);assert.equal(f.sent.length,1);
+  assert.equal((await f.db.prepare("SELECT state FROM deliveries WHERE purpose='issue'").first()).state,provider==='lost'?'uncertain':'rejected');
+ }
+});
+
+test('quota receipt and a crash-pending receipt remain unresolved instead of being resent',async()=>{
+ for(const state of ['quota','pending']){
+  const auth=await signedToken(),f=fixture({auth}),headers={authorization:`Bearer ${auth.token}`};
+  await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+  if(state==='quota')await f.db.prepare("UPDATE limits SET count=90 WHERE bucket='mail:2026-11-03'").run();
+  else {const s=await f.db.prepare('SELECT id FROM subscribers').first();await f.db.prepare("INSERT INTO deliveries VALUES(?,?,?,'pending',NULL,?)").bind(`issue:note-2026-11-03:${s.id}`,s.id,'issue',auth.now).run();}
+  const result=await (await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers)).json();
+  assert.equal(result.unresolved,1);assert.equal(result.queued,0);assert.equal(f.sent.length,1);
+ }
+});
+
+test('known boundary: deleting and re-enrolling an address creates a distinct subscriber identity',async()=>{
+ const auth=await signedToken(),f=fixture({auth}),headers={authorization:`Bearer ${auth.token}`};
+ await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+ await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers);
+ const originalId=(await f.db.prepare('SELECT id FROM subscribers').first()).id;
+ const token=new URL(f.sent[1].text.match(/구독 해지: (.+)/)[1]).searchParams.get('token');await f.call('/api/unsubscribe',{token});
+ await f.call('/api/subscribe',f.consent);
+ const newToken=f.sent[2].text.match(/confirm\/\?token=([\w-]+)/)[1];await f.call('/api/confirm',{token:newToken});
+ assert.notEqual((await f.db.prepare('SELECT id FROM subscribers').first()).id,originalId);
+ const result=await (await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers)).json();assert.equal(result.queued,1);
 });

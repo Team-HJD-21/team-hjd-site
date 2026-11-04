@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import { SITE_URL, SITE_NAME, issuePath, escapeHtml, page as renderPage, indexContent, searchContent, articleContent, subscribeContent } from '../src/templates.mjs';
 import { loadContent } from './content.mjs';
+import { publicationVersion } from './publication-version.mjs';
 import { buildBrand } from './brand.mjs';
 import { loadCompanyBrand } from './company-brand.mjs';
 import { subscriptionPages } from '../src/subscription-pages.mjs';
@@ -21,6 +22,7 @@ if (!existsSync(katexPath)) throw new Error('Vendored KaTeX is missing from asse
 const katex = require(katexPath);
 
 const { tags, issues, documents } = await loadContent(project);
+const contentVersions=new Map(await Promise.all(issues.map(async issue=>[issue.id,await publicationVersion(project,issue,documents.get(issue.id))])));
 const company = await loadCompanyBrand(project);
 const assetVersion = createHash('sha256').update(await readFile(join(project,'src/app.js'))).update(await readFile(join(project,'src/styles.css'))).update(company.stylesheet).digest('hex').slice(0,12);
 const page = (options) => renderPage({ ...options, footer: company.footer, assetVersion });
@@ -135,7 +137,7 @@ for (const issue of issues) {
     const decoded = tex.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim().replace(/^\\[([]/, '').replace(/\\[)\]]$/, '');
     return `<span class="math ${mode}">${katex.renderToString(decoded, { displayMode: mode === 'display', throwOnError: true, output: 'htmlAndMathml', strict: 'warn' })}</span>`;
   });
-  await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, content: articleContent(issue, tags, body, toc) }));
+  await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, content: articleContent(issue, tags, body, toc) }).replace('</head>',`<meta name="note-content-version" content="${contentVersions.get(issue.id)}"></head>`));
   const downloads = join(dist, 'downloads');
   await mkdir(downloads, { recursive: true });
   // Standalone Markdown works outside the ZIP; ZIP retains portable relative paths.
@@ -151,7 +153,7 @@ await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${S
 await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/', '/tags/', '/subscribe/', ...issues.map(issuePath)].map((path) => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>`);
 await writeFile(join(dist, '_redirects'), issues.map(issue=>`/articles/${issue.slug}/ ${issuePath(issue)} 301`).join('\n')+'\n');
 const published = issues.filter((issue) => issue.status === 'published');
-await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}${issuePath(issue)}` })) }, null, 2));
+await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}${issuePath(issue)}`,contentVersion:contentVersions.get(issue.id) })) }, null, 2));
 await writeFile(join(dist, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${SITE_NAME}</title><link>${SITE_URL}/</link><description>게임 클라이언트 개발자를 위한 기술 노트</description><language>ko</language>${published.map((issue) => `<item><title>${escapeHtml(issue.title)}</title><link>${SITE_URL}${issuePath(issue)}</link><guid>${SITE_URL}${issuePath(issue)}</guid><pubDate>${new Date(issue.publishedAt || issue.publishAt || `${issue.date}T12:00:00+09:00`).toUTCString()}</pubDate><description>${escapeHtml(issue.description)}</description></item>`).join('')}</channel></rss>`);
 await writeFile(join(dist, '_headers'), '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Cache-Control: no-cache\n  Content-Security-Policy: frame-ancestors \'self\'; object-src \'none\'; base-uri \'self\'\n/subscription/*\n  Referrer-Policy: no-referrer\n  X-Robots-Tag: noindex\n  Cache-Control: no-store\n');
 console.log(`Built ${issues.length} article(s), archive, tag search and synchronized downloads in dist/.`);

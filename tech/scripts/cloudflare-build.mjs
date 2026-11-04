@@ -28,6 +28,7 @@ try {
     process.env.PANDOC_PATH = join(directory, 'pandoc');
   }
   run(process.execPath, ['--test', 'scripts/content.test.mjs', 'scripts/release.test.mjs', 'scripts/delivery-client.test.mjs', 'scripts/warm-release.test.mjs', 'src/subscriptions.test.mjs', 'src/monitor.test.mjs', '../tools/newsletter-monitor/server.test.mjs', '../tools/newsletter-monitor/audience.test.mjs', 'deploy/ensure-pages-project.test.mjs', 'integrations/cloudflare-email.test.mjs']);
+  run(process.execPath, ['--test', 'scripts/publication-version.test.mjs', 'scripts/audit-no-send.test.mjs']);
   run(process.execPath, ['scripts/build.mjs']);
 } finally {
   if (directory) await rm(directory, { recursive: true, force: true });

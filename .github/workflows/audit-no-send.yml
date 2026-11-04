@@ -1,0 +1,39 @@
+name: Newsletter no-send operational audit
+on:
+  # One isolated UTC clock probe: 2026-11-05 00:49 Asia/Seoul.
+  schedule:
+    - cron: '49 15 4 11 *'
+  push:
+    branches: [main]
+    paths:
+      - 'tech/operations/audit-canary.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+      - run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends pandoc
+      - name: Build validated published content without changing publication state
+        working-directory: tech
+        run: npm run build
+      - name: Real-clock shared gate and public production inspection with mail unavailable
+        env:
+          PROBE_EXPECTED_AT: '2026-11-04T15:49:00Z'
+          PROBE_CRON: ${{ github.event.schedule }}
+        run: node tech/scripts/audit-no-send.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: newsletter-no-send-audit-${{ github.run_id }}
+          path: tech/.local/audit-no-send.json
+          retention-days: 7
+          if-no-files-found: error
