@@ -2,17 +2,36 @@ name: Publish newsletter at noon KST
 
 on:
   schedule:
-    # Asia/Seoul: independent attempts at 11:57, 12:03, 12:09, 12:17 and 12:23.
-    # The release gate still refuses late publication after 12:30.
-    # Delivery receipts and provider idempotency prevent repeat sends.
+    # Seoul: 11:57; then 12:03, 12:09, 12:17 and 12:23.
+    # Cron cannot consume manual recovery approvals or defeat the 12:30 cutoff.
     - cron: '57 2 * * *'
     - cron: '3,9,17,23 3 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'tech/operations/release-request.json'
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Check the release gate without publishing'
+        description: 'Inspect only: do not publish or send mail'
         type: boolean
         default: true
+      allow_late:
+        description: 'Explicit same-day recovery after 12:30 KST (requires issue, date and reason)'
+        type: boolean
+        default: false
+      recovery_issue_id:
+        description: 'Exact existing issue ID; never change the ID to resend'
+        type: string
+        required: false
+      recovery_date:
+        description: 'Current Seoul date, YYYY-MM-DD'
+        type: string
+        required: false
+      recovery_reason:
+        description: 'Recovery reason, 10-300 characters; no personal data or secrets'
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -33,40 +52,45 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           ref: main
+          fetch-depth: 0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '22'
-      - name: Install Pandoc
-        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends pandoc
+      - name: Record trigger diagnostics without credentials
+        env:
+          TRIGGER_EVENT: ${{ github.event_name }}
+          TRIGGER_CRON: ${{ github.event.schedule }}
+        run: |
+          node --input-type=module -e 'console.log(JSON.stringify({event:process.env.TRIGGER_EVENT,cron:process.env.TRIGGER_CRON||null,run:process.env.GITHUB_RUN_ID,attempt:process.env.GITHUB_RUN_ATTEMPT,actualUtc:new Date().toISOString(),ref:process.env.GITHUB_REF,sha:process.env.GITHUB_SHA}))'
       - name: Check release and content contracts
         run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/src/subscriptions.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
-      - name: Apply the Seoul 11:57 release gate
+      - name: Apply release gate or explicit bounded recovery
         id: gate
-        env:
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-        run: |
-          if [ "$DRY_RUN" = "true" ]; then
-            node tech/scripts/release.mjs --check
-          else
-            node tech/scripts/release.mjs --write
-          fi
+        run: node tech/scripts/release.mjs --from-event
       - name: Check authenticated delivery connection without sending email
-        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        if: steps.gate.outputs.issue_ids != '' || steps.gate.outputs.dry_run == 'true'
         run: node tech/scripts/deliver.mjs --check
+      - name: Install Pandoc only for a new publication
+        if: steps.gate.outputs.changed == 'true'
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends pandoc
       - name: Build the exact release before committing
         if: steps.gate.outputs.changed == 'true'
         working-directory: tech
         run: npm run build
-      - name: Publish the validated status change
+      - name: Publish the validated status change without force-pushing
         if: steps.gate.outputs.changed == 'true'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- tech/content/issues.json
-          git commit -m "Publish prepared newsletter issue at noon KST"
+          git commit -m "Publish validated newsletter issue"
           git push origin HEAD:main
       - name: Deliver the live issue to confirmed subscribers
-        if: steps.gate.outputs.issue_ids != '' && !(github.event_name == 'workflow_dispatch' && inputs.dry_run)
+        if: steps.gate.outputs.issue_ids != '' && steps.gate.outputs.dry_run == 'false'
         env:
           ISSUE_IDS: ${{ steps.gate.outputs.issue_ids }}
         run: node tech/scripts/deliver.mjs
+      - name: Record failure and recovery instructions
+        if: failure()
+        run: |
+          printf '%s\n' '## 발행 또는 발송 확인이 필요합니다' '실패 단계와 발송 집계의 unresolved를 확인하세요. tech/docs/RECOVERY.md를 따르세요.' 'receipt 삭제, 호 ID 변경, 임의 수신자 발송은 금지합니다. API 수락은 실제 받은편지함 도착과 다릅니다.' >> "$GITHUB_STEP_SUMMARY"
