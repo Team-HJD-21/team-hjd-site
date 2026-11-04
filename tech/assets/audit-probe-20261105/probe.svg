@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">겜붕이 연결 검수</title>
+  <desc id="desc">무발송 운영 연결 검수용 정적 이미지</desc>
+  <rect width="1200" height="630" fill="#111827"/>
+  <rect x="40" y="40" width="1120" height="550" rx="24" fill="#1f2937" stroke="#374151" stroke-width="2"/>
+  <text x="600" y="330" fill="#f9fafb" font-family="sans-serif" font-size="112" font-weight="700" text-anchor="middle">겜붕이</text>
+</svg>
