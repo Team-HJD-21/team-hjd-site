@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "recovery-20261104-dryrun-2141",
+  "requestId": "recovery-20261104-live-2149",
   "date": "2026-11-04",
   "issueId": "note-2026-11-04-reversed-z",
-  "reason": "Owner approved inspection of the missed November 4 issue before any live recovery.",
-  "requestedAt": "2026-11-04T21:41:00+09:00",
-  "expiresAt": "2026-11-04T22:41:00+09:00",
+  "reason": "Owner explicitly requested immediate publication and one delivery of the missed November 4 issue after successful dry-run validation.",
+  "requestedAt": "2026-11-04T21:49:00+09:00",
+  "expiresAt": "2026-11-04T22:49:00+09:00",
   "allowLate": true,
-  "dryRun": true,
+  "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "b6ac541f4f2fd17c5b4daae03d03eded3bb8fe3e"
+  "expectedBaseSha": "2e32dc9a81308b7ad500e0b4de8944c89fb9a6a4"
 }
