@@ -129,6 +129,16 @@ test('manifest content version mismatch blocks provider calls',async()=>{
  assert.equal(result.status,409);assert.equal((await result.json()).error,'publication_version_mismatch');assert.equal(f.sent.length,0);
 });
 
+test('after a six-reader interruption only the seventh unattempted reader is processed',async()=>{
+ const auth=await signedToken(),f=fixture({auth}),headers={authorization:`Bearer ${auth.token}`};
+ await f.call('/api/subscribe',f.consent);await f.call('/api/confirm',{token:f.token()});
+ const s=await f.db.prepare('SELECT * FROM subscribers').first();
+ for(let i=1;i<=6;i++)await f.db.prepare('INSERT INTO subscribers(id,email_hash,email,status,consent_version,consent_at,privacy_consent,email_consent,overseas_consent,last_request,confirmed_at,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)').bind(`mock-${i}`,`hash-${i}`,`reader${i}@example.test`,'active',CONSENT_VERSION,s.consent_at,1,1,1,s.last_request,s.confirmed_at,s.created_at+i).run();
+ const first=await (await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers)).json();assert.equal(first.queued,6);assert.equal(first.remaining,1);
+ const recovery=await (await f.call('/api/internal/deliver',{issueId:'note-2026-11-03'},headers)).json();assert.equal(recovery.queued,1);assert.equal(recovery.remaining,0);assert.equal(recovery.unresolved,0);
+ assert.equal(f.sent.length,8);assert.equal(new Set(f.sent.slice(1).map(m=>m.to[0])).size,7);
+});
+
 test('concurrent worker and repeated runs cannot reserve a second receipt',async()=>{
  let entered,finish;const reached=new Promise(r=>entered=r),barrier=new Promise(r=>finish=r);
  const auth=await signedToken(),f=fixture({auth,provider:async(options,sent)=>{if(sent.length===2){entered();await barrier;}return Response.json({id:'mock'});}}),headers={authorization:`Bearer ${auth.token}`};
