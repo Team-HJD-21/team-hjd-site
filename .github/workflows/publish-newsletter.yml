@@ -19,6 +19,10 @@ on:
         description: 'Explicit same-day recovery after 12:30 KST (requires issue, date and reason)'
         type: boolean
         default: false
+      confirm_recovery:
+        description: 'Explicitly confirm recovery of the named same-day issue; preserve receipts'
+        type: boolean
+        default: false
       recovery_issue_id:
         description: 'Exact existing issue ID; never change the ID to resend'
         type: string
@@ -62,7 +66,7 @@ jobs:
         run: |
           node --input-type=module -e 'console.log(JSON.stringify({event:process.env.TRIGGER_EVENT,cron:process.env.TRIGGER_CRON||null,run:process.env.GITHUB_RUN_ID,attempt:process.env.GITHUB_RUN_ATTEMPT,actualUtc:new Date().toISOString(),ref:process.env.GITHUB_REF,sha:process.env.GITHUB_SHA}))'
       - name: Check release and content contracts without live email
-        run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/scripts/warm-release.test.mjs tech/src/subscriptions.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
+        run: node --test tech/scripts/content.test.mjs tech/scripts/release.test.mjs tech/scripts/delivery-client.test.mjs tech/scripts/warm-release.test.mjs tech/src/subscriptions.test.mjs tech/deploy/ensure-pages-project.test.mjs tech/integrations/cloudflare-email.test.mjs
       - name: Check authenticated delivery connection without sending email
         run: node tech/scripts/deliver.mjs --check
       - name: Install Pandoc before the timed release
@@ -88,6 +92,7 @@ jobs:
         if: steps.gate.outputs.issue_ids != '' && steps.gate.outputs.dry_run == 'false'
         env:
           ISSUE_IDS: ${{ steps.gate.outputs.issue_ids }}
+          ISSUE_DATE: ${{ steps.gate.outputs.issue_date }}
         run: node tech/scripts/deliver.mjs
       - name: Read-only production article image Markdown ZIP and RSS inspection
         if: steps.gate.outputs.issue_ids != '' && steps.gate.outputs.dry_run == 'true'

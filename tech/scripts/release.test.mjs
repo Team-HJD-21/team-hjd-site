@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { planRelease, validateRecovery, validateRecoveryPush, contextFromEvent, REQUEST_PATH } from './release.mjs';
+import { release, planRelease, validateRecovery, validateRecoveryPush, contextFromEvent, REQUEST_PATH } from './release.mjs';
 
 const scheduled = { id: 'note-2026-11-03-example', date: '2026-11-03', status: 'scheduled', publishAt: '2026-11-03T11:57:00+09:00' };
 const evening = new Date('2026-11-03T12:30:00Z'); // 21:30 KST, after the ordinary cutoff.
@@ -114,11 +114,11 @@ test('manual dispatch is dry-run by default and explicit false means write', asy
   assert.deepEqual(await contextFromEvent(f.project, f.env, evening), { write: true, recovery: null });
 });
 test('manual late recovery requires issue, date and reason; dispatch booleans are parsed safely', async t => {
-  const inputs = { dry_run: false, allow_late: true, recovery_issue_id: scheduled.id, recovery_date: scheduled.date, recovery_reason: 'Explicit owner-approved missed-issue recovery.' };
+  const inputs = { dry_run: false, allow_late: true, confirm_recovery: true, recovery_issue_id: scheduled.id, recovery_date: scheduled.date, recovery_reason: 'Explicit owner-approved missed-issue recovery.' };
   const f = await eventFixture(t, 'workflow_dispatch', inputs);
   const context = await contextFromEvent(f.project, f.env, evening);
   assert.equal(context.write, true); assert.equal(context.recovery.allowLate, true); assert.equal(context.recovery.issueId, scheduled.id);
-  for (const key of ['recovery_issue_id', 'recovery_date', 'recovery_reason']) {
+  for (const key of ['recovery_issue_id', 'recovery_date', 'recovery_reason', 'confirm_recovery']) {
     const missing = { ...inputs }; delete missing[key]; const fixture = await eventFixture(t, 'workflow_dispatch', missing);
     await assert.rejects(contextFromEvent(fixture.project, fixture.env, evening));
   }
@@ -128,6 +128,12 @@ test('manual late recovery requires issue, date and reason; dispatch booleans ar
 test('untrusted events cannot authorize a release', async t => {
   const f = await eventFixture(t, 'pull_request');
   await assert.rejects(contextFromEvent(f.project, f.env, evening), /Unsupported/);
+});
+test('manual confirmation cannot authorize a missing target or silently fall back', async t => {
+ for(const inputs of [{confirm_recovery:true},{allow_late:true},{confirm_recovery:true,recovery_issue_id:scheduled.id},{dry_run:false,allow_late:true,recovery_issue_id:scheduled.id,recovery_date:scheduled.date,recovery_reason:'Owner approved the exact same-day recovery.',confirm_recovery:false}]){
+  const f=await eventFixture(t,'workflow_dispatch',inputs);
+  await assert.rejects(contextFromEvent(f.project,f.env,evening));
+ }
 });
 
 test('actual committed request is read from a real git tree and stale checkout is refused', async t => {
@@ -148,4 +154,50 @@ test('actual committed request is read from a real git tree and stale checkout i
   assert.equal(context.write, false); assert.equal(context.recovery.issueId, scheduled.id);
   await writeFile(join(root, 'README.md'), 'changed\n'); git(['add', 'README.md']); git(['commit', '-m', 'unrelated']);
   await assert.rejects(contextFromEvent(project, env, evening), /Stale/);
+});
+
+async function recoveryFixture(t) {
+  const project = await mkdtemp(join(tmpdir(), 'newsletter-recovery-'));
+  t.after(() => rm(project, { recursive: true, force: true }));
+  await mkdir(join(project, 'content/issues'), { recursive: true });
+  const item = {
+    ...scheduled, slug: 'recovery-test', title: '테스트 원고', description: '검사용 소개',
+    question: '테스트 질문', summary: '검사용 요약', tags: ['rendering'],
+    source: `content/issues/${scheduled.id}.md`, assetDirectory: `assets/issues/${scheduled.id}`
+  };
+  await writeFile(join(project, 'content/tags.json'), JSON.stringify([
+    { id: 'rendering', group: '분야', ko: '렌더링', en: 'Rendering', aliases: [] }
+  ]));
+  await writeFile(join(project, 'content/issues.json'), JSON.stringify([item], null, 2) + '\n');
+  await writeFile(join(project, item.source), '# 검사\n\n<!-- article -->\n\n## 오늘 얻어갈 것\n\n검사용 원고입니다.\n\n## 출처\n\n[검사용 링크](https://example.test/)\n');
+  return { project, item, path: join(project, 'content/issues.json') };
+}
+test('dry-run recovery performs full validation without changing any metadata bytes', async t => {
+  const f = await recoveryFixture(t), before = await readFile(f.path);
+  const result = await release({ project: f.project, now: evening, recovery: approval(), write: false });
+  assert.equal(result.changed, false); assert.equal(result.dryRun, true);
+  assert.deepEqual(await readFile(f.path), before);
+});
+test('actual recovery writes only status/publishedAt; repeat recovery preserves timestamps', async t => {
+  const f = await recoveryFixture(t);
+  const first = await release({ project: f.project, now: evening, recovery: approval(), write: true });
+  assert.equal(first.changed, true);
+  const [published] = JSON.parse(await readFile(f.path, 'utf8'));
+  assert.deepEqual(published, { ...f.item, status: 'published', publishedAt: evening.toISOString() });
+  const before = await readFile(f.path);
+  const second = await release({ project: f.project, now: new Date(+evening + 60000), recovery: approval(), write: true });
+  assert.equal(second.changed, false);
+  assert.deepEqual(await readFile(f.path), before);
+  assert.ok((await readdir(join(f.project, 'content'))).every(name => !name.endsWith('.tmp')));
+});
+test('invalid manuscript still blocks confirmed manual recovery', async t => {
+  const f = await recoveryFixture(t), before = await readFile(f.path);
+  await writeFile(join(f.project, f.item.source), '# broken manuscript');
+  await assert.rejects(release({ project: f.project, now: evening, recovery: approval(), write: true }), /article/);
+  assert.deepEqual(await readFile(f.path), before);
+});
+test('recovery crossing Seoul midnight is rejected without changing the issue date', async t => {
+  const f = await recoveryFixture(t), before = await readFile(f.path);
+  await assert.rejects(release({ project: f.project, now: new Date('2026-11-03T15:00:00Z'), recovery: approval(), write: true }), /current Seoul date/);
+  assert.deepEqual(await readFile(f.path), before);
 });
