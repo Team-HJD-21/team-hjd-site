@@ -57,6 +57,12 @@ test('WebP assets load and missing cover/figure references stop publication', as
   await rm(join(root, issue.assetDirectory, 'figure.webp'));
   await assert.rejects(loadContent(root, { today: issue.date }), /Missing figure/);
 });
+
+test('CRLF manuscript checkouts produce the same canonical download text as LF',async t=>{
+ const root=await fixture(t);
+ await writeFile(join(root,issue.source),markdown.replaceAll('\n','\r\n'));
+ assert.equal((await loadContent(root,{today:issue.date})).documents.get(issue.id).markdown,markdown);
+});
 test('draft and scheduled metadata remain out of public issues and SVG scripts are rejected', async (t) => {
   const root = await fixture(t);
   for (const status of ['draft', 'scheduled']) {

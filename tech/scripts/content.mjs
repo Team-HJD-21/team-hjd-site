@@ -100,7 +100,8 @@ export async function loadContent(project, options) {
   const documents = new Map();
   for (const issue of allIssues) {
     const source = await containedPath(project, issue.source);
-    const markdown = await readFile(source, 'utf8');
+    // Canonical text keeps downloads/ZIP identical across Windows and Linux checkouts.
+    const markdown = (await readFile(source, 'utf8')).replaceAll('\r\n', '\n');
     const body = validateMarkdown(markdown, issue.id);
     let entries = [];
     try {
