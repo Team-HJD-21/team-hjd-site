@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "recovery-20261104-live-2149",
+  "requestId": "recovery-20261104-postflight-dryrun",
   "date": "2026-11-04",
   "issueId": "note-2026-11-04-reversed-z",
-  "reason": "Owner explicitly requested immediate publication and one delivery of the missed November 4 issue after successful dry-run validation.",
-  "requestedAt": "2026-11-04T21:49:00+09:00",
-  "expiresAt": "2026-11-04T22:49:00+09:00",
+  "reason": "Post-publication inspection requested by the owner. No live email is authorized in this test.",
+  "requestedAt": "2026-11-04T21:50:30+09:00",
+  "expiresAt": "2026-11-04T22:50:30+09:00",
   "allowLate": true,
-  "dryRun": false,
+  "dryRun": true,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "2e32dc9a81308b7ad500e0b4de8944c89fb9a6a4"
+  "expectedBaseSha": "79da4888ce28bcf8d4e24aa4a6d34b8995cdd061"
 }
