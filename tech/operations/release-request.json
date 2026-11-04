@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "recovery-20261104-postflight-dryrun",
+  "requestId": "inspection-20261104-public-files-2204",
   "date": "2026-11-04",
   "issueId": "note-2026-11-04-reversed-z",
-  "reason": "Post-publication inspection requested by the owner. No live email is authorized in this test.",
-  "requestedAt": "2026-11-04T21:50:30+09:00",
-  "expiresAt": "2026-11-04T22:50:30+09:00",
+  "reason": "Owner requested post-recovery tests only. Verify production files and safeguards without sending any additional email.",
+  "requestedAt": "2026-11-04T22:04:27+09:00",
+  "expiresAt": "2026-11-04T23:04:27+09:00",
   "allowLate": true,
   "dryRun": true,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "79da4888ce28bcf8d4e24aa4a6d34b8995cdd061"
+  "expectedBaseSha": "7aa8fbbffc1634b8de4e30121a571f80c4e7d729"
 }
