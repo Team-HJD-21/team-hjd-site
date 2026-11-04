@@ -213,6 +213,7 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
    const manifest=await response.json();
    const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now*1000));
    const issue=manifest.issues?.find(i=>i.id===data.issueId && i.date===today);
+   if(data.contentVersion!==undefined&&(!/^[a-f0-9]{64}$/.test(data.contentVersion)||issue?.contentVersion!==data.contentVersion))return json({error:'publication_version_mismatch'},409);
    if(!issue || typeof issue.title!=='string' || typeof issue.summary!=='string' || typeof issue.url!=='string' || !issue.url.startsWith(`${SITE}/${today}/`) || !/^\/[0-9]{4}-[0-9]{2}-[0-9]{2}\/[a-z0-9-]+\/$/.test(new URL(issue.url).pathname) || new URL(issue.url).origin!==SITE) return json({error:'issue_not_live'},409);
    const releaseClock=Object.fromEntries(new Intl.DateTimeFormat('en',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(now*1000)).map(({type,value})=>[type,value]));
    if(Number(releaseClock.hour)*60+Number(releaseClock.minute)<11*60+57) return json({error:'before_release_time'},409);

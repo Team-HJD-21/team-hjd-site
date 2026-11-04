@@ -38,7 +38,7 @@ Publish newsletter at noon KST가 11:57에 첫 공개·발송 절차를 시작�
 
 초기 Codex 인계는 ChatGPT의 기존 예약을 조회·수정하지 않았습니다. 전달받은 예약 ID는 6ae774bba4148191961bb42f0e193d6b이며 당시에는 일시 중지·12시 설정이었습니다. 이후 기존 예약을 매일 11:00 Asia/Seoul로 갱신했습니다. 다음 운영 작업에서도 실제 현재 상태를 먼저 확인해 주세요. 예전 ID 6ae770fa2b148191b9db1650b0dc6a08도 함께 켜 중복 실행하지 않습니다.
 
-1. 이 문서, EDITORIAL.md, CONTENT_CONTRACT.md, CHATGPT_DAILY_PROMPT.md를 읽어 주세요.
+1. 최신 DAILY_RELIABILITY.md, RECOVERY.md, OPERATIONAL_AUDIT_20261105.md, 이 문서, EDITORIAL.md, CONTENT_CONTRACT.md, CHATGPT_DAILY_PROMPT.md를 읽어 주세요.
 2. 연결된 GitHub에서 main을 읽고 실제 콘텐츠 쓰기 도구가 있는지 확인해 주세요. 로컬 폴더에 의존하지 않습니다.
 3. 일반 채팅에서 원고 준비와 GitHub 반영을 한 번 시험해 주세요. 오늘 이미 정식 발행된 호가 있으면 오늘의 두 번째 호를 만들지 않습니다. 내일 원고를 미리 준비하는 경우 date와 publishAt을 내일로 맞추고 scheduled를 유지합니다.
 4. 기존 예약의 편집 의도를 보존하며 CHATGPT_DAILY_PROMPT.md를 적용하고 매일 11:00 Asia/Seoul 설정을 유지해 주세요. 실제 클라우드 도구와 권한이 확인된 뒤 활성화합니다.
@@ -49,7 +49,9 @@ Publish newsletter at noon KST가 11:57에 첫 공개·발송 절차를 시작�
 
 ## GitHub 콘텐츠 반영 범위
 
-허용된 변경은 tech/content/issues.json, tech/content/tags.json, 이번 호의 tech/content/issues/<id>.md와 tech/assets/issues/<id>/입니다. 기존 배열·호·타인의 변경을 보존하고 최신 HEAD를 기준으로 일관된 커밋 하나를 만들어 주세요. 가능하면 GitHub의 blob → tree(base 지정) → commit(parent 지정) → update_ref(expected SHA, force=false) 흐름을 사용합니다. 실제 도구가 제공되는지는 실행 때 확인합니다.
+원고 준비 후 사전 기동은 DAILY_RELIABILITY.md 및 RECOVERY.md가 우선합니다. tech/operations/release-request.json 하나만 별도 커밋으로 추가 허용하며 실제 run ID를 확인합니다. 이미 scheduled여도 기동 확인을 생략하지 않습니다. GitHub cron은 보조입니다.
+
+허용된 콘텐츠 변경은 tech/content/issues.json, tech/content/tags.json, 이번 호의 tech/content/issues/<id>.md와 tech/assets/issues/<id>/입니다. 기존 배열·호·타인의 변경을 보존하고 최신 HEAD를 기준으로 일관된 커밋 하나를 만들어 주세요. 가능하면 GitHub의 blob → tree(base 지정) → commit(parent 지정) → update_ref(expected SHA, force=false) 흐름을 사용합니다. 실제 도구가 제공되는지는 실행 때 확인합니다.
 
 브랜치 보호 때문에 main 쓰기가 안 되면 콘텐츠 PR을 만들고 pending으로 보고해 주세요. 자동 병합이나 무인 배포가 끝났다고 주장하지 않습니다. 코드·브랜드·워크플로·DNS·권한·Secrets·구독 DB·발송 기록은 GPT의 매일 작업 범위가 아닙니다. 개인 주소나 키를 공개 Git에 넣지 않습니다.
 

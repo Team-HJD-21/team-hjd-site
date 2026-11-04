@@ -19,6 +19,19 @@ test('deployment polling caps the combined manifest and article GET count at six
 });
 const liveIssue = { id: scheduled.id, date: scheduled.date, title: '오늘의 글', url: `${SITE}/${scheduled.date}/recovery-test/` };
 const html = () => new Response('<!doctype html><title>오늘의 글</title>', { headers: { 'content-type': 'text/html; charset=utf-8' } });
+test('same ID with stale manuscript or stale article HTML cannot pass the version gate',async()=>{
+ const expectedVersion='a'.repeat(64);
+ for(const staleManifest of [true,false]){
+  const timer=pollClock();let articles=0;
+  await assert.rejects(waitForLiveIssue(scheduled.id,{expectedDate:scheduled.date,expectedVersion,...timer,maxWaitMs:3,pollMs:1,
+   fetcher:async url=>url.includes('/publication.json')?Response.json({issues:[{...liveIssue,contentVersion:staleManifest?'b'.repeat(64):expectedVersion}]}):(articles++,html())}),/deadline/);
+  assert.equal(articles,staleManifest?0:3);
+ }
+ const timer=pollClock();
+ const result=await waitForLiveIssue(scheduled.id,{expectedDate:scheduled.date,expectedVersion,...timer,maxWaitMs:3,pollMs:1,
+ fetcher:async url=>url.includes('/publication.json')?Response.json({issues:[{...liveIssue,contentVersion:expectedVersion}]}):new Response(`<meta name="note-content-version" content="${expectedVersion}">`,{headers:{'content-type':'text/html'}})});
+ assert.equal(result.contentVersion,expectedVersion);
+});
 function pollClock() {
   let time = +late;
   return { clock: () => time, pause: async ms => { time += ms; }, advance: ms => { time += ms; } };
