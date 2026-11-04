@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "requestId": "recovery-20261104-dryrun-2141",
+  "date": "2026-11-04",
+  "issueId": "note-2026-11-04-reversed-z",
+  "reason": "Owner approved inspection of the missed November 4 issue before any live recovery.",
+  "requestedAt": "2026-11-04T21:41:00+09:00",
+  "expiresAt": "2026-11-04T22:41:00+09:00",
+  "allowLate": true,
+  "dryRun": true,
+  "confirm": "publish-and-send-once",
+  "expectedBaseSha": "b6ac541f4f2fd17c5b4daae03d03eded3bb8fe3e"
+}
