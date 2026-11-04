@@ -2,9 +2,11 @@ name: Publish newsletter at noon KST
 
 on:
   schedule:
-    # Asia/Seoul: first attempt 11:57; check unattempted recipients at 12:03.
+    # Asia/Seoul: independent attempts at 11:57, 12:03, 12:09, 12:17 and 12:23.
+    # The release gate still refuses late publication after 12:30.
+    # Delivery receipts and provider idempotency prevent repeat sends.
     - cron: '57 2 * * *'
-    - cron: '3 3 * * *'
+    - cron: '3,9,17,23 3 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
