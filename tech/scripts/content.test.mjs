@@ -43,7 +43,7 @@ test('C++ headers and templates in complete inline code are literals, not active
  for(const literal of ['`<new>`','`std::vector<int>`','``<vector> ` <new>``'])assert.doesNotThrow(()=>validateMarkdown(markdown+'\n'+literal,issue.id));
 });
 test('unclosed, escaped and mixed inline code cannot conceal active HTML',()=>{
- for(const bad of ['`<script>alert(1)</script>','\\`<script>alert(1)</script>\\`','`<new>`<script>alert(1)</script>','``<new>`<script>alert(1)</script>'])assert.throws(()=>validateMarkdown(markdown+'\n'+bad,issue.id),/Unsafe HTML/);
+ for(const bad of ['`<script>alert(1)</script>','\\`<script>alert(1)</script>\\`','`<new>`<script>alert(1)</script>','``<new>`<script>alert(1)</script>','`open\n\n<script>alert(1)</script>\n\n`','`open\r\n \t\r\n<script>alert(1)</script>\r\n\r\n`'])assert.throws(()=>validateMarkdown(markdown+'\n'+bad,issue.id),/Unsafe HTML/);
 });
 
 async function fixture(t) {

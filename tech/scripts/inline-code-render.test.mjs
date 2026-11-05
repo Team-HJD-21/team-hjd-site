@@ -8,3 +8,9 @@ test('the deployed Pandoc mode escapes allowed inline angle brackets',()=>{
  const rendered=spawnSync(process.env.PANDOC_PATH||'pandoc',['--from=markdown-implicit_figures','--to=html5'],{input:text,encoding:'utf8'});
  assert.equal(rendered.status,0);assert.match(rendered.stdout,/<code>&lt;new&gt;<\/code>/);assert.ok(!rendered.stdout.includes('<new>'));assert.ok(!rendered.stdout.includes('<vector>'));
 });
+test('blank paragraph boundaries cannot hide HTML from validation',()=>{
+ const text='# 검사\n\n<!-- article -->\n\n## 오늘 얻어갈 것\n\n`open\n\n<script>alert(1)</script>\n\n`\n';
+ const rendered=spawnSync(process.env.PANDOC_PATH||'pandoc',['--from=markdown-implicit_figures','--to=html5'],{input:text,encoding:'utf8'});
+ assert.equal(rendered.status,0);assert.ok(rendered.stdout.includes('<script>'));
+ assert.throws(()=>validateMarkdown(text,'paragraph-probe'),/Unsafe HTML/);
+});

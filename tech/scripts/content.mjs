@@ -65,8 +65,12 @@ function proseOnly(body) {
   }).join('\n');
 }
 
-// Match complete CommonMark backtick spans. Escaped/open-ended delimiters remain prose.
+// Inline code cannot cross a blank paragraph boundary in the deployed Pandoc mode.
 function maskInlineCode(text) {
+ return text.split(/(\r?\n[ \t\r]*\n)/).map(maskInlineParagraph).join('');
+}
+// Escaped/open-ended delimiters remain prose.
+function maskInlineParagraph(text) {
  let cursor=0,result='';
  while(cursor<text.length){
   const start=text.indexOf('`',cursor);if(start<0)return result+text.slice(cursor);
