@@ -158,10 +158,10 @@ export function articleContent(issue, tags, body, toc) {
     <div class="prose">${body}</div>
     <section class="downloads" aria-labelledby="downloads-title"><h2 id="downloads-title">파일로 읽기</h2><div class="download-links"><a href="/downloads/${escapeHtml(issue.id)}.md" download>Markdown ↓</a><a href="/downloads/${escapeHtml(issue.id)}.zip" download>본문과 그림 ZIP ↓</a></div></section>
     <section class="article-feedback" data-feedback-issue="${escapeHtml(issue.id)}" aria-labelledby="feedback-title">
-      <h2 id="feedback-title">오늘의 노트는 어땠나요?</h2><p>여러분의 반응이 다음 노트의 주제와 설명을 다듬는 데 도움이 됩니다.</p>
+      <h2 id="feedback-title">오늘의 노트는 어땠나요?</h2>
       <div class="feedback-options" role="group" aria-label="글 반응 한 가지 선택"><button type="button" data-feedback-choice="useful" aria-pressed="false" disabled>유용해요</button><button type="button" data-feedback-choice="curious" aria-pressed="false" disabled>더 궁금해요</button><button type="button" data-feedback-choice="hard" aria-pressed="false" disabled>어려워요</button><button type="button" data-feedback-choice="easy" aria-pressed="false" disabled>좀 쉬워요</button></div>
-      <p class="feedback-status" role="status" aria-live="polite" data-feedback-status>반응을 준비하고 있습니다.</p><button type="button" class="feedback-undo" data-feedback-undo hidden>반응 취소</button>
-      <p class="feedback-note">한 가지를 선택하실 수 있으며, 나중에 바꾸거나 취소하실 수 있습니다. 중복 참여를 줄이기 위해 쿠키와 IP 기반 요청 제한을 사용합니다. <a href="/subscription/privacy/#feedback">수집 안내</a></p><noscript><p>반응을 남기려면 JavaScript를 켜 주세요.</p></noscript>
+      <p class="feedback-status" role="status" aria-live="polite" data-feedback-status></p><button type="button" class="feedback-undo" data-feedback-undo hidden>반응 취소</button>
+      <noscript><p>반응을 남기려면 JavaScript를 켜 주세요.</p></noscript>
     </section>
     <nav class="article-bottom-nav" aria-label="다음 읽기"><a href="/">← 글 목록</a><a href="/tags/">태그로 더 찾기 →</a></nav>
   </article>`;

@@ -242,17 +242,17 @@
   const data=await response.json();if(!response.ok)throw new Error(data.message||'반응을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');return data;
  }
  async function send(choice){
-  if(busy)return;if(choice&&choice===selected){status.textContent='이미 선택하신 반응입니다. 다른 반응으로 바꾸실 수도 있습니다.';return;}
+  if(busy)return;if(choice&&choice===selected){status.textContent='선택하신 반응입니다.';return;}
   lock(true);status.textContent='저장하고 있습니다.';
   try{
    const write=async()=>{let result=await api(choice?'POST':'DELETE',choice);if(result.needsCookie)result=await api('POST',choice);return result;};
    const result=navigator.locks?await navigator.locks.request('gambungi-article-feedback',write):await write();
    if(result.needsCookie)throw new Error('반응을 남기려면 이 사이트의 쿠키를 허용해 주세요.');
-   select(result.choice);status.textContent=result.message||'의견을 남겨 주셔서 감사합니다.';
-  }catch(error){status.textContent=error.name==='TimeoutError'||error.name==='TypeError'?'저장 결과를 확인하지 못했습니다. 다시 눌러 주세요. 같은 반응은 중복 집계되지 않습니다.':error.message;}
+   select(result.choice);status.textContent=selected?'반응을 남겨 주셔서 감사합니다.':'반응을 취소했습니다.';
+  }catch(error){status.textContent=error.name==='TimeoutError'||error.name==='TypeError'?'저장 결과를 확인하지 못했습니다. 다시 눌러 주세요.':error.message;}
   finally{lock(false);}
  }
  buttons.forEach(button=>button.addEventListener('click',()=>send(button.dataset.feedbackChoice)));undo.addEventListener('click',()=>send(null));
- async function load(){lock(true);try{const result=await api('GET');select(result.choice);status.textContent=selected?'선택하신 반응입니다. 바꾸거나 취소하실 수 있습니다.':'어떤 점이 좋았는지, 어떤 설명이 더 필요한지 알려 주세요.';}catch{status.textContent='연결을 확인하지 못했습니다. 반응 버튼을 눌러 다시 시도하실 수 있습니다.';}finally{lock(false);}}
+ async function load(){lock(true);try{const result=await api('GET');select(result.choice);status.textContent=selected?'반응을 남겨 주셔서 감사합니다.':'';}catch{status.textContent='반응을 불러오지 못했습니다. 다시 눌러 주세요.';}finally{lock(false);}}
  load();window.addEventListener('pageshow',event=>{if(event.persisted)load();});
 })();
