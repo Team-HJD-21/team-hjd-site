@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "inspection-20261104-public-files-2204",
-  "date": "2026-11-04",
-  "issueId": "note-2026-11-04-reversed-z",
-  "reason": "Owner requested post-recovery tests only. Verify production files and safeguards without sending any additional email.",
-  "requestedAt": "2026-11-04T22:04:27+09:00",
-  "expiresAt": "2026-11-04T23:04:27+09:00",
-  "allowLate": true,
-  "dryRun": true,
+  "requestId": "daily-20261105-1793844151569",
+  "date": "2026-11-05",
+  "issueId": "note-2026-11-05-false-sharing",
+  "reason": "Daily 11:00 ChatGPT preparation validated; start the authorized main release worker before 11:57 KST.",
+  "requestedAt": "2026-11-05T11:02:31+09:00",
+  "expiresAt": "2026-11-05T12:02:31+09:00",
+  "allowLate": false,
+  "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "7aa8fbbffc1634b8de4e30121a571f80c4e7d729"
+  "expectedBaseSha": "b83ba9c6d63c2376da43290177e75d455698c93b"
 }
