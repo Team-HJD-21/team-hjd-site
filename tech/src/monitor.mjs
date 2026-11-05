@@ -1,3 +1,4 @@
+import {feedbackSnapshot} from './feedback.mjs';
 const encoder=new TextEncoder();
 const b64=b=>{const bytes=new Uint8Array(b);let text='';for(let i=0;i<bytes.length;i+=16384)text+=String.fromCharCode(...bytes.subarray(i,i+16384));return btoa(text).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');};
 export function maskEmail(email){if(!email)return '해지·삭제된 주소';const [name,domain]=email.split('@');return `${name.slice(0,1)}${'*'.repeat(Math.min(Math.max(name.length-1,3),8))}@${domain}`;}
@@ -8,7 +9,7 @@ export function reportingWindow(date,now){
  if(start>now||start<now-31*86400)throw new Error('Report date outside retained history');
  return {start,end:start+86400};
 }
-export async function monitorSnapshot(db,{date,now=Math.floor(Date.now()/1000)}){
+export async function monitorSnapshot(db,{date,now=Math.floor(Date.now()/1000),assets}){
  const {start,end}=reportingWindow(date,now);
  const utcDay=new Date(now*1000).toISOString().slice(0,10),quotaStart=Date.parse(`${utcDay}T00:00:00Z`)/1000;
  const [subscribers,quota,grouped,rows,trend]=await Promise.all([
@@ -24,7 +25,7 @@ export async function monitorSnapshot(db,{date,now=Math.floor(Date.now()/1000)})
  ]);
  return {version:1,generatedAt:new Date(now*1000).toISOString(),date,window:{start:new Date(start*1000).toISOString(),end:new Date(end*1000).toISOString()},subscribers,
   quota:{scope:'이 서비스의 기록 · Resend 계정 전체 실측과 다릅니다',providerDailyLimit:100,appDailyLimit:90,appUsed:quota?.count||0,appRemaining:Math.max(0,90-(quota?.count||0)),accepted:acceptedQuota.count,startsAt:new Date(quotaStart*1000).toISOString(),resetsAt:new Date((quotaStart+86400)*1000).toISOString()},
-  audience,summary:grouped.results,trend:trend.results,deliveries:rows.results.map(row=>({id:row.receipt,purpose:row.purpose,state:row.state,providerId:row.provider_id,createdAt:new Date(row.created_at*1000).toISOString(),recipient:maskEmail(row.email),subject:row.subject||null,html:row.html||null,text:row.text||null,issueId:row.purpose==='issue'?row.receipt.split(':')[1]:null}))};
+  feedback:await feedbackSnapshot(db,{now,assets}),audience,summary:grouped.results,trend:trend.results,deliveries:rows.results.map(row=>({id:row.receipt,purpose:row.purpose,state:row.state,providerId:row.provider_id,createdAt:new Date(row.created_at*1000).toISOString(),recipient:maskEmail(row.email),subject:row.subject||null,html:row.html||null,text:row.text||null,issueId:row.purpose==='issue'?row.receipt.split(':')[1]:null}))};
 }
 const iso=seconds=>seconds==null?null:new Date(seconds*1000).toISOString();
 // This object is only returned inside the encrypted, owner-authenticated report.

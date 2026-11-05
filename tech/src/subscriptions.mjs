@@ -1,9 +1,10 @@
 import {emailTemplate} from './email-template.mjs';
 import {monitorSnapshot,encryptMonitorReport,redactMailTokens} from './monitor.mjs';
+import {FEEDBACK_SCHEMA} from './feedback.mjs';
 // Cloudflare Pages + private D1. No subscriber data belongs in the static build.
 export const CONSENT_VERSION = '2026-11-03';
 export const SITE = 'https://tech.teamhjd.com';
-export const SCHEMA = `
+export const SCHEMA = FEEDBACK_SCHEMA+`
 CREATE TABLE IF NOT EXISTS subscribers (
  id TEXT PRIMARY KEY, email_hash TEXT NOT NULL UNIQUE, email TEXT NOT NULL,
  status TEXT NOT NULL CHECK(status IN ('pending','active')),
@@ -143,7 +144,7 @@ export async function handleSubscription(request, env, {fetcher=fetch, clock=()=
  try {
   await init(db,now);
   if(path==='/api/internal/monitor'){
-   try{return json(await encryptMonitorReport(await monitorSnapshot(db,{date:data.date,now}),data.publicKey,data.requestId));}
+   try{return json(await encryptMonitorReport(await monitorSnapshot(db,{date:data.date,now,assets:env.ASSETS}),data.publicKey,data.requestId));}
    catch{return json({error:'invalid_monitor_request'},400);}
   }
   if(path==='/api/internal/check') return json({authenticated:true,databaseReady:true,mailConfigured:true});

@@ -228,3 +228,31 @@
   window.addEventListener('popstate', () => { input.value = new URLSearchParams(window.location.search).get('q')?.slice(0, 120) || ''; render(false); });
   render(false);
 })();
+
+// Article feedback is independent of subscription and tag-search initialization.
+(()=>{
+ const root=document.querySelector('[data-feedback-issue]');if(!root)return;
+ const buttons=[...root.querySelectorAll('[data-feedback-choice]')],undo=root.querySelector('[data-feedback-undo]'),status=root.querySelector('[data-feedback-status]');
+ let selected=null,busy=true;
+ const lock=value=>{busy=value;buttons.forEach(button=>button.disabled=value);undo.disabled=value;root.setAttribute('aria-busy',String(value));};
+ const select=value=>{selected=value;buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.feedbackChoice===value)));undo.hidden=!value;};
+ async function api(method,choice){
+  const url='/api/feedback'+(method==='GET'?'?issueId='+encodeURIComponent(root.dataset.feedbackIssue):'');
+  const response=await fetch(url,{method,credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(10000),...(method==='GET'?{}:{headers:{'Content-Type':'application/json'},body:JSON.stringify({issueId:root.dataset.feedbackIssue,...(choice?{choice}:{})})})});
+  const data=await response.json();if(!response.ok)throw new Error(data.message||'반응을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');return data;
+ }
+ async function send(choice){
+  if(busy)return;if(choice&&choice===selected){status.textContent='이미 선택하신 반응입니다. 다른 반응으로 바꾸실 수도 있습니다.';return;}
+  lock(true);status.textContent='저장하고 있습니다.';
+  try{
+   const write=async()=>{let result=await api(choice?'POST':'DELETE',choice);if(result.needsCookie)result=await api('POST',choice);return result;};
+   const result=navigator.locks?await navigator.locks.request('gambungi-article-feedback',write):await write();
+   if(result.needsCookie)throw new Error('반응을 남기려면 이 사이트의 쿠키를 허용해 주세요.');
+   select(result.choice);status.textContent=result.message||'의견을 남겨 주셔서 감사합니다.';
+  }catch(error){status.textContent=error.name==='TimeoutError'||error.name==='TypeError'?'저장 결과를 확인하지 못했습니다. 다시 눌러 주세요. 같은 반응은 중복 집계되지 않습니다.':error.message;}
+  finally{lock(false);}
+ }
+ buttons.forEach(button=>button.addEventListener('click',()=>send(button.dataset.feedbackChoice)));undo.addEventListener('click',()=>send(null));
+ async function load(){lock(true);try{const result=await api('GET');select(result.choice);status.textContent=selected?'선택하신 반응입니다. 바꾸거나 취소하실 수 있습니다.':'어떤 점이 좋았는지, 어떤 설명이 더 필요한지 알려 주세요.';}catch{status.textContent='연결을 확인하지 못했습니다. 반응 버튼을 눌러 다시 시도하실 수 있습니다.';}finally{lock(false);}}
+ load();window.addEventListener('pageshow',event=>{if(event.persisted)load();});
+})();
