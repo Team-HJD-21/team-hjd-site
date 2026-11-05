@@ -59,7 +59,7 @@
     "question": "서로 다른 변수를 고치는데도 두 스레드가 왜 서로의 캐시를 방해할까요?",
     "summary": "캐시 일관성은 변수 하나가 아닌 라인 단위로 조정됩니다. 거짓 공유가 생기는 배치와 C++17 정렬, 스레드별 집계의 선택 기준을 작은 예제로 살펴봅니다.",
     "date": "2026-11-05",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-05T11:57:00+09:00",
     "source": "content/issues/note-2026-11-05-false-sharing.md",
     "assetDirectory": "assets/issues/note-2026-11-05-false-sharing",
@@ -71,6 +71,7 @@
       "memory-management",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-05T02:57:00.074Z"
   }
 ]
