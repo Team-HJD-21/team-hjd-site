@@ -1,0 +1,104 @@
+name: Verify workflow failure completion
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'tools/ci/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - 'tools/ci/**'
+permissions:
+  contents: read
+concurrency:
+  group: workflow-guards-${{ github.ref }}
+  cancel-in-progress: false
+  queue: max
+jobs:
+  fault_probe:
+    name: Expected outcome probe (${{ matrix.scenario }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # Only deliberately injected errors are expected; verify checks every artifact below.
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [success, check-failure, build-failure]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        id: checkout
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        id: node
+        with:
+          node-version: '22'
+      - name: Inject the expected first-check failure
+        id: validate
+        continue-on-error: ${{ matrix.scenario == 'check-failure' }}
+        env:
+          SCENARIO: ${{ matrix.scenario }}
+        run: |
+          mkdir -p .workflow-results
+          if [ "$SCENARIO" = check-failure ]; then exit 1; fi
+      - name: Finish the independent check even after the first check fails
+        id: tests
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: echo complete > .workflow-results/independent-check.txt
+      - name: Exercise the build gate without building or publishing any real issue
+        id: build
+        continue-on-error: ${{ matrix.scenario == 'build-failure' }}
+        if: ${{ !cancelled() && steps.validate.outcome == 'success' && steps.tests.outcome == 'success' }}
+        env:
+          SCENARIO: ${{ matrix.scenario }}
+        run: |
+          if [ "$SCENARIO" = build-failure ]; then exit 1; fi
+      - name: Exercise the final gate with a local marker only (no network or mail)
+        id: release_stub
+        if: ${{ !cancelled() && steps.validate.outcome == 'success' && steps.tests.outcome == 'success' && steps.build.outcome == 'success' }}
+        run: echo permitted > .workflow-results/release-permitted.txt
+      - name: Prepare diagnostic snapshot even after the injected failure
+        id: collect
+        if: always()
+        env:
+          RESULT_KIND: failure-probe
+          RESULT_PHASE: artifact
+          REQUIRED_STEPS: checkout,node,validate,tests,build,release_stub
+          STEP_RESULTS: ${{ toJSON(steps) }}
+        run: node tools/ci/workflow-result.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        id: artifact
+        if: always()
+        with:
+          name: workflow-failure-probe-${{ matrix.scenario }}-${{ github.run_id }}
+          path: .workflow-results/
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - name: Finish with the real failure retained in the final summary
+        if: always()
+        env:
+          RESULT_KIND: failure-probe
+          RESULT_PHASE: final
+          REQUIRED_STEPS: checkout,node,validate,tests,build,release_stub,collect,artifact
+          STEP_RESULTS: ${{ toJSON(steps) }}
+        run: node tools/ci/workflow-result.mjs
+  verify:
+    name: Verify all expected outcomes and diagnostic artifacts
+    needs: fault_probe
+    if: ${{ always() && !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: workflow-failure-probe-*-${{ github.run_id }}
+          path: .probe-artifacts
+      - run: node tools/ci/verify-failure-probes.mjs .probe-artifacts

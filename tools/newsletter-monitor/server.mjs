@@ -4,6 +4,7 @@ import {dirname,join,resolve,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {randomBytes,timingSafeEqual} from 'node:crypto';
 import {fetchSnapshot,seoulDate} from './bridge.mjs';
+import {createRefreshQueue} from './refresh-queue.mjs';
 const here=dirname(fileURLToPath(import.meta.url)),root=resolve(here,'../..');
 const startupFile=process.argv[2];
 if(!startupFile||!resolve(startupFile).startsWith(join(root,'.local','newsletter-monitor')+sep))throw new Error('Startup file must stay in the private monitor directory');
@@ -11,7 +12,11 @@ let oneTime=randomBytes(32).toString('base64url'),session=randomBytes(32).toStri
 const state={report:null,busy:false,phase:'아직 조회하지 않았습니다'};
 const equal=(a,b)=>typeof a==='string'&&a.length===b.length&&timingSafeEqual(Buffer.from(a),Buffer.from(b));
 const respond=(res,data,status=200)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));};
-function refresh(date){state.busy=true;state.phase='조회 준비 중';state.error=null;state.requestedDate=date;fetchSnapshot(date,update=>Object.assign(state,update)).then(report=>{state.report=report;state.phase='조회 완료';state.busy=false;}).catch(()=>{state.error='조회하지 못했습니다. GitHub 로그인과 조회 실행 상태를 확인해 주세요. 이전 정상 정보는 유지합니다.';state.phase='조회 실패';state.busy=false;});}
+const refreshQueue=createRefreshQueue({
+ async run(date){state.phase='조회 준비 중';state.error=null;state.requestedDate=date;state.report=await fetchSnapshot(date,update=>Object.assign(state,update));state.phase='조회 완료';},
+ onChange({busy,pending}){state.busy=busy;state.queuedDates=pending;},
+ onError(){state.error='조회하지 못했습니다. GitHub 로그인과 조회 실행 상태를 확인해 주세요. 이전 정상 정보는 유지합니다.';state.phase='조회 실패';}
+});
 const server=http.createServer(async(req,res)=>{
  try{
   const origin=`http://127.0.0.1:${port}`;
@@ -36,7 +41,7 @@ const server=http.createServer(async(req,res)=>{
    let body='';for await(const chunk of req){body+=chunk;if(body.length>1024){respond(res,{error:'body_too_large'},413);return;}}
    const data=JSON.parse(body),date=data.date||seoulDate();
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))){respond(res,{error:'invalid_date'},400);return;}
-   if(state.busy){respond(res,{busy:true},202);return;}refresh(date);respond(res,{busy:true},202);return;
+   const queued=refreshQueue.request(date);respond(res,{busy:true,deduplicated:queued.deduplicated,queued:queued.pending.length},202);return;
   }
   const files={'/':['index.html','text/html; charset=utf-8'],'/app.js':['app.js','text/javascript; charset=utf-8'],'/audience.mjs':['audience.mjs','text/javascript; charset=utf-8'],'/styles.css':['styles.css','text/css; charset=utf-8'],'/logo.png':['../../tech/assets/brand/gambungi-email-logo.png','image/png']};
   if(req.method==='GET'&&files[url.pathname]){

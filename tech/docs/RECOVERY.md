@@ -89,3 +89,7 @@ npm run build:cloudflare
 - [GitHub 수동 workflow 실행](https://docs.github.com/actions/managing-workflow-runs/manually-running-a-workflow)
 - [GitHub branch/path 필터](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow)
 - [Resend 중복 방지 키](https://resend.com/docs/dashboard/emails/idempotency-keys)
+
+## 실행 완료와 진단 기록
+
+WORKFLOW_COMPLETION.md를 함께 확인합니다. 원고 검사·회사 배포·발행·모니터는 역할에 맞게 기동하고, 실패 후에도 독립 검사와 최종 진단 저장을 수행합니다. workflow-result artifact는 업무 단계 스냅샷이며 마지막 phase=final 로그/summary에 업로드 결과까지 기록합니다. 이 단계 결과만으로 공개·메일 성공이라 판단하지 않습니다.

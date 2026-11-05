@@ -10,7 +10,8 @@
     "test:content": "node --test scripts/content.test.mjs scripts/release.test.mjs",
     "test:subscriptions": "node --test src/subscriptions.test.mjs",
     "build:cloudflare": "node scripts/cloudflare-build.mjs",
-    "release:check": "node scripts/release.mjs --check"
+    "release:check": "node scripts/release.mjs --check",
+    "test:ci": "node scripts/test-ci.mjs"
   },
   "engines": {
     "node": ">=22.16"

@@ -1,4 +1,4 @@
-import {selectPeople,pagePeople,duration} from './audience.mjs';
+import {selectPeople,pagePeople,duration,shouldAutoRefresh} from './audience.mjs';
 (()=>{'use strict';
 const $=id=>document.getElementById(id),num=n=>Number(n||0).toLocaleString('ko-KR'),time=s=>new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(new Date(s));
 const purpose={confirm:'구독 인증',issue:'정기 메일',manage:'구독 관리'},states={queued:'API 수락',pending:'처리 확인 필요',uncertain:'응답 확인 필요',rejected:'제공자 거절',quota:'한도 차단',cancelled:'발송 취소'};
@@ -65,7 +65,7 @@ async function poll(){try{const response=await fetch('/api/state',{cache:'no-sto
  $('status').textContent=state.busy?`${state.phase} · 첫 조회는 실행 대기 때문에 잠시 걸릴 수 있습니다.`:state.phase;$('refresh').disabled=state.busy;$('error').hidden=!state.error;if(state.error)$('error').textContent=state.error;
  if(state.runUrl){$('run-link').hidden=false;$('run-link').href=state.runUrl;}
  if(state.report&&state.report.generatedAt!==lastGenerated){lastGenerated=state.report.generatedAt;render(state.report);}
- if(!document.hidden&&!state.busy&&Date.now()-lastRefresh>300000)refresh();
+ if(shouldAutoRefresh({enabled:$('auto-refresh').checked,hidden:document.hidden,busy:state.busy,lastRefresh}))refresh();
  }catch{$('status').textContent='로컬 관리 서비스 연결을 확인해 주세요.';}
 }
 $('refresh').addEventListener('click',refresh);$('report-date').addEventListener('change',refresh);$('preview').addEventListener('close',()=>{$('mail-frame').src='about:blank';});setInterval(poll,2000);poll();

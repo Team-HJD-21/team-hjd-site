@@ -12,8 +12,11 @@ const run = (command, args, options = {}) => {
   const result = spawnSync(command, args, { cwd: root, stdio: 'inherit', env: process.env, ...options });
   if (result.status !== 0) throw new Error(`${command} failed (${result.status}): ${result.error?.message || ''}`);
 };
+const args=process.argv.slice(2);
+if(args.length>1||args.some(arg=>arg!=='--build-only'))throw new Error('Use --build-only or no arguments.');
 let directory;
 try {
+  if(!args.includes('--build-only'))run(process.execPath,['scripts/test-ci.mjs']);
   const installed = spawnSync(process.env.PANDOC_PATH || 'pandoc', ['--version'], { stdio: 'ignore' });
   if (installed.status !== 0) {
     if (process.platform !== 'linux' || process.arch !== 'x64') throw new Error('Install Pandoc or set PANDOC_PATH on this platform.');
@@ -27,8 +30,7 @@ try {
     run('tar', ['-xzf', archivePath, '--strip-components=2', '-C', directory, `pandoc-${version}/bin/pandoc`]);
     process.env.PANDOC_PATH = join(directory, 'pandoc');
   }
-  run(process.execPath, ['--test', 'scripts/content.test.mjs', 'scripts/release.test.mjs', 'scripts/delivery-client.test.mjs', 'scripts/warm-release.test.mjs', 'src/subscriptions.test.mjs', 'src/monitor.test.mjs', '../tools/newsletter-monitor/server.test.mjs', '../tools/newsletter-monitor/audience.test.mjs', 'deploy/ensure-pages-project.test.mjs', 'integrations/cloudflare-email.test.mjs']);
-  run(process.execPath, ['--test', 'scripts/publication-version.test.mjs', 'scripts/audit-no-send.test.mjs']);
+  run(process.execPath, ['--test', 'scripts/inline-code-render.test.mjs']);
   run(process.execPath, ['scripts/build.mjs']);
 } finally {
   if (directory) await rm(directory, { recursive: true, force: true });
