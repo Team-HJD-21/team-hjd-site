@@ -12,7 +12,7 @@ import { loadContent } from './content.mjs';
 import { publicationVersion } from './publication-version.mjs';
 import { buildBrand } from './brand.mjs';
 import { loadCompanyBrand } from './company-brand.mjs';
-import { subscriptionPages } from '../src/subscription-pages.mjs';
+import { subscriptionPages, notesTerms } from '../src/subscription-pages.mjs';
 
 const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(project, 'dist');
@@ -54,6 +54,7 @@ await writePage('index.html', page({ title: SITE_NAME, description: '매일 12�
 await writePage('tags/index.html', page({ title: '태그로 찾기', description: '한글과 영어 태그로 게임 개발 기술 글을 찾아보세요.', path: '/tags/', active: 'tags', content: searchContent(issues, tags), data: { tags, issues: publicIssues } }));
 await writePage('subscribe/index.html', page({title:'구독하기',description:'겜붕이의 노트를 이메일로 받아보세요.',path:'/subscribe/',active:'subscribe',content:subscribeContent()}));
 for (const [name, detail] of Object.entries(subscriptionPages)) await writePage(`subscription/${name}/index.html`, page({title:detail.title,description:detail.title,path:`/subscription/${name}/`,content:detail.content}));
+await writePage('terms/index.html',page({title:notesTerms.title,description:'겜붕이의 노트의 글 읽기, 이메일 구독과 글 반응 이용안내입니다.',path:'/terms/',content:notesTerms.content}));
 
 // A small deterministic ZIP writer keeps the downloadable source and figures in sync.
 const crcTable = Uint32Array.from({ length: 256 }, (_, n) => {
@@ -150,7 +151,7 @@ for (const issue of issues) {
 
 await writePage('404.html', page({ title: '글을 찾을 수 없습니다', description: '요청한 페이지를 찾을 수 없습니다.', path: '/404.html', content: '<div class="archive-shell not-found"><header class="archive-heading"><h1>글을 찾을 수 없습니다</h1><p>주소를 확인하거나 글 목록에서 찾아보세요.</p></header><a href="/">글 목록으로 돌아가기 →</a></div>' }));
 await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
-await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/', '/tags/', '/subscribe/', ...issues.map(issuePath)].map((path) => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>`);
+await writeFile(join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/', '/tags/', '/subscribe/', '/terms/', ...issues.map(issuePath)].map((path) => `<url><loc>${SITE_URL}${path}</loc></url>`).join('')}</urlset>`);
 await writeFile(join(dist, '_redirects'), issues.map(issue=>`/articles/${issue.slug}/ ${issuePath(issue)} 301`).join('\n')+'\n');
 const published = issues.filter((issue) => issue.status === 'published');
 await writeFile(join(dist, 'publication.json'), JSON.stringify({ version: 1, issues: published.map((issue) => ({ id: issue.id, date: issue.date, title: issue.title, summary: issue.summary, url: `${SITE_URL}${issuePath(issue)}`,contentVersion:contentVersions.get(issue.id) })) }, null, 2));

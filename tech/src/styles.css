@@ -218,5 +218,4 @@ button { border: 0; }
 .feedback-options button:disabled { opacity:.55; cursor:wait; }
 .article-feedback .feedback-status { min-height:27px; margin:0; color:var(--ink); }
 .feedback-undo { background:transparent; color:var(--secondary); text-decoration:underline; text-underline-offset:4px; padding:8px 0; }
-.article-feedback .feedback-note { font-size:12px; margin:14px 0 0; max-width:62ch; }
 @media(max-width:480px) { .feedback-options { display:grid; grid-template-columns:1fr 1fr; }.feedback-options button { padding:12px 8px; }.article-feedback h2 { font-size:22px; } }
