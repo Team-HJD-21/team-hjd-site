@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {shouldAutoRefresh,AUTO_REFRESH_MS} from './refresh-policy.mjs';
+import {shouldAutoRefresh,AUTO_REFRESH_MS} from './audience.mjs';
 test('leaving the dashboard open never dispatches periodic workflows by default',()=>{
  assert.equal(shouldAutoRefresh({now:86400000}),false);
 });

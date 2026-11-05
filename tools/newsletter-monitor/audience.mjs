@@ -1,3 +1,9 @@
+// Keep browser policy in an existing route so an already-running local server
+// can serve an updated dashboard without interrupting its current request.
+export const AUTO_REFRESH_MS=300000;
+export function shouldAutoRefresh({enabled=false,hidden=false,busy=false,lastRefresh=0,now=Date.now()}={}){
+ return enabled===true&&!hidden&&!busy&&now-lastRefresh>=AUTO_REFRESH_MS;
+}
 export function selectPeople(people,{status='active',search='',sort='newest'}={}){
  const query=search.trim().toLocaleLowerCase('ko-KR');
  const rows=people.filter(person=>(status==='all'||person.status===status)&&person.email.toLocaleLowerCase('ko-KR').includes(query));

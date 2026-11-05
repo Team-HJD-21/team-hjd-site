@@ -1,5 +1,4 @@
-import {selectPeople,pagePeople,duration} from './audience.mjs';
-import {shouldAutoRefresh} from './refresh-policy.mjs';
+import {selectPeople,pagePeople,duration,shouldAutoRefresh} from './audience.mjs';
 (()=>{'use strict';
 const $=id=>document.getElementById(id),num=n=>Number(n||0).toLocaleString('ko-KR'),time=s=>new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(new Date(s));
 const purpose={confirm:'구독 인증',issue:'정기 메일',manage:'구독 관리'},states={queued:'API 수락',pending:'처리 확인 필요',uncertain:'응답 확인 필요',rejected:'제공자 거절',quota:'한도 차단',cancelled:'발송 취소'};
