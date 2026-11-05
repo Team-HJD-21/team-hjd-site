@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520">
+<rect width="1100" height="520" fill="#080f17"/><text x="58" y="67" fill="#f3f0e8" font-family="sans-serif" font-size="32" font-weight="bold">같은 캐시 라인, 서로 다른 변수</text><text x="58" y="102" fill="#a2afab" font-family="sans-serif" font-size="19">64B line은 설명을 위한 예시 · 두 코어가 각자 8B만 쓰더라도 간섭할 수 있습니다</text>
+<rect x="60" y="144" width="980" height="133" rx="16" fill="#13202c" stroke="#a2afab" stroke-width="2"/>
+<rect x="77" y="165" width="120" height="92" rx="8" fill="#d9eea6"/><text x="91" y="204" font-family="sans-serif" font-size="21" fill="#080f17" font-weight="bold">물리</text><text x="91" y="235" font-family="sans-serif" font-size="18" fill="#080f17">0~7</text>
+<rect x="201" y="165" width="120" height="92" rx="8" fill="#77b7e7"/><text x="235" y="204" font-family="sans-serif" font-size="21" fill="#080f17" font-weight="bold">AI</text><text x="216" y="235" font-family="sans-serif" font-size="18" fill="#080f17">8~15</text>
+<rect x="325" y="165" width="697" height="92" rx="8" fill="#203241"/><text x="560" y="210" font-family="sans-serif" font-size="20" fill="#a2afab">16~63: 나머지 48바이트</text>
+<text x="60" y="310" fill="#d9eea6" font-family="sans-serif" font-size="20">Core A: physics++</text><text x="830" y="310" fill="#77b7e7" font-family="sans-serif" font-size="20">Core B: ai++</text>
+<path d="M206 344 H478" stroke="#d9eea6" stroke-width="5"/><polygon points="477,333 502,344 477,355" fill="#d9eea6"/>
+<path d="M893 344 H621" stroke="#77b7e7" stroke-width="5"/><polygon points="622,333 597,344 622,355" fill="#77b7e7"/>
+<rect x="409" y="370" width="284" height="88" rx="12" fill="#243745" stroke="#e8ba73" stroke-width="2"/><text x="551" y="405" fill="#f3f0e8" font-family="sans-serif" font-size="22" text-anchor="middle" font-weight="bold">라인 단위의</text><text x="551" y="435" fill="#f3f0e8" font-family="sans-serif" font-size="22" text-anchor="middle" font-weight="bold">소유권·무효화 조정</text><text x="550" y="493" fill="#a2afab" font-family="sans-serif" font-size="17" text-anchor="middle">같은 변수에 쓰는 데이터 경쟁과는 다른 문제</text>
+</svg>

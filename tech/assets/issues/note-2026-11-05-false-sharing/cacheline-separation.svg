@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+<rect width="1100" height="560" fill="#080f17"/><text x="58" y="65" fill="#f3f0e8" font-family="sans-serif" font-size="32" font-weight="bold">서로 다른 캐시 라인으로 분리</text><text x="58" y="100" fill="#a2afab" font-family="sans-serif" font-size="19">64B 라인을 가정한 개념 예제: 시작 오프셋 0B, 64B</text>
+<text x="64" y="150" fill="#a2afab" font-family="sans-serif" font-size="23">분리 전</text>
+<rect x="210" y="125" width="810" height="96" rx="12" fill="#13202c" stroke="#e8ba73" stroke-width="3"/>
+<rect x="224" y="141" width="127" height="62" rx="6" fill="#d9eea6"/><text x="288" y="179" text-anchor="middle" fill="#080f17" font-family="sans-serif" font-size="18">물리 · 0B</text>
+<rect x="355" y="141" width="127" height="62" rx="6" fill="#77b7e7"/><text x="418" y="179" text-anchor="middle" fill="#080f17" font-family="sans-serif" font-size="18">AI · 8B</text>
+<text x="743" y="179" text-anchor="middle" fill="#a2afab" font-family="sans-serif" font-size="19">하나의 64B 라인</text>
+<text x="64" y="300" fill="#d9eea6" font-family="sans-serif" font-size="23">분리 후</text>
+<rect x="210" y="263" width="390" height="112" rx="12" fill="#13202c" stroke="#d9eea6" stroke-width="3"/>
+<rect x="224" y="282" width="128" height="68" rx="7" fill="#d9eea6"/><text x="288" y="321" text-anchor="middle" fill="#080f17" font-family="sans-serif" font-size="18">물리 · 0B</text><text x="474" y="321" text-anchor="middle" fill="#a2afab" font-family="sans-serif" font-size="18">Line 0</text>
+<rect x="630" y="263" width="390" height="112" rx="12" fill="#13202c" stroke="#77b7e7" stroke-width="3"/>
+<rect x="644" y="282" width="138" height="68" rx="7" fill="#77b7e7"/><text x="713" y="321" text-anchor="middle" fill="#080f17" font-family="sans-serif" font-size="18">AI · 64B</text><text x="890" y="321" text-anchor="middle" fill="#a2afab" font-family="sans-serif" font-size="18">Line 1</text>
+<rect x="174" y="430" width="754" height="75" rx="12" fill="#203241"/><text x="551" y="462" fill="#f3f0e8" text-anchor="middle" font-family="sans-serif" font-size="21">C++17: alignas(std::hardware_destructive_interference_size)</text><text x="551" y="488" fill="#a2afab" text-anchor="middle" font-family="sans-serif" font-size="16">구현이 권장하는 간격 · 성능은 실제 측정해야 합니다</text>
+</svg>
