@@ -26,7 +26,7 @@ artifact는 업로드 전 업무 단계의 스냅샷입니다. 최종 로그의 
 
 ## 실패 경로 검사
 
-Verify workflow failure completion은 workflow/진단 코드 변경에서만 실행합니다. success, check-failure, build-failure 세 격리 fixture가 실제 GitHub runner에서 실행됩니다. 의도한 실패 job도 독립 검사를 끝내고 진단 artifact를 남기며, 실패한 경로에서는 공개 허용 marker가 생성되지 않아야 합니다. verify가 세 artifact를 모두 검사합니다. 실제 콘텐츠·구독자·발송은 호출하지 않습니다.
+Verify workflow failure completion은 workflow/진단 코드 변경에서만 실행합니다. success, check-failure, build-failure 세 격리 fixture가 실제 GitHub runner에서 실행됩니다. 최초 PR 검수에서는 실제 실패 job의 후속 검사·artifact·최종 요약 완료를 입증했습니다. 상시 회귀에서는 의도한 두 오류만 expected failure로 취급하고 실제 outcome=failure를 진단에 유지합니다. 독립 검사를 끝내고 진단 artifact를 남기며, 실패한 경로에서는 공개 허용 marker가 생성되지 않아야 합니다. verify가 세 artifact를 모두 검사합니다. 실제 콘텐츠·구독자·발송은 호출하지 않습니다.
 
 C++ inline code의 <new>를 HTML로 오인하던 검사도 수정했습니다. 완전한 backtick span만 HTML 검사에서 제외하고, 이스케이프/미종결 span과 실제 HTML은 차단합니다. 실제 배포와 같은 Pandoc 모드의 escaping 회귀검사도 수행합니다.
 

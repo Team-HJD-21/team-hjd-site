@@ -20,8 +20,7 @@ jobs:
     name: Expected outcome probe (${{ matrix.scenario }})
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    # Only isolated fault fixtures may fail here; verify checks every artifact below.
-    continue-on-error: true
+    # Only deliberately injected errors are expected; verify checks every artifact below.
     strategy:
       fail-fast: false
       matrix:
@@ -37,6 +36,7 @@ jobs:
           node-version: '22'
       - name: Inject the expected first-check failure
         id: validate
+        continue-on-error: ${{ matrix.scenario == 'check-failure' }}
         env:
           SCENARIO: ${{ matrix.scenario }}
         run: |
@@ -48,6 +48,7 @@ jobs:
         run: echo complete > .workflow-results/independent-check.txt
       - name: Exercise the build gate without building or publishing any real issue
         id: build
+        continue-on-error: ${{ matrix.scenario == 'build-failure' }}
         if: ${{ !cancelled() && steps.validate.outcome == 'success' && steps.tests.outcome == 'success' }}
         env:
           SCENARIO: ${{ matrix.scenario }}
