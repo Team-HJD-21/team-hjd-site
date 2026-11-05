@@ -1,5 +1,7 @@
 import { handleSubscription } from '../../src/subscriptions.mjs';
+import { handleFeedback } from '../../src/feedback.mjs';
 export const onRequest = async ({request,env}) => {
+ if(new URL(request.url).pathname==='/api/feedback')return handleFeedback(request,env);
  const result=await handleSubscription(request,env);
  if(!(request.headers.get('content-type')||'').startsWith('application/x-www-form-urlencoded') || !(request.headers.get('accept')||'').includes('text/html')) return result;
  const data=await result.json();

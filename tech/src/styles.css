@@ -208,3 +208,15 @@ button { border: 0; }
 .subscribe-form[data-state="waiting"] input { opacity:.65; cursor:wait; }
 .subscribe-form[data-state="confirmed"] [data-subscribe-status] { color:var(--accent); font-weight:650; }
 .subscription-help { margin:24px 0 0; padding-top:20px; border-top:1px solid var(--rule); font-size:14px; color:var(--secondary); }
+.article-feedback { margin:44px 0 28px; padding:30px 0; border-top:1px solid var(--rule); }
+.article-feedback h2 { font-size:24px; margin:0 0 10px; letter-spacing:-.03em; }
+.article-feedback p { color:var(--secondary); font-size:15px; line-height:1.8; }
+.feedback-options { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 16px; }
+.feedback-options button { padding:12px 19px; min-height:46px; background:var(--panel); border:1px solid var(--rule); border-radius:999px; font-size:15px; transition:background .15s,border-color .15s; }
+.feedback-options button:hover:not(:disabled) { border-color:var(--accent); }
+.feedback-options button[aria-pressed="true"] { background:var(--accent); color:var(--paper); border-color:var(--accent); font-weight:700; }
+.feedback-options button:disabled { opacity:.55; cursor:wait; }
+.article-feedback .feedback-status { min-height:27px; margin:0; color:var(--ink); }
+.feedback-undo { background:transparent; color:var(--secondary); text-decoration:underline; text-underline-offset:4px; padding:8px 0; }
+.article-feedback .feedback-note { font-size:12px; margin:14px 0 0; max-width:62ch; }
+@media(max-width:480px) { .feedback-options { display:grid; grid-template-columns:1fr 1fr; }.feedback-options button { padding:12px 8px; }.article-feedback h2 { font-size:22px; } }

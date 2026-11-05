@@ -6,7 +6,8 @@ let initialized=false,lastGenerated='',lastRefresh=0,report=null,personStatus='a
 const fullTime=value=>value?new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(value)):'—';
 function emptyRow(target,text,columns){const tr=document.createElement('tr');cell(tr,text,'empty').colSpan=columns;target.append(tr);}
 function badge(target,text,ok=true){const span=document.createElement('span');span.className='badge '+(ok?'ok':'warn');span.textContent=text;target.append(span);}
-function setView(view){for(const name of ['overview','people','mail']){const selected=name===view;$(name+'-view').hidden=!selected;$(name+'-tab').setAttribute('aria-selected',String(selected));$(name+'-tab').tabIndex=selected?0:-1;}}
+const views=['overview','people','mail','feedback'];
+function setView(view){for(const name of views){const selected=name===view;$(name+'-view').hidden=!selected;$(name+'-tab').setAttribute('aria-selected',String(selected));$(name+'-tab').tabIndex=selected?0:-1;}}
 function setPeopleStatus(value){personStatus=value;personPage=1;for(const name of ['active','pending','all'])$('filter-'+name).setAttribute('aria-pressed',String(name===value));renderPeople();}
 function openPeople(status){setView('people');setPeopleStatus(status);}
 function renderPeople(){
@@ -46,7 +47,7 @@ function renderAudience(){
 }
 function cell(tr,text,className){const td=document.createElement('td');td.textContent=text;if(className)td.className=className;tr.append(td);return td;}
 function render(r){
- report=r;renderAudience();
+ report=r;renderAudience();renderFeedback();
  $('updated').textContent=time(r.generatedAt);$('active').textContent=num(r.subscribers.active)+'명';$('pending').textContent=num(r.subscribers.pending)+'명';$('forecast').textContent=num(r.subscribers.active)+'통';$('quota').textContent=`${num(r.quota.appUsed)} / ${num(r.quota.appDailyLimit)}통`;$('budget').value=r.quota.appUsed;
  $('quota-detail').textContent=`앱 예산 ${num(r.quota.appRemaining)}통 남음 · 같은 한도 기간의 API 수락 ${num(r.quota.accepted)}통 · 집계 ${time(r.quota.startsAt)} ~ ${time(r.quota.resetsAt)} KST`;
  const risk=r.quota.appUsed>=72||r.subscribers.active>r.quota.appRemaining;
@@ -69,7 +70,13 @@ async function poll(){try{const response=await fetch('/api/state',{cache:'no-sto
  }catch{$('status').textContent='로컬 관리 서비스 연결을 확인해 주세요.';}
 }
 $('refresh').addEventListener('click',refresh);$('report-date').addEventListener('change',refresh);$('preview').addEventListener('close',()=>{$('mail-frame').src='about:blank';});setInterval(poll,2000);poll();
-for(const view of ['overview','people','mail']){$(view+'-tab').addEventListener('click',()=>setView(view));$(view+'-tab').addEventListener('keydown',event=>{const names=['overview','people','mail'],index=names.indexOf(view);let next;if(event.key==='ArrowRight')next=names[(index+1)%3];if(event.key==='ArrowLeft')next=names[(index+2)%3];if(event.key==='Home')next=names[0];if(event.key==='End')next=names[2];if(next){event.preventDefault();setView(next);$(next+'-tab').focus();}});}
+function renderFeedback(){
+ const feedback=report?.feedback,target=$('feedback-rows');target.replaceChildren();
+ $('feedback-count').textContent=feedback?`총 ${num(feedback.total)}건`:'업데이트 필요';
+ if(!feedback?.issues.length){emptyRow(target,feedback?'아직 수집된 반응이 없습니다.':'배포 후 지금 새로고침을 눌러 주세요.',7);return;}
+ for(const issue of feedback.issues){const tr=document.createElement('tr'),title=cell(tr,'');let link;try{const url=new URL(issue.url);if(url.origin==='https://tech.teamhjd.com')link=url.href;}catch{}if(link){const a=document.createElement('a');a.href=link;a.textContent=issue.title;a.target='_blank';a.rel='noopener noreferrer';title.append(a);}else title.textContent=issue.title;const id=document.createElement('small');id.textContent=issue.id;title.append(id);for(const choice of ['useful','curious','hard','easy'])cell(tr,num(issue.counts[choice]));cell(tr,num(issue.total));cell(tr,fullTime(issue.lastAt));target.append(tr);}
+}
+for(const view of views){$(view+'-tab').addEventListener('click',()=>setView(view));$(view+'-tab').addEventListener('keydown',event=>{const index=views.indexOf(view);let next;if(event.key==='ArrowRight')next=views[(index+1)%views.length];if(event.key==='ArrowLeft')next=views[(index+views.length-1)%views.length];if(event.key==='Home')next=views[0];if(event.key==='End')next=views.at(-1);if(next){event.preventDefault();setView(next);$(next+'-tab').focus();}});}
 for(const state of ['active','pending','all'])$('filter-'+state).addEventListener('click',()=>setPeopleStatus(state));
 $('active-card').addEventListener('click',()=>openPeople('active'));$('pending-card').addEventListener('click',()=>openPeople('pending'));$('waiting-open').addEventListener('click',()=>openPeople('pending'));
 for(const [id,event] of [['people-search','input'],['people-sort','change'],['show-emails','change']])$(id).addEventListener(event,()=>{personPage=1;renderPeople();if($('person-detail').open)renderPerson();});
