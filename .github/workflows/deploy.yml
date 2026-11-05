@@ -2,6 +2,16 @@ name: Deploy TeamHJD website
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'tech/**'
+      - 'tools/newsletter-monitor/**'
+      - 'tools/Open-NewsletterMonitor.ps1'
+      - 'tools/ci/**'
+      - '.github/workflows/deploy-newsletter.yml'
+      - '.github/workflows/publish-newsletter.yml'
+      - '.github/workflows/monitor-newsletter.yml'
+      - '.github/workflows/audit-no-send.yml'
+      - '.github/workflows/workflow-guards.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -10,6 +20,7 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: false
+  queue: max
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,16 +29,78 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        id: checkout
       - uses: actions/setup-node@v4
+        id: node
         with:
           node-version: 20
-      - run: node scripts/check-site.mjs
-      - run: node scripts/test-team.mjs
-      - run: node scripts/check-favicons.mjs
-      - run: node scripts/build-site.mjs
+      - name: Check public pages
+        id: check_site
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: node scripts/check-site.mjs
+      - name: Check team pages independently
+        id: test_team
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: node scripts/test-team.mjs
+      - name: Check favicons independently
+        id: check_icons
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: node scripts/check-favicons.mjs
+      - name: Build validated public website
+        id: build
+        if: ${{ !cancelled() && steps.check_site.outcome == 'success' && steps.test_team.outcome == 'success' && steps.check_icons.outcome == 'success' }}
+        run: node scripts/build-site.mjs
       - uses: actions/configure-pages@v5
+        id: configure_pages
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
       - uses: actions/upload-pages-artifact@v3
+        id: upload_site
+        if: ${{ !cancelled() && steps.configure_pages.outcome == 'success' }}
         with:
           path: _site
       - id: deploy
+        if: ${{ !cancelled() && steps.upload_site.outcome == 'success' }}
         uses: actions/deploy-pages@v4
+      - name: Prepare diagnostic snapshot even after failure
+        id: result
+        if: always()
+        env:
+          RESULT_KIND: company
+          REQUIRED_STEPS: checkout,node,check_site,test_team,check_icons,build,configure_pages,upload_site,deploy
+          STEP_RESULTS: ${{ toJSON(steps) }}
+          RESULT_PHASE: artifact
+        run: |
+          if [ -f tools/ci/workflow-result.mjs ]; then
+            node tools/ci/workflow-result.mjs
+          else
+            mkdir -p .workflow-results
+            printf '%s\n' '{"version":1,"verdict":"setup_failed"}' > .workflow-results/workflow-result.json
+            printf '%s\n' 'Source setup failed; diagnostics could not load.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - name: Save diagnostic snapshot even after failure
+        id: upload_result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: workflow-result-company-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .workflow-results/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+      - name: Record final outcome even after failure
+        if: always()
+        env:
+          RESULT_KIND: company
+          REQUIRED_STEPS: checkout,node,check_site,test_team,check_icons,build,configure_pages,upload_site,deploy,result,upload_result
+          STEP_RESULTS: ${{ toJSON(steps) }}
+          RESULT_PHASE: final
+        run: |
+          if [ -f tools/ci/workflow-result.mjs ]; then
+            node tools/ci/workflow-result.mjs
+          else
+            mkdir -p .workflow-results
+            printf '%s\n' '{"version":1,"verdict":"setup_failed"}' > .workflow-results/workflow-result.json
+            printf '%s\n' 'Source setup failed; diagnostics could not load.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

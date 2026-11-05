@@ -14,6 +14,10 @@ on:
         type: string
 permissions:
   contents: read
+concurrency:
+  group: newsletter-monitor-${{ github.actor }}
+  cancel-in-progress: false
+  queue: max
 jobs:
   report:
     if: github.ref == 'refs/heads/main'
@@ -23,21 +27,69 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - id: checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+      - id: node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '22'
       - name: Request an encrypted private snapshot
+        id: snapshot
         env:
           MONITOR_REQUEST_ID: ${{ inputs.request_id }}
           MONITOR_DATE: ${{ inputs.date }}
           MONITOR_PUBLIC_KEY: ${{ inputs.public_key }}
         run: node tech/scripts/monitor-report.mjs
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - id: encrypted_artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: newsletter-monitor-${{ inputs.request_id }}
           path: monitor-report.json
           retention-days: 1
           if-no-files-found: error
+
+      - name: Prepare diagnostic snapshot even after failure
+        id: result
+        if: always()
+        env:
+          RESULT_KIND: monitor
+          REQUIRED_STEPS: checkout,node,snapshot,encrypted_artifact
+          STEP_RESULTS: ${{ toJSON(steps) }}
+          RESULT_PHASE: artifact
+        run: |
+          if [ -f tools/ci/workflow-result.mjs ]; then
+            node tools/ci/workflow-result.mjs
+          else
+            mkdir -p .workflow-results
+            printf '%s\n' '{"version":1,"verdict":"setup_failed"}' > .workflow-results/workflow-result.json
+            printf '%s\n' 'Source setup failed; diagnostics could not load.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - name: Save diagnostic snapshot even after failure
+        id: upload_result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: workflow-result-monitor-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .workflow-results/
+          include-hidden-files: true
+          retention-days: 1
+          if-no-files-found: error
+      - name: Record final outcome even after failure
+        if: always()
+        env:
+          RESULT_KIND: monitor
+          REQUIRED_STEPS: checkout,node,snapshot,encrypted_artifact,result,upload_result
+          STEP_RESULTS: ${{ toJSON(steps) }}
+          RESULT_PHASE: final
+        run: |
+          if [ -f tools/ci/workflow-result.mjs ]; then
+            node tools/ci/workflow-result.mjs
+          else
+            mkdir -p .workflow-results
+            printf '%s\n' '{"version":1,"verdict":"setup_failed"}' > .workflow-results/workflow-result.json
+            printf '%s\n' 'Source setup failed; diagnostics could not load.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

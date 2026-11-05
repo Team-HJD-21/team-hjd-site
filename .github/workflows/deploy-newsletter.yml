@@ -5,6 +5,7 @@ on:
   pull_request:
     paths:
       - 'tech/**'
+      - '!tech/operations/**'
       - 'index.html'
       - 'styles.css'
       - 'assets/teamhjd-wordmark.png'
@@ -15,10 +16,13 @@ on:
       - '.github/workflows/audit-no-send.yml'
       - 'tools/newsletter-monitor/**'
       - 'tools/Open-NewsletterMonitor.ps1'
+      - 'tools/ci/**'
+      - '.github/workflows/workflow-guards.yml'
   push:
     branches: [main]
     paths:
       - 'tech/**'
+      - '!tech/operations/**'
       - 'index.html'
       - 'styles.css'
       - 'assets/teamhjd-wordmark.png'
@@ -29,6 +33,8 @@ on:
       - '.github/workflows/audit-no-send.yml'
       - 'tools/newsletter-monitor/**'
       - 'tools/Open-NewsletterMonitor.ps1'
+      - 'tools/ci/**'
+      - '.github/workflows/workflow-guards.yml'
   workflow_dispatch:
 
 permissions:
@@ -37,6 +43,7 @@ permissions:
 concurrency:
   group: newsletter-pages-${{ github.ref }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   newsletter:
@@ -44,29 +51,83 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out source
+        id: checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
 
       - name: Set up Node.js
+        id: node
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '22'
 
       - name: Validate daily content contract
+        id: content
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         working-directory: tech
         run: npm run validate
-
-      - name: Verify the Cloudflare build entrypoint and official Pandoc bootstrap
+      - name: Run every offline regression independently of content validation
+        id: tests
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        working-directory: tech
+        run: npm run test:ci
+      - name: Verify the official Pandoc bootstrap and build validated content
+        id: build
+        if: ${{ !cancelled() && steps.content.outcome == 'success' && steps.tests.outcome == 'success' }}
         working-directory: tech
         env:
           PANDOC_PATH: /tmp/gambungi-ci-bootstrap-pandoc
-        run: npm run build:cloudflare
-
-      - name: Save static website artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        run: npm run build:cloudflare -- --build-only
+      - name: Save validated static website artifact
+        id: site_artifact
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: gambungi-notes-site
           path: tech/dist/
           if-no-files-found: error
           retention-days: 7
+      - name: Prepare diagnostic snapshot even after failure
+        id: result
+        if: always()
+        env:
+          RESULT_KIND: validation
+          REQUIRED_STEPS: checkout,node,content,tests,build,site_artifact
+          STEP_RESULTS: ${{ toJSON(steps) }}
+          RESULT_PHASE: artifact
+        run: |
+          if [ -f tools/ci/workflow-result.mjs ]; then
+            node tools/ci/workflow-result.mjs
+          else
+            mkdir -p .workflow-results
+            printf '%s\n' '{"version":1,"verdict":"setup_failed"}' > .workflow-results/workflow-result.json
+            printf '%s\n' 'Source setup failed; diagnostics could not load.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - name: Save diagnostic snapshot even after failure
+        id: upload_result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: workflow-result-validation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .workflow-results/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+      - name: Record final outcome even after failure
+        if: always()
+        env:
+          RESULT_KIND: validation
+          REQUIRED_STEPS: checkout,node,content,tests,build,site_artifact,result,upload_result
+          STEP_RESULTS: ${{ toJSON(steps) }}
+          RESULT_PHASE: final
+        run: |
+          if [ -f tools/ci/workflow-result.mjs ]; then
+            node tools/ci/workflow-result.mjs
+          else
+            mkdir -p .workflow-results
+            printf '%s\n' '{"version":1,"verdict":"setup_failed"}' > .workflow-results/workflow-result.json
+            printf '%s\n' 'Source setup failed; diagnostics could not load.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

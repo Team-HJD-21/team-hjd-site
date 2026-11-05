@@ -39,6 +39,13 @@ test('active HTML and unsafe image URLs are rejected while code examples are pre
   assert.doesNotThrow(() => validateMarkdown(markdown + '\n```cpp\nif (a < b) { onEvent = 1; }\n```', issue.id));
 });
 
+test('C++ headers and templates in complete inline code are literals, not active HTML',()=>{
+ for(const literal of ['`<new>`','`std::vector<int>`','``<vector> ` <new>``'])assert.doesNotThrow(()=>validateMarkdown(markdown+'\n'+literal,issue.id));
+});
+test('unclosed, escaped and mixed inline code cannot conceal active HTML',()=>{
+ for(const bad of ['`<script>alert(1)</script>','\\`<script>alert(1)</script>\\`','`<new>`<script>alert(1)</script>','``<new>`<script>alert(1)</script>'])assert.throws(()=>validateMarkdown(markdown+'\n'+bad,issue.id),/Unsafe HTML/);
+});
+
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'notes-content-'));
   t.after(() => rm(root, { recursive: true, force: true }));
