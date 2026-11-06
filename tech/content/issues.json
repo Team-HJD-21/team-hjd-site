@@ -82,7 +82,7 @@
     "question": "물리는 초당 50회 계산하는데 화면은 60회 그린다면 어떻게 자연스럽게 보여줄까요?",
     "summary": "물리 상태는 고정 시간 간격으로 갱신되지만 렌더링은 다른 리듬으로 돌아갑니다. 앞선 두 물리 위치를 보간하면 화면의 움직임을 매끄럽게 할 수 있지만 한 물리 스텝의 시각적 지연이 생깁니다.",
     "date": "2026-11-06",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-06T11:57:00+09:00",
     "source": "content/issues/note-2026-11-06-fixed-step-interpolation.md",
     "assetDirectory": "assets/issues/note-2026-11-06-fixed-step-interpolation",
@@ -93,6 +93,7 @@
       "physics-interpolation",
       "unity",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-06T02:57:00.072Z"
   }
 ]
