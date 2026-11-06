@@ -57,7 +57,20 @@ test('draft IDs, malformed choices, CSRF, missing IP and oversized bodies fail c
  assert.equal((await f.call({ip:null})).status,503);assert.equal((await f.call({method:'PUT'})).status,405);
 });
 test('tampered cookies cannot choose a voter identity and cookie-blocked clients count nothing',async()=>{
- const f=fixture(),cookie=await f.mint(),bad=cookie.slice(0,-1)+(cookie.endsWith('a')?'b':'a');assert.equal((await f.call({cookie:bad})).status,202);assert.equal((await f.call()).status,202);assert.equal(f.raw.prepare('SELECT COUNT(*) AS n FROM article_feedback').get().n,0);
+ const f=fixture(),cookie=await f.mint(),[name,value]=cookie.split('='),[token,signature]=value.split('.');
+ // The final base64url character has unused bits; changing it can preserve bytes.
+ const changed=(signature[0]==='A'?'B':'A')+signature.slice(1),bad=`${name}=${token}.${changed}`;
+ assert.notDeepEqual(Buffer.from(changed,'base64url'),Buffer.from(signature,'base64url'));
+ assert.equal((await f.call({cookie:bad})).status,202);assert.equal((await f.call()).status,202);assert.equal(f.raw.prepare('SELECT COUNT(*) AS n FROM article_feedback').get().n,0);
+});
+test('equivalent base64url signature encodings keep the same voter and one reaction',async()=>{
+ const f=fixture(),cookie=await f.mint(),[name,value]=cookie.split('='),[token,signature]=value.split('.');
+ const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+ const alias=signature.slice(0,-1)+alphabet[alphabet.indexOf(signature.at(-1))^1];
+ assert.notEqual(alias,signature);assert.deepEqual(Buffer.from(alias,'base64url'),Buffer.from(signature,'base64url'));
+ await f.call({cookie});assert.equal((await f.call({cookie:`${name}=${token}.${alias}`,choice:'curious'})).status,200);
+ assert.equal(f.raw.prepare('SELECT COUNT(*) AS n FROM article_feedback').get().n,1);
+ assert.equal((await feedbackSnapshot(f.db,{now:f.now()})).issues[0].counts.curious,1);
 });
 test('failed atomic admission rolls back the vote and an idempotent retry succeeds',async()=>{
  const f=fixture(),cookie=await f.mint();f.failNextBatch();assert.equal((await f.call({cookie})).status,503);assert.equal(f.raw.prepare('SELECT COUNT(*) AS n FROM article_feedback').get().n,0);assert.equal((await f.call({cookie})).status,200);assert.equal(f.raw.prepare('SELECT COUNT(*) AS n FROM article_feedback').get().n,1);
