@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261105-1793844151569",
-  "date": "2026-11-05",
-  "issueId": "note-2026-11-05-false-sharing",
-  "reason": "Daily 11:00 ChatGPT preparation validated; start the authorized main release worker before 11:57 KST.",
-  "requestedAt": "2026-11-05T11:02:31+09:00",
-  "expiresAt": "2026-11-05T12:02:31+09:00",
+  "requestId": "daily-20261106-110826-55e62820",
+  "date": "2026-11-06",
+  "issueId": "note-2026-11-06-fixed-step-interpolation",
+  "reason": "Validated November 6 daily issue; authorized pre-start before 11:57 KST.",
+  "requestedAt": "2026-11-06T11:08:26+09:00",
+  "expiresAt": "2026-11-06T12:08:26+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "b83ba9c6d63c2376da43290177e75d455698c93b"
+  "expectedBaseSha": "55e628201aad8ae46a54a2ab2d90f4452e9df171"
 }
