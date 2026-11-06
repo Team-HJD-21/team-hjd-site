@@ -93,6 +93,15 @@ function maskInlineParagraph(text) {
 export function validateMarkdown(markdown, id) {
   const body = articleBody(markdown);
   const prose = proseOnly(body);
+  // Pandoc's pipe-table reader needs a paragraph break before the header.
+  // Detect a real separator row, not arbitrary pipes in prose or fenced code.
+  const lines=prose.split('\n');
+  for(let i=1;i<lines.length;i++){
+    const line=lines[i].trim();
+    if(!line.includes('|'))continue;
+    const cells=line.replace(/^\|/,'').replace(/\|$/,'').split('|').map(cell=>cell.trim());
+    if(cells.length&&cells.every(cell=>/^:?-{3,}:?$/.test(cell))&&lines[i-1].includes('|')&&i>1&&lines[i-2].trim())fail(`Add a blank line before the Markdown table header: ${id}`);
+  }
   // Raw HTML is limited to the existing disclosure component and comments.
   const raw = maskInlineCode(prose).replace(/<!--[\s\S]*?-->/g, '').replace(/<\/?(?:details|summary)>/g, '');
   if (/<\s*\/?[a-z][^>]*>/i.test(raw) || /(?:javascript|vbscript|data)\s*:/i.test(prose) || /chatgpt\.com\/c\/|\uE200|\uE201/.test(prose)) fail(`Unsafe HTML, URL or private citation in ${id}`);

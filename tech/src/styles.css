@@ -97,8 +97,21 @@ button { border: 0; }
 .prose blockquote p:last-child { margin-bottom: 0; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
 .prose code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: .86em; overflow-wrap: anywhere; word-break: break-word; color: var(--accent); }
-.prose pre { margin: 26px 0; padding: 21px 22px; max-width: 100%; overflow-x: auto; background: var(--panel); border-radius: 4px; font-size: 14px; line-height: 1.8; white-space: pre; overscroll-behavior-x: contain; }
-.prose pre code { font-size: inherit; color: var(--ink); white-space: inherit; overflow-wrap: normal; word-break: normal; }
+/* Visual Studio inspired editor colors, applied to Pandoc's existing tokens. */
+.prose pre { --code-bg:#1e1e1e; --code-text:#d4d4d4; --code-keyword:#569cd6; --code-control:#c586c0; --code-type:#4ec9b0; --code-string:#ce9178; --code-comment:#6a9955; --code-number:#b5cea8; --code-function:#dcdcaa; --code-property:#9cdcfe; --code-preprocessor:#9b9b9b; --code-special:#d7ba7d; --code-error:#f44747; margin: 26px 0; padding: 21px 22px; max-width: 100%; overflow-x: auto; background: var(--code-bg); color:var(--code-text); border-radius: 4px; font-size: 14px; line-height: 1.8; white-space: pre; overscroll-behavior-x: contain; }
+:root[data-theme="light"] .prose pre { --code-bg:#fff; --code-text:#1e1e1e; --code-keyword:#0000ff; --code-control:#af00db; --code-type:#267f99; --code-string:#a31515; --code-comment:#008000; --code-number:#098658; --code-function:#795e26; --code-property:#001080; --code-preprocessor:#666; --code-special:#795e26; --code-error:#a1260d; box-shadow:inset 0 0 0 1px var(--rule); }
+.prose pre code { font-size: inherit; color: var(--code-text); white-space: inherit; overflow-wrap: normal; word-break: normal; }
+.prose pre .kw,.prose pre .dt { color:var(--code-keyword); }
+.prose pre .cf { color:var(--code-control); }
+.prose pre .bu { color:var(--code-type); }
+.prose pre .st,.prose pre .ch,.prose pre .vs,.prose pre .im { color:var(--code-string); }
+.prose pre .co,.prose pre .cv,.prose pre .an,.prose pre .do { color:var(--code-comment); }
+.prose pre .dv,.prose pre .bn,.prose pre .fl { color:var(--code-number); }
+.prose pre .fu { color:var(--code-function); }
+.prose pre .at,.prose pre .va { color:var(--code-property); }
+.prose pre .pp { color:var(--code-preprocessor); }
+.prose pre .sc,.prose pre .ss { color:var(--code-special); }
+.prose pre .al,.prose pre .er { color:var(--code-error); }
 .table-scroll { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; overscroll-behavior-x: contain; margin: 27px 0; }
 .prose table { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 15px; line-height: 1.8; table-layout: auto; }
 .prose th { font-weight: 600; text-align: left; padding: 11px 18px 11px 0; border-bottom: 1px solid var(--ink); vertical-align: bottom; }
