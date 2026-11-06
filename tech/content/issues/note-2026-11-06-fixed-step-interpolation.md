@@ -17,17 +17,11 @@
 ## 50ms 순간에 어떤 위치를 그려야 할까요?
 
 조건을 단순하게 잡겠습니다. 공이 x축을 따라 **초속 2m**로 움직이고, 물리 스텝은 20ms입니다. 충돌과 가속은 없다고 가정합니다. 물리 갱신 시점에 계산된 위치는 다음과 같습니다.
-
 | 시뮬레이션 시각 | 공의 x 위치 |
-
 | --- | ---: |
-
 | 0ms | 0.000m |
-
 | 20ms | 0.040m |
-
 | 40ms | 0.080m |
-
 | 60ms | 0.120m |
 
 화면을 **50ms**에 그린다고 하겠습니다. 이 순간 완료된 물리 상태 중 가장 최신은 40ms의 **0.080m**입니다. 보간 없이 최신 물리 위치만 그리면, 다음 물리 스텝이 완료되기 전까지 같은 0.080m가 여러 렌더 프레임에 반복될 수 있습니다. 이것이 눈에 보이는 계단식 움직임의 한 원인입니다. 다만 실제 지터의 원인이 언제나 보간 부족인 것은 아닙니다.
@@ -37,17 +31,11 @@
 **보간(Interpolation)**은 *이미 알고 있는 두 시점 사이*의 값을 구하는 방법입니다. 50ms에 렌더할 때, 알고 있는 20ms와 40ms의 두 위치를 쓰되 표시 시각을 한 물리 스텝 늦춘 **30ms**로 놓아 보겠습니다. 그러면 두 위치의 딱 중간을 그릴 수 있습니다.
 
 ```text
-
 물리 간격 dt = 20ms
-
 최근에 완료된 물리 시각 = 40ms
-
 렌더 시각 = 50ms
-
 보간 비율 alpha = (50 - 40) / 20 = 0.5
-
 표시 위치 = 0.040 + (0.080 - 0.040) × 0.5 = 0.060m
-
 ```
 
 즉 **50ms에 보이는 공은 0.060m**에 있습니다. 이를 일반화하면 `renderPosition = previous + (current - previous) * alpha`이며 `0 ≤ alpha < 1`인 구간에서 생각할 수 있습니다. 이것은 한 물리 스텝만큼 뒤로 민 화면 표시 시간을 기준으로 한 **설명용 모델**입니다. Unity의 내부 보간 구현 코드를 그대로 옮겼다는 뜻은 아닙니다.
@@ -71,51 +59,25 @@
 다음은 **Unity 2022.3의 3D `Rigidbody`를 대상으로 한 실제 C# 사용 예**입니다. 2m/s 숫자 모델을 보이기 위해 *키네마틱(kinematic)* 리지드바디를 매 고정 스텝에 일정 거리 이동시킵니다. `MovePosition`은 키네마틱 리지드바디의 위치를 옮길 때 보간 설정을 따릅니다. 비교를 위해 `Interpolate`와 `None`을 번갈아 설정해 보세요. 이 코드는 플레이어 입력·충돌 반응을 포함한 완성형 이동 시스템은 아닙니다. [Unity Rigidbody.MovePosition API](https://docs.unity3d.com/kr/2022.2/ScriptReference/Rigidbody.MovePosition.html).
 
 ```csharp
-
 using UnityEngine;
-
-
-
 [RequireComponent(typeof(Rigidbody))]
-
 public sealed class ConstantMotion : MonoBehaviour
-
 {
-
     private Rigidbody body;
-
     [SerializeField] private float speed = 2f;
-
-
-
     private void Awake()
-
     {
-
         body = GetComponent<Rigidbody>();
-
         body.isKinematic = true;
-
         body.interpolation = RigidbodyInterpolation.Interpolate;
-
     }
-
-
-
     private void FixedUpdate()
-
     {
-
         Vector3 next = body.position
-
             + Vector3.right * (speed * Time.fixedDeltaTime);
-
         body.MovePosition(next);
-
     }
-
 }
-
 ```
 
 `Time.fixedDeltaTime`은 물리 갱신 간격(초)이고, `RigidbodyInterpolation.Interpolate`는 **렌더링 표시용 보간 설정**입니다. `FixedUpdate` 안에서 일정 거리씩 이동시키되, 표시할 때는 엔진의 보간을 쓰는 흐름입니다. Unity가 보간 중인 리지드바디의 Transform을 물리 시스템에서 관리한다는 점도 기억해야 합니다. Transform을 외부에서 직접 바꾸는 코드를 섞는 경우 `Physics.SyncTransforms` 등 동기화 요건을 확인해야 하며, 임의로 직접 덮어쓰는 구현은 피하는 편이 안전합니다. [Unity 2022.3 보간 지침](https://docs.unity3d.com/kr/2022.3/Manual/rigidbody-interpolation.html).
