@@ -42,6 +42,15 @@ test('active HTML and unsafe image URLs are rejected while code examples are pre
 test('C++ headers and templates in complete inline code are literals, not active HTML',()=>{
  for(const literal of ['`<new>`','`std::vector<int>`','``<vector> ` <new>``'])assert.doesNotThrow(()=>validateMarkdown(markdown+'\n'+literal,issue.id));
 });
+test('pipe tables need a blank line before the header, including CRLF manuscripts',()=>{
+ const table='| Time | X |\n| --- | ---: |\n| 20ms | 0.040m |\n';
+ for(const newline of ['\n','\r\n']){
+  const bad=(markdown+'\n\nA paragraph.\n'+table).replaceAll('\n',newline);
+  assert.throws(()=>validateMarkdown(bad,issue.id),/blank line before the Markdown table header/);
+  assert.doesNotThrow(()=>validateMarkdown(bad.replace('A paragraph.'+newline,'A paragraph.'+newline+newline),issue.id));
+ }
+ assert.doesNotThrow(()=>validateMarkdown(markdown+'\n\n```markdown\nA paragraph.\n'+table+'```\n',issue.id));
+});
 test('unclosed, escaped and mixed inline code cannot conceal active HTML',()=>{
  for(const bad of ['`<script>alert(1)</script>','\\`<script>alert(1)</script>\\`','`<new>`<script>alert(1)</script>','``<new>`<script>alert(1)</script>','`open\n\n<script>alert(1)</script>\n\n`','`open\r\n \t\r\n<script>alert(1)</script>\r\n\r\n`'])assert.throws(()=>validateMarkdown(markdown+'\n'+bad,issue.id),/Unsafe HTML/);
 });
