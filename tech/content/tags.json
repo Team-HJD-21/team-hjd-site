@@ -357,5 +357,17 @@
       "perspective divide",
       "projection matrix"
     ]
+  },
+  {
+    "id": "physics-interpolation",
+    "group": "기법·원리",
+    "ko": "물리 보간",
+    "en": "Physics Interpolation",
+    "aliases": [
+      "물리 보간법",
+      "고정 시간 보간",
+      "rigidbody interpolation",
+      "fixed timestep interpolation"
+    ]
   }
 ]
