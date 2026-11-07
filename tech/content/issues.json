@@ -104,7 +104,7 @@
     "question": "목적지에 가장 가까워 보이는 길을 먼저 선택하면 항상 최단 경로일까요?",
     "summary": "A*는 이미 사용한 비용과 앞으로 남을 비용의 추정치를 함께 비교합니다. 5개 노드의 작은 그래프에서 탐욕 탐색과 A*를 비교하고 휴리스틱 설계·우선순위 큐·엔진 적용 시 주의점을 살펴봅니다.",
     "date": "2026-11-07",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-07T11:57:00+09:00",
     "source": "content/issues/note-2026-11-07-astar-search-costs.md",
     "assetDirectory": "assets/issues/note-2026-11-07-astar-search-costs",
@@ -115,6 +115,7 @@
       "a-star-search",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-07T02:57:00.081Z"
   }
 ]
