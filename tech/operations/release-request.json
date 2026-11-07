@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261106-110826-55e62820",
-  "date": "2026-11-06",
-  "issueId": "note-2026-11-06-fixed-step-interpolation",
-  "reason": "Validated November 6 daily issue; authorized pre-start before 11:57 KST.",
-  "requestedAt": "2026-11-06T11:08:26+09:00",
-  "expiresAt": "2026-11-06T12:08:26+09:00",
+  "requestId": "daily-20261107-1794017138723-astar",
+  "date": "2026-11-07",
+  "issueId": "note-2026-11-07-astar-search-costs",
+  "reason": "November 7 scheduled A* issue validated in CI; pre-start one authorized release worker before 11:57 KST.",
+  "requestedAt": "2026-11-07T11:05:38+09:00",
+  "expiresAt": "2026-11-07T12:05:38+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "55e628201aad8ae46a54a2ab2d90f4452e9df171"
+  "expectedBaseSha": "e8eabefec050f50e19dbcb81600943fbccdc6e4c"
 }
