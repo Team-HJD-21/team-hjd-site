@@ -13,6 +13,7 @@ import { publicationVersion } from './publication-version.mjs';
 import { buildBrand } from './brand.mjs';
 import { loadCompanyBrand } from './company-brand.mjs';
 import { subscriptionPages, notesTerms } from '../src/subscription-pages.mjs';
+import { renderArticleFigures, assertInlineFormatting } from './article-html.mjs';
 
 const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(project, 'dist');
@@ -127,10 +128,7 @@ for (const issue of issues) {
   if (!toc.length) throw new Error(`No article headings converted for ${issue.id}`);
   body = body.replace(/<h2>(\d+)\.\s*([\s\S]*?)<\/h2>/g, '<h2><span class="section-number">$1</span>$2</h2>');
   body = body.replace(/src="assets\/([^"/]+)"/g, (_,name)=>`src="/${issue.assetDirectory}/${name}?v=${assetVersions.get(name)}"`);
-  body = body.replace(/<p>(<img\b[^>]+>)<\/p>\s*<p><em>([\s\S]*?)<\/em><\/p>/g, (_, image, caption) => {
-    const src = image.match(/src="([^"]+)"/)[1];
-    return `<figure class="article-figure"><a class="image-zoom" href="${src}" data-lightbox aria-label="그림 원본 크기로 보기">${image.replace('<img ', '<img loading="lazy" decoding="async" ')}</a><div class="figure-tools"><a href="${src}" target="_blank" rel="noopener noreferrer">원본 크기로 보기 ↗</a></div><figcaption>${caption}</figcaption></figure>`;
-  });
+  body = renderArticleFigures(body, issue.id);
   body = body.replace(/<table\b[\s\S]*?<\/table>/g, (table) => `<div class="table-scroll" tabindex="0" role="region" aria-label="가로로 이동할 수 있는 표">${table}</div>`);
   body = body.replace(/<pre([^>]*)>/g, '<pre$1 tabindex="0" aria-label="가로로 이동할 수 있는 코드">');
   body = body.replace(/<a href="(https?:[^"<>]+)"/g, '<a href="$1" target="_blank" rel="noopener noreferrer"');
@@ -138,6 +136,7 @@ for (const issue of issues) {
     const decoded = tex.replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim().replace(/^\\[([]/, '').replace(/\\[)\]]$/, '');
     return `<span class="math ${mode}">${katex.renderToString(decoded, { displayMode: mode === 'display', throwOnError: true, output: 'htmlAndMathml', strict: 'warn' })}</span>`;
   });
+  assertInlineFormatting(body, issue.id);
   await writePage(`${issue.date}/${issue.slug}/index.html`, page({ title: issue.title, description: issue.description, path: issuePath(issue), active: 'article', math: true, content: articleContent(issue, tags, body, toc) }).replace('</head>',`<meta name="note-content-version" content="${contentVersions.get(issue.id)}"></head>`));
   const downloads = join(dist, 'downloads');
   await mkdir(downloads, { recursive: true });
