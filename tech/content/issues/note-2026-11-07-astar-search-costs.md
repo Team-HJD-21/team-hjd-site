@@ -16,7 +16,7 @@ NPC의 시작점은 S, 목적지는 G입니다. A는 위쪽 문으로 가는 지
 
 ![시작 S에서 목표 G까지 위쪽 S-A-G는 비용 11, 아래쪽 S-B-C-G는 비용 6인 다섯 지점의 단방향 그래프](assets/astar-route-choices.svg)
 
-*그림 1 · 직접 제작한 설명용 그래프입니다. 위 경로는 2+9=11, 아래 경로는 3+1+2=6입니다. 노드의 h 값은 아래 표의 설명용 하한 추정치이며 엔진이 계산한 수치가 아닙니다. A*의 원리 참고: [Hart·Nilsson·Raphael(1968)](https://doi.org/10.1109/TSSC.1968.300136).*
+*그림 1 · 직접 제작한 설명용 그래프입니다. 위 경로는 2+9=11, 아래 경로는 3+1+2=6입니다. 노드의 h 값은 아래 표의 설명용 하한 추정치이며 엔진이 계산한 수치가 아닙니다. A\*의 원리 참고: [Hart·Nilsson·Raphael(1968)](https://doi.org/10.1109/TSSC.1968.300136).*
 
 어떤 지점에서 갈 수 있는 곳과 비용은 다음과 같습니다.
 
@@ -58,7 +58,7 @@ A*는 아직 조사할 후보를 **우선순위 큐(Priority Queue)**에 넣고 
 
 ![A*가 S A B C G 순으로 조사하며 목표 G의 후보 비용을 11에서 6으로 개선하는 계산 단계](assets/astar-search-steps.svg)
 
-*그림 2 · 직접 제작한 예제 계산 순서입니다. 각 후보의 f=g+h를 표시했습니다. 같은 우선순위에서는 노드 순서로 결정하는 아래 C++ 예제의 규칙을 사용합니다. 실제 게임에서 측정한 탐색 호출 횟수가 아닙니다. 구현 원리 참고: [Red Blob Games · Implementation of A*](https://www.redblobgames.com/pathfinding/a-star/implementation.html).*
+*그림 2 · 직접 제작한 예제 계산 순서입니다. 각 후보의 f=g+h를 표시했습니다. 같은 우선순위에서는 노드 순서로 결정하는 아래 C++ 예제의 규칙을 사용합니다. 실제 게임에서 측정한 탐색 호출 횟수가 아닙니다. 구현 원리 참고: [Red Blob Games · Implementation of A\*](https://www.redblobgames.com/pathfinding/a-star/implementation.html).*
 
 실제로 큐에서 꺼내는 지점의 순서를 따라가겠습니다.
 
