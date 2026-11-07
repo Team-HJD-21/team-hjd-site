@@ -95,5 +95,26 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-06T02:57:00.072Z"
+  },
+  {
+    "id": "note-2026-11-07-astar-search-costs",
+    "slug": "astar-search-costs",
+    "title": "목표에 더 가까운데 왜 최단 경로가 아닐까요?",
+    "description": "적에게 가장 가까워 보이는 길이 비싼 문을 통과한다면 어떻게 될까요? 다섯 노드의 비용을 직접 계산해 A*의 g, h, f와 최단 경로 보장 조건을 따라갑니다.",
+    "question": "목적지에 가장 가까워 보이는 길을 먼저 선택하면 항상 최단 경로일까요?",
+    "summary": "A*는 이미 사용한 비용과 앞으로 남을 비용의 추정치를 함께 비교합니다. 5개 노드의 작은 그래프에서 탐욕 탐색과 A*를 비교하고 휴리스틱 설계·우선순위 큐·엔진 적용 시 주의점을 살펴봅니다.",
+    "date": "2026-11-07",
+    "status": "scheduled",
+    "publishAt": "2026-11-07T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-07-astar-search-costs.md",
+    "assetDirectory": "assets/issues/note-2026-11-07-astar-search-costs",
+    "coverImage": "astar-route-choices.svg",
+    "format": "기술 해설",
+    "tags": [
+      "game-ai",
+      "a-star-search",
+      "cpp",
+      "technical-explainer"
+    ]
   }
 ]

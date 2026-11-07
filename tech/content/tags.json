@@ -369,5 +369,18 @@
       "rigidbody interpolation",
       "fixed timestep interpolation"
     ]
+  },
+  {
+    "id": "a-star-search",
+    "group": "기법·원리",
+    "ko": "A* 경로 탐색",
+    "en": "A* Search",
+    "aliases": [
+      "A 스타",
+      "에이스타",
+      "A-star",
+      "A* pathfinding",
+      "A star search"
+    ]
   }
 ]
