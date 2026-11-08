@@ -126,7 +126,7 @@
     "question": "170°에서 -170°로 회전할 때 왜 340°가 아니라 20°를 선택해야 할까요?",
     "summary": "사원수 q와 -q는 같은 방향을 나타냅니다. 내적이 음수일 때 목표 표현을 뒤집는 의미를 수치와 도식으로 풀고, Unity Quaternion.Slerp의 동작을 재현합니다.",
     "date": "2026-11-08",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-08T11:57:00+09:00",
     "source": "content/issues/note-2026-11-08-quaternion-shortest-arc.md",
     "assetDirectory": "assets/issues/note-2026-11-08-quaternion-shortest-arc",
@@ -139,6 +139,7 @@
       "unity",
       "csharp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-08T02:57:00.063Z"
   }
 ]
