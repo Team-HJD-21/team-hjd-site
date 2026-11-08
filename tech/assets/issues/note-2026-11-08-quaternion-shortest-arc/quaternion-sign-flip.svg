@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="650" viewBox="0 0 1160 650" role="img" aria-label="사원수 회전 최단 호 설명"><rect width="1160" height="650" fill="#080f17"/>
+<text x="56" y="76" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="32" font-weight="700" text-anchor="start">같은 목표 회전, 부호만 바꿔 짧은 호 선택</text>
+<text x="56" y="111" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="400" text-anchor="start">Y축 170°와 -170°의 단위 사원수 성분(소수 넷째 자리 반올림)</text>
+<rect x="56" y="155" width="503" height="330" rx="20" fill="#13202c"/>
+<rect x="602" y="155" width="503" height="330" rx="20" fill="#13202c"/>
+<text x="88" y="202" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="26" font-weight="700" text-anchor="start">1. 원래 목표 표현</text>
+<text x="88" y="258" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="22" font-weight="400" text-anchor="start">q₀ = (0, +0.9962, 0, +0.0872)</text>
+<text x="88" y="304" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="22" font-weight="400" text-anchor="start">q₁ = (0, -0.9962, 0, +0.0872)</text>
+<text x="88" y="360" fill="#eab8a6" font-family="Arial, Noto Sans KR, sans-serif" font-size="25" font-weight="400" text-anchor="start">dot(q₀, q₁) ≈ -0.9848</text>
+<text x="88" y="416" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="20" font-weight="400" text-anchor="start">내적이 음수: 멀리 떨어진 표현</text>
+<path d="M559 319 L601 319" stroke="#d9eea6" stroke-width="5" fill="none"/>
+<path d="M591 309 L604 319 L591 329" fill="none" stroke="#d9eea6" stroke-width="5"/>
+<text x="632" y="202" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="26" font-weight="700" text-anchor="start">2. 목표의 네 부호 반전</text>
+<text x="632" y="258" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="22" font-weight="400" text-anchor="start">q₀ = (0, +0.9962, 0, +0.0872)</text>
+<text x="632" y="304" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="22" font-weight="400" text-anchor="start">-q₁ = (0, +0.9962, 0, -0.0872)</text>
+<text x="632" y="360" fill="#d9eea6" font-family="Arial, Noto Sans KR, sans-serif" font-size="25" font-weight="400" text-anchor="start">dot(q₀, -q₁) ≈ +0.9848</text>
+<text x="632" y="416" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="20" font-weight="400" text-anchor="start">같은 목표 회전, 가까운 표현</text>
+<rect x="56" y="511" width="1049" height="87" rx="16" fill="#1b3040"/>
+<text x="91" y="548" fill="#d9eea6" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="700" text-anchor="start">acos(0.9848) ≈ 10°</text>
+<text x="91" y="580" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="20" font-weight="400" text-anchor="start">사원수 공간의 각도 · 실제 자세 사이의 최소 회전각 ≈ 20°</text>
+</svg>

@@ -117,5 +117,28 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-07T02:57:00.081Z"
+  },
+  {
+    "id": "note-2026-11-08-quaternion-shortest-arc",
+    "slug": "quaternion-shortest-arc",
+    "title": "170도에서 -170도로 돌리는데 왜 한 바퀴 가까이 돌아갈까요?",
+    "description": "170°에서 -170°로 돌아갈 때 각도 숫자를 평균 내면 340°를 돕니다. 사원수 부호 선택과 SLERP로 20° 회전 경로를 계산하고 Unity C#에서 확인합니다.",
+    "question": "170°에서 -170°로 회전할 때 왜 340°가 아니라 20°를 선택해야 할까요?",
+    "summary": "사원수 q와 -q는 같은 방향을 나타냅니다. 내적이 음수일 때 목표 표현을 뒤집는 의미를 수치와 도식으로 풀고, Unity Quaternion.Slerp의 동작을 재현합니다.",
+    "date": "2026-11-08",
+    "status": "scheduled",
+    "publishAt": "2026-11-08T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-08-quaternion-shortest-arc.md",
+    "assetDirectory": "assets/issues/note-2026-11-08-quaternion-shortest-arc",
+    "coverImage": "angle-arcs.svg",
+    "format": "기술 해설",
+    "tags": [
+      "animation",
+      "quaternion-rotation",
+      "slerp",
+      "unity",
+      "csharp",
+      "technical-explainer"
+    ]
   }
 ]

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="650" viewBox="0 0 1160 650" role="img" aria-label="사원수 회전 최단 호 설명"><rect width="1160" height="650" fill="#080f17"/>
+<text x="60" y="78" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="33" font-weight="700" text-anchor="start">170° → -170° : 같은 목표, 다른 경로</text>
+<text x="60" y="113" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="400" text-anchor="start">한 축 회전을 원 위의 각도로 나타낸 설명용 눈금</text>
+<rect x="60" y="142" width="715" height="455" rx="20" fill="#13202c"/>
+<circle cx="375" cy="358" r="210" fill="none" stroke="#557080" stroke-width="2"/>
+<line x1="160" y1="358" x2="590" y2="358" stroke="#46606c" stroke-width="1" stroke-dasharray="5 7"/>
+<line x1="375" y1="145" x2="375" y2="571" stroke="#46606c" stroke-width="1" stroke-dasharray="5 7"/>
+<path d="M168.19 321.53 L166.15 336.05 L165.13 350.67 L165.13 365.33 L166.15 379.95 L168.19 394.47" fill="none" stroke="#d9eea6" stroke-width="13" stroke-linecap="round"/>
+<path d="M196.75 326.57 L199.38 314.21 L202.86 302.07 L207.18 290.2 L212.32 278.65 L218.25 267.5 L224.94 256.79 L232.37 246.57 L240.49 236.89 L249.27 227.8 L258.66 219.35 L268.61 211.57 L279.08 204.5 L290.03 198.19 L301.38 192.65 L313.09 187.92 L325.11 184.01 L337.37 180.96 L349.81 178.76 L362.37 177.44 L375 177 L387.63 177.44 L400.19 178.76 L412.63 180.96 L424.89 184.01 L436.91 187.92 L448.62 192.65 L459.97 198.19 L470.92 204.5 L481.39 211.57 L491.34 219.35 L500.73 227.8 L509.51 236.89 L517.63 246.57 L525.06 256.79 L531.75 267.5 L537.68 278.65 L542.82 290.2 L547.14 302.07 L550.62 314.21 L553.25 326.57 L555.01 339.08 L555.89 351.68 L555.89 364.32 L555.01 376.92 L553.25 389.43 L550.62 401.79 L547.14 413.93 L542.82 425.8 L537.68 437.35 L531.75 448.5 L525.06 459.21 L517.63 469.43 L509.51 479.11 L500.73 488.2 L491.34 496.65 L481.39 504.43 L470.92 511.5 L459.97 517.81 L448.62 523.35 L436.91 528.08 L424.89 531.99 L412.63 535.04 L400.19 537.24 L387.63 538.56 L375 539 L362.37 538.56 L349.81 537.24 L337.37 535.04 L325.11 531.99 L313.09 528.08 L301.38 523.35 L290.03 517.81 L279.08 511.5 L268.61 504.43 L258.66 496.65 L249.27 488.2 L240.49 479.11 L232.37 469.43 L224.94 459.21 L218.25 448.5 L212.32 437.35 L207.18 425.8 L202.86 413.93 L199.38 401.79 L196.75 389.43" fill="none" stroke="#eab8a6" stroke-width="6" stroke-dasharray="12 10" stroke-linecap="round" opacity=".8"/>
+<circle cx="168.19" cy="321.53" r="11" fill="#d9eea6"/><circle cx="168.19" cy="394.47" r="11" fill="#f3f0e8"/>
+<text x="375" y="352" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="400" text-anchor="middle">중심</text>
+<text x="110" y="285" fill="#d9eea6" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="400" text-anchor="start">시작 170°</text>
+<text x="110" y="446" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="400" text-anchor="start">목표 -170°</text>
+<text x="110" y="476" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="400" text-anchor="start">(= 190°)</text>
+<text x="580" y="237" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="400" text-anchor="start">0°</text>
+<rect x="811" y="142" width="295" height="455" rx="20" fill="#13202c"/>
+<text x="837" y="198" fill="#d9eea6" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="700" text-anchor="start">초록색 실선</text>
+<text x="837" y="232" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="400" text-anchor="start">짧은 호 = 20°</text>
+<text x="837" y="279" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="20" font-weight="400" text-anchor="start">170° → 180°</text>
+<text x="837" y="309" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="20" font-weight="400" text-anchor="start">→ 190°</text>
+<line x1="835" y1="360" x2="886" y2="360" stroke="#eab8a6" stroke-width="6" stroke-dasharray="10 8"/>
+<text x="897" y="367" fill="#eab8a6" font-family="Arial, Noto Sans KR, sans-serif" font-size="24" font-weight="400" text-anchor="start">긴 호</text>
+<text x="837" y="409" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="21" font-weight="400" text-anchor="start">단순 각도 보간</text>
+<text x="837" y="440" fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="25" font-weight="700" text-anchor="start">340° 회전</text>
+<text x="837" y="503" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="18" font-weight="400" text-anchor="start">같은 끝 방향이지만</text>
+<text x="837" y="532" fill="#a2afab" font-family="Arial, Noto Sans KR, sans-serif" font-size="18" font-weight="400" text-anchor="start">중간 자세가 다릅니다.</text>
+</svg>

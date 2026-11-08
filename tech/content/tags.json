@@ -382,5 +382,29 @@
       "A* pathfinding",
       "A star search"
     ]
+  },
+  {
+    "id": "quaternion-rotation",
+    "group": "기법·원리",
+    "ko": "사원수 회전",
+    "en": "Quaternion Rotation",
+    "aliases": [
+      "쿼터니언",
+      "사원수",
+      "quaternion",
+      "회전 표현"
+    ]
+  },
+  {
+    "id": "slerp",
+    "group": "기법·원리",
+    "ko": "구면 선형 보간",
+    "en": "Spherical Linear Interpolation",
+    "aliases": [
+      "SLERP",
+      "slerp",
+      "사원수 보간",
+      "구면 보간"
+    ]
   }
 ]
