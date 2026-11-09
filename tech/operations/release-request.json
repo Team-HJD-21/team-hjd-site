@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261108-1794103548990-quaternion",
-  "date": "2026-11-08",
-  "issueId": "note-2026-11-08-quaternion-shortest-arc",
-  "reason": "November 8 scheduled quaternion issue passed Validate newsletter; start one authorized release worker before 11:57 KST.",
-  "requestedAt": "2026-11-08T11:05:48+09:00",
-  "expiresAt": "2026-11-08T12:05:48+09:00",
+  "requestId": "daily-20261109-110520-asset-reference-loading",
+  "date": "2026-11-09",
+  "issueId": "note-2026-11-09-asset-reference-loading",
+  "reason": "November 9 Unreal asset references note passed Validate newsletter; pre-arm the authorized release worker for 11:57 KST without duplicate delivery.",
+  "requestedAt": "2026-11-09T11:05:20+09:00",
+  "expiresAt": "2026-11-09T12:05:20+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "f7a8556096b0e1143b36397d90b82dd97e0847ca"
+  "expectedBaseSha": "3f5cda1d72c914b2782427b5f3a4b0b2cdff2e32"
 }
