@@ -150,7 +150,7 @@
     "question": "아직 선택하지 않은 모자 세 개가 왜 메뉴 진입과 함께 로딩될까요?",
     "summary": "하드 참조는 로딩 의존성을, 소프트 참조는 사용 시점의 명시적 로드를 선택하게 합니다. 1MB 메뉴와 12MB 모자 세 개 예제를 따라 비동기 로드, 콜백, GC 수명과 패키징 조건을 살펴봅니다.",
     "date": "2026-11-09",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-09T11:57:00+09:00",
     "source": "content/issues/note-2026-11-09-asset-reference-loading.md",
     "assetDirectory": "assets/issues/note-2026-11-09-asset-reference-loading",
@@ -163,6 +163,7 @@
       "unreal-engine",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-09T02:57:00.081Z"
   }
 ]
