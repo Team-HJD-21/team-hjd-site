@@ -406,5 +406,18 @@
       "사원수 보간",
       "구면 보간"
     ]
+  },
+  {
+    "id": "asset-streaming",
+    "group": "기법·원리",
+    "ko": "에셋 스트리밍",
+    "en": "Asset Streaming",
+    "aliases": [
+      "비동기 에셋 로드",
+      "에셋 로딩",
+      "async asset loading",
+      "asset loading",
+      "soft reference loading"
+    ]
   }
 ]

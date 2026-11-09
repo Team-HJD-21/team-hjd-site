@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="610" viewBox="0 0 1100 610" role="img" aria-label="하드 참조는 세 개의 모자를 함께 로드할 수 있고 소프트 참조는 선택 시 하나만 로드할 수 있는 구조"><rect width="1100" height="610" fill="#080f17"/>
+<text x="48" y="60" font-size="32" font-family="Arial, Noto Sans KR, sans-serif" font-weight="700" fill="#f3f0e8">같은 모자 세 개, 다른 로드 경계</text>
+<text x="48" y="95" font-size="18" font-family="Arial, Noto Sans KR, sans-serif" fill="#a2afab">모든 MB 값은 계산용 가정 · 실제 측정이 아닙니다</text>
+<rect x="48" y="135" width="480" height="375" rx="20" fill="#13202c"/><rect x="572" y="135" width="480" height="375" rx="20" fill="#13202c"/>
+<text x="74" y="176" font-size="24" font-family="Arial, Noto Sans KR, sans-serif" font-weight="700" fill="#f3f0e8">하드 참조</text>
+<rect x="180" y="202" width="216" height="60" rx="12" fill="#263947" stroke="#eab8a6" stroke-width="2"/>
+<text x="288" y="238" text-anchor="middle" font-size="20" font-family="Arial, Noto Sans KR, sans-serif" fill="#f3f0e8">메뉴 설정 · 1MB</text>
+<path d="M288 262 V287 M120 287 H456 M120 287 V310 M288 287 V310 M456 287 V310" fill="none" stroke="#eab8a6" stroke-width="3"/>
+<g fill="#304550" stroke="#eab8a6" stroke-width="2"><rect x="72" y="311" width="130" height="83" rx="12"/><rect x="222" y="311" width="130" height="83" rx="12"/><rect x="372" y="311" width="130" height="83" rx="12"/></g>
+<g fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="17" text-anchor="middle"><text x="137" y="347">모자 A</text><text x="137" y="371">12MB</text><text x="287" y="347">모자 B</text><text x="287" y="371">12MB</text><text x="437" y="347">모자 C</text><text x="437" y="371">12MB</text></g>
+<text x="288" y="448" text-anchor="middle" font-size="25" font-family="Arial, Noto Sans KR, sans-serif" font-weight="700" fill="#eab8a6">준비 시 37MB</text>
+<text x="598" y="176" font-size="24" font-family="Arial, Noto Sans KR, sans-serif" font-weight="700" fill="#f3f0e8">소프트 참조 + 선택 로드</text>
+<rect x="708" y="202" width="216" height="60" rx="12" fill="#263947" stroke="#d9eea6" stroke-width="2"/>
+<text x="816" y="238" text-anchor="middle" font-size="20" font-family="Arial, Noto Sans KR, sans-serif" fill="#f3f0e8">메뉴 설정 · 1MB</text>
+<path d="M816 262 V287 M648 287 H984 M648 287 V310 M816 287 V310 M984 287 V310" fill="none" stroke="#a2afab" stroke-width="3" stroke-dasharray="7 6"/>
+<g fill="#304550" stroke="#a2afab" stroke-width="2" stroke-dasharray="7 5"><rect x="598" y="311" width="130" height="83" rx="12"/><rect x="748" y="311" width="130" height="83" rx="12"/></g>
+<rect x="898" y="311" width="130" height="83" rx="12" fill="#304550" stroke="#d9eea6" stroke-width="3"/>
+<g fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="17" text-anchor="middle"><text x="663" y="347">모자 A</text><text x="663" y="371">경로만</text><text x="813" y="347">모자 B</text><text x="813" y="371">경로만</text><text x="963" y="347">모자 C</text><text x="963" y="371">12MB</text></g>
+<text x="813" y="448" text-anchor="middle" font-size="25" font-family="Arial, Noto Sans KR, sans-serif" font-weight="700" fill="#d9eea6">준비 시 1MB</text>
+<text x="813" y="480" text-anchor="middle" font-size="18" font-family="Arial, Noto Sans KR, sans-serif" fill="#f3f0e8">모자 C를 선택한 뒤 13MB</text>
+<rect x="48" y="534" width="1004" height="51" rx="12" fill="#1b3040"/>
+<text x="71" y="566" font-size="19" font-family="Arial, Noto Sans KR, sans-serif" fill="#a2afab">실선: 로드와 연결된 참조 · 점선: 로드하지 않은 경로 · 예제는 공유 의존성을 제외</text></svg>

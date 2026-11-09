@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-label="소프트 경로 보관부터 사용자가 모자를 선택하고 비동기 로드 완료 후 강한 참조를 유지하고 해제하는 순서"><rect width="1100" height="520" fill="#080f17"/>
+<text x="50" y="61" font-size="32" font-family="Arial, Noto Sans KR, sans-serif" font-weight="700" fill="#f3f0e8">소프트 참조의 다섯 단계</text>
+<text x="50" y="100" font-size="19" font-family="Arial, Noto Sans KR, sans-serif" fill="#a2afab">화살표는 호출·상태의 순서이며 소요 시간 눈금이 아닙니다</text>
+<path d="M142 247 H958" stroke="#d9eea6" stroke-width="4"/><path d="M950 235 L971 247 L950 259" fill="none" stroke="#d9eea6" stroke-width="4"/>
+<g fill="#13202c" stroke="#d9eea6" stroke-width="2"><rect x="48" y="190" width="190" height="114" rx="16"/><rect x="255" y="190" width="190" height="114" rx="16"/><rect x="462" y="190" width="190" height="114" rx="16"/><rect x="669" y="190" width="190" height="114" rx="16"/><rect x="876" y="190" width="176" height="114" rx="16"/></g>
+<g fill="#d9eea6" font-size="18" font-weight="700" font-family="Arial, Noto Sans KR, sans-serif" text-anchor="middle"><text x="143" y="219">1 · 준비</text><text x="350" y="219">2 · 선택</text><text x="557" y="219">3 · 비동기</text><text x="764" y="219">4 · 사용</text><text x="964" y="219">5 · 해제</text></g>
+<g fill="#f3f0e8" font-family="Arial, Noto Sans KR, sans-serif" font-size="17" text-anchor="middle"><text x="143" y="250">에셋 경로 저장</text><text x="143" y="276">메시는 미로드</text><text x="350" y="250">사용자 입력</text><text x="350" y="276">대상 결정</text><text x="557" y="250">RequestAsyncLoad</text><text x="557" y="276">완료 콜백</text><text x="764" y="250">실제 메시 사용</text><text x="764" y="276">수명 참조 유지</text><text x="964" y="250">장착 해제</text><text x="964" y="276">참조 정리</text></g>
+<rect x="70" y="356" width="960" height="103" rx="18" fill="#1b3040"/>
+<text x="94" y="397" font-size="21" font-family="Arial, Noto Sans KR, sans-serif" fill="#f3f0e8">주의: 로드 완료 ≠ 사용 중 객체의 영구 보관</text>
+<text x="94" y="433" font-size="19" font-family="Arial, Noto Sans KR, sans-serif" fill="#a2afab">실패·취소·늦은 콜백을 검사하고, 사용이 끝났을 때 강한 참조나 핸들을 해제합니다</text></svg>
