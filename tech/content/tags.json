@@ -419,5 +419,17 @@
       "asset loading",
       "soft reference loading"
     ]
+  },
+  {
+    "id": "gpu-readback",
+    "group": "기법·원리",
+    "ko": "GPU 결과 읽기",
+    "en": "GPU Readback",
+    "aliases": [
+      "비동기 GPU 읽기",
+      "GPU readback",
+      "AsyncGPUReadback",
+      "GPU 읽기"
+    ]
   }
 ]

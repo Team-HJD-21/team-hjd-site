@@ -165,5 +165,28 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-09T02:57:00.081Z"
+  },
+  {
+    "id": "note-2026-11-10-gpu-readback-synchronization",
+    "slug": "gpu-readback-synchronization",
+    "title": "16바이트만 읽는데 왜 프레임이 멈출까요?",
+    "description": "GPU에서 계산한 16바이트를 읽었을 뿐인데 CPU가 기다릴 수 있습니다. 동기 읽기와 AsyncGPUReadback의 시간선을 비교하고 Unity C# 예제로 확인합니다.",
+    "question": "GPU가 쓴 16바이트를 CPU에서 가져올 때 왜 프레임이 멈출 수 있을까요?",
+    "summary": "문제는 데이터 크기보다 CPU가 GPU 작업의 완료를 지금 확인해야 하는 동기화 지점에 있습니다. 네 개의 카운터를 읽는 작은 예제로 동기 대기와 비동기 결과의 지연을 비교하고, 실제 Unity API와 수명 관리에서 주의할 지점을 살펴봅니다.",
+    "date": "2026-11-10",
+    "status": "scheduled",
+    "publishAt": "2026-11-10T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-10-gpu-readback-synchronization.md",
+    "assetDirectory": "assets/issues/note-2026-11-10-gpu-readback-synchronization",
+    "coverImage": "readback-timeline.svg",
+    "format": "기술 해설",
+    "tags": [
+      "optimization",
+      "profiling",
+      "gpu-readback",
+      "unity",
+      "csharp",
+      "technical-explainer"
+    ]
   }
 ]
