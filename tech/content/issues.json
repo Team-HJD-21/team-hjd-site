@@ -189,5 +189,28 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-10T02:57:00.086Z"
+  },
+  {
+    "id": "note-2026-11-11-broad-phase-collision",
+    "slug": "broad-phase-collision",
+    "title": "충돌체 1,000개면 정말 499,500쌍을 검사해야 할까요?",
+    "description": "충돌체가 1,000개면 499,500쌍을 모두 검사해야 할까요? 다섯 AABB의 격자 등록부터 후보 중복 제거, C++17 코드와 Box2D 트리 구조까지 따라갑니다.",
+    "question": "충돌체가 1,000개일 때 가능한 모든 쌍을 매 프레임 정밀 검사해야 할까요?",
+    "summary": "광역 단계는 멀리 떨어진 쌍을 먼저 제외합니다. 다섯 상자의 10쌍을 후보 4쌍과 겹치는 2쌍으로 줄이는 계산, 격자의 경계·중복 처리, 실제 물리 엔진의 선택 기준을 설명합니다.",
+    "date": "2026-11-11",
+    "status": "scheduled",
+    "publishAt": "2026-11-11T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-11-broad-phase-collision.md",
+    "assetDirectory": "assets/issues/note-2026-11-11-broad-phase-collision",
+    "coverImage": "broadphase-grid.svg",
+    "format": "기술 해설",
+    "tags": [
+      "physics",
+      "optimization",
+      "broad-phase-collision",
+      "spatial-partitioning",
+      "cpp",
+      "technical-explainer"
+    ]
   }
 ]

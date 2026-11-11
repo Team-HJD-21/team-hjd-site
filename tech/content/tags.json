@@ -431,5 +431,29 @@
       "AsyncGPUReadback",
       "GPU 읽기"
     ]
+  },
+  {
+    "id": "broad-phase-collision",
+    "group": "기법·원리",
+    "ko": "광역 충돌 판정",
+    "en": "Broad-phase Collision Detection",
+    "aliases": [
+      "광역 단계",
+      "브로드 페이즈",
+      "broad phase",
+      "broadphase"
+    ]
+  },
+  {
+    "id": "spatial-partitioning",
+    "group": "기법·원리",
+    "ko": "공간 분할",
+    "en": "Spatial Partitioning",
+    "aliases": [
+      "공간 격자",
+      "spatial subdivision",
+      "uniform grid",
+      "uniform spatial grid"
+    ]
   }
 ]
