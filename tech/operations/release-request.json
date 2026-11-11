@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261110-110554-c2184ca113",
-  "date": "2026-11-10",
-  "issueId": "note-2026-11-10-gpu-readback-synchronization",
-  "reason": "November 10 GPU readback note passed Validate newsletter; pre-arm the authorized 11:57 KST release worker without duplicate delivery.",
-  "requestedAt": "2026-11-10T11:05:54+09:00",
-  "expiresAt": "2026-11-10T12:05:54+09:00",
+  "requestId": "daily-20261111-110704-eebaffba13",
+  "date": "2026-11-11",
+  "issueId": "note-2026-11-11-broad-phase-collision",
+  "reason": "November 11 broad-phase article passed Validate newsletter; pre-arm the authorized daily 11:57 KST publication worker without duplicate email delivery.",
+  "requestedAt": "2026-11-11T11:07:04+09:00",
+  "expiresAt": "2026-11-11T12:07:04+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "c2184ca113f9be1978d20a76f3b707a53835b2a6"
+  "expectedBaseSha": "eebaffba13a61c6fda03707d055e815a68694656"
 }
