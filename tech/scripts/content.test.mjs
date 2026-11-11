@@ -88,6 +88,44 @@ test('draft and scheduled metadata remain out of public issues and SVG scripts a
   await writeFile(join(root, issue.assetDirectory, 'active.svg'), '<svg><script>alert(1)</script></svg>');
   await assert.rejects(loadContent(root), /Active or external SVG/);
 });
+
+test('SVG figure XML must be complete and properly nested, including the November 11 failure', async (t) => {
+  const root = await fixture(t);
+  const path = join(root, issue.assetDirectory, 'broken.svg');
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">';
+  for (const bad of [
+    svg + '<rect width="100" height="50"/><text x="5" y="20">10 → 5 → 4 → 2</text></rect></svg>',
+    svg + '<g><text>Missing closing group</text></svg>',
+    svg + '<text>Truncated image',
+    svg + '<rect width=100 /></svg>',
+    svg + '<text>A & B</text></svg>',
+    svg + '<rect width="100" width="50"/></svg>',
+    svg + '</svg>' + svg + '</svg>',
+  ]) {
+    await writeFile(path, bad);
+    await assert.rejects(loadContent(root, { today: issue.date }), /Malformed SVG: note-2026-11-03\/broken\.svg:/);
+  }
+});
+
+test('valid standalone SVG figures preserve Unicode, namespaces and XML text syntax', async (t) => {
+  const root = await fixture(t);
+  await writeFile(join(root, issue.assetDirectory, 'diagram.svg'), `<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50" aria-label="후보 10 → 2">
+  <!-- Tags inside comments are text: </rect> -->
+  <g><rect width="100" height="50"/><text x="5" y="20">A &amp; B &lt; C</text>
+  <text><![CDATA[x < 4 && y > 2]]></text></g>
+</svg>`);
+  assert.deepEqual((await loadContent(root, { today: issue.date })).documents.get(issue.id).assets, ['diagram.svg', 'figure.webp']);
+});
+
+test('SVG assets require a single SVG root in the SVG namespace', async (t) => {
+  const root = await fixture(t);
+  const path = join(root, issue.assetDirectory, 'wrong-root.svg');
+  for (const bad of ['', '<html/>', '<svg/>', '<svg xmlns="urn:wrong"/>']) {
+    await writeFile(path, bad);
+    await assert.rejects(loadContent(root, { today: issue.date }), /Malformed SVG/);
+  }
+});
 test('an image-free issue does not require an untracked empty asset directory', async (t) => {
   const root = await fixture(t);
   const withoutCover = { ...issue };

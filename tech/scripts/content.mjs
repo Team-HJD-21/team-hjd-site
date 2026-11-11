@@ -1,5 +1,6 @@
 import { readFile, readdir, realpath } from 'node:fs/promises';
 import { resolve, relative, sep, extname, join } from 'node:path';
+import { SaxesParser } from './vendor/xml/saxes.cjs';
 
 export const PUBLIC_STATES = new Set(['sample', 'published']);
 const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -152,6 +153,15 @@ export async function loadContent(project, options) {
       if (extname(entry.name).toLowerCase() === '.svg') {
         const svg = await readFile(file, 'utf8');
         if (/<\s*(?:script|foreignObject|iframe|object|image)\b|\bon\w+\s*=|<!ENTITY|(?:javascript|data)\s*:|(?:xlink:)?href\s*=\s*["'](?!#)|url\(\s*["']?(?!#)/i.test(svg)) fail(`Active or external SVG: ${issue.id}/${entry.name}`);
+        try {
+          let root;
+          const parser = new SaxesParser({ xmlns: true });
+          parser.on('opentag', (tag) => { root ??= tag; });
+          parser.write(svg).close();
+          if (root?.local !== 'svg' || root.uri !== 'http://www.w3.org/2000/svg') throw new Error('Expected an SVG root in the SVG namespace');
+        } catch (error) {
+          fail(`Malformed SVG: ${issue.id}/${entry.name}: ${error.message}`);
+        }
       }
       assets.push(entry.name);
     }
