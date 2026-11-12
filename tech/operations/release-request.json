@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261111-110704-eebaffba13",
-  "date": "2026-11-11",
-  "issueId": "note-2026-11-11-broad-phase-collision",
-  "reason": "November 11 broad-phase article passed Validate newsletter; pre-arm the authorized daily 11:57 KST publication worker without duplicate email delivery.",
-  "requestedAt": "2026-11-11T11:07:04+09:00",
-  "expiresAt": "2026-11-11T12:07:04+09:00",
+  "requestId": "daily-20261112-111224-149502c6e2",
+  "date": "2026-11-12",
+  "issueId": "note-2026-11-12-cache-data-layout",
+  "reason": "November 12 cache data layout note passed Validate newsletter; pre-arm the existing 11:57 KST publication worker for the exact scheduled issue without duplicate delivery.",
+  "requestedAt": "2026-11-12T11:12:24+09:00",
+  "expiresAt": "2026-11-12T12:12:24+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "eebaffba13a61c6fda03707d055e815a68694656"
+  "expectedBaseSha": "149502c6e27098d1ee1f1f918fe6f80f2617a727"
 }
