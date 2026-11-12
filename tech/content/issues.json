@@ -213,5 +213,29 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-11T02:57:00.074Z"
+  },
+  {
+    "id": "note-2026-11-12-cache-data-layout",
+    "slug": "cache-data-layout",
+    "title": "체력만 읽는데 왜 좌표까지 캐시에 들어올까요?",
+    "description": "체력 4바이트만 필요한데도 왜 좌표와 속도까지 캐시에 읽힐까요? AoS와 SoA를 64바이트 캐시 라인 예제로 계산하고 C++17과 Unity Entities 청크 구조로 연결합니다.",
+    "question": "체력만 읽는 루프에서 왜 좌표와 속도가 든 메모리까지 가져올까요?",
+    "summary": "AoS는 한 객체의 필드를 모으고 SoA는 같은 필드를 모읍니다. 1,024개 객체의 체력 접근에 걸리는 라인 수를 계산하고 실제 코드·엔진의 손익을 비교합니다.",
+    "date": "2026-11-12",
+    "status": "scheduled",
+    "publishAt": "2026-11-12T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-12-cache-data-layout.md",
+    "assetDirectory": "assets/issues/note-2026-11-12-cache-data-layout",
+    "coverImage": "aos-soa-cacheline.svg",
+    "format": "기술 해설",
+    "tags": [
+      "optimization",
+      "memory-management",
+      "data-layout",
+      "cpp",
+      "unity",
+      "engine-internals",
+      "technical-explainer"
+    ]
   }
 ]

@@ -455,5 +455,20 @@
       "uniform grid",
       "uniform spatial grid"
     ]
+  },
+  {
+    "id": "data-layout",
+    "group": "기법·원리",
+    "ko": "데이터 배치",
+    "en": "Data Layout",
+    "aliases": [
+      "메모리 배치",
+      "data locality",
+      "cache locality",
+      "AoS",
+      "SoA",
+      "array of structures",
+      "structure of arrays"
+    ]
   }
 ]

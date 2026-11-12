@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430">
+<rect width="1000" height="430" fill="#080f17"/>
+<text x="40" y="57" fill="#f3f0e8" font-family="sans-serif" font-size="29" font-weight="700">HP-only scan · 1,024 actors</text>
+<text x="40" y="94" fill="#a2afab" font-family="sans-serif" font-size="17">64 B aligned lines · data footprint model, not a performance benchmark</text>
+<rect x="40" y="127" width="920" height="244" rx="18" fill="#13202c"/>
+<text x="64" y="174" fill="#f3f0e8" font-family="sans-serif" font-size="22">AoS · 32 KiB</text>
+<rect x="64" y="189" width="780" height="53" rx="8" fill="#486174"/>
+<text x="858" y="226" fill="#f3f0e8" font-family="sans-serif" font-size="21">512</text>
+<text x="64" y="290" fill="#f3f0e8" font-family="sans-serif" font-size="22">SoA HP · 4 KiB</text>
+<rect x="64" y="305" width="97.5" height="53" rx="8" fill="#d9eea6"/>
+<text x="176" y="340" fill="#f3f0e8" font-family="sans-serif" font-size="21">64</text>
+<text x="40" y="404" fill="#a2afab" font-family="sans-serif" font-size="17">Bar lengths are proportional to line counts (512 : 64 = 8 : 1).</text>
+</svg>
