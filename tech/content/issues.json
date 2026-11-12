@@ -222,7 +222,7 @@
     "question": "체력만 읽는 루프에서 왜 좌표와 속도가 든 메모리까지 가져올까요?",
     "summary": "AoS는 한 객체의 필드를 모으고 SoA는 같은 필드를 모읍니다. 1,024개 객체의 체력 접근에 걸리는 라인 수를 계산하고 실제 코드·엔진의 손익을 비교합니다.",
     "date": "2026-11-12",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-12T11:57:00+09:00",
     "source": "content/issues/note-2026-11-12-cache-data-layout.md",
     "assetDirectory": "assets/issues/note-2026-11-12-cache-data-layout",
@@ -236,6 +236,7 @@
       "unity",
       "engine-internals",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-12T02:57:00.077Z"
   }
 ]
