@@ -247,7 +247,7 @@
     "question": "멀어진 바닥의 텍스처 무늬가 카메라 이동 때 반짝이거나 흔들리는 이유는 무엇일까요?",
     "summary": "화면 한 픽셀에 여러 원본 텍셀이 대응하면 한 점 샘플링은 불안정해집니다. 8×8 텍셀과 log2(8)=3 계산을 통해 밉 레벨 선택을 따라가고 실제 셰이더 미분·필터 설정을 알아봅니다.",
     "date": "2026-11-13",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-13T11:57:00+09:00",
     "source": "content/issues/note-2026-11-13-mipmap-lod.md",
     "assetDirectory": "assets/issues/note-2026-11-13-mipmap-lod",
@@ -259,6 +259,7 @@
       "mipmapping",
       "unity",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-13T02:57:00.062Z"
   }
 ]
