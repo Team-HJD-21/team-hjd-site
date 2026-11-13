@@ -470,5 +470,19 @@
       "array of structures",
       "structure of arrays"
     ]
+  },
+  {
+    "id": "mipmapping",
+    "group": "기법·원리",
+    "ko": "밉매핑",
+    "en": "Mipmapping",
+    "aliases": [
+      "밉맵",
+      "밉 레벨",
+      "mipmap",
+      "mipmaps",
+      "texture LOD",
+      "texture level of detail"
+    ]
   }
 ]
