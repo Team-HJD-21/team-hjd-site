@@ -270,7 +270,7 @@
     "question": "사용하지도 않는 함수를 담은 헤더를 고치면 왜 다른 C++ 소스까지 다시 컴파일될까요?",
     "summary": "전처리기의 간접 include는 번역 단위의 입력 의존성이 됩니다. 네 소스의 변경 전 3개, 정리 후 1개 재컴파일 예제를 따라 GCC 의존성 기록과 Ninja 증분 빌드, PCH의 손익을 살펴봅니다.",
     "date": "2026-11-14",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-14T11:57:00+09:00",
     "source": "content/issues/note-2026-11-14-header-include-rebuild.md",
     "assetDirectory": "assets/issues/note-2026-11-14-header-include-rebuild",
@@ -281,6 +281,7 @@
       "incremental-compilation",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-14T02:57:00.059Z"
   }
 ]
