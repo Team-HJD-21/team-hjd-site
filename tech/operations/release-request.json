@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261113-110919-f4e4c0625ce8",
-  "date": "2026-11-13",
-  "issueId": "note-2026-11-13-mipmap-lod",
-  "reason": "November 13 mipmap LOD note passed Validate newsletter; pre-arm the existing 11:57 KST publication worker once for the exact scheduled issue.",
-  "requestedAt": "2026-11-13T11:09:19+09:00",
-  "expiresAt": "2026-11-13T12:09:19+09:00",
+  "requestId": "daily-20261114-110137-74273473d6b6",
+  "date": "2026-11-14",
+  "issueId": "note-2026-11-14-header-include-rebuild",
+  "reason": "The November 14 C++ header dependency note passed Validate newsletter. Pre-arm the existing 11:57 KST publication worker for this scheduled issue once.",
+  "requestedAt": "2026-11-14T11:01:37+09:00",
+  "expiresAt": "2026-11-14T12:01:37+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "f4e4c0625ce8658e8189eef8bd206a95c638393c"
+  "expectedBaseSha": "74273473d6b6fe34183d31b8922e7ff47f46ec26"
 }
