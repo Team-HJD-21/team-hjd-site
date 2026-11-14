@@ -261,5 +261,26 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-13T02:57:00.062Z"
+  },
+  {
+    "id": "note-2026-11-14-header-include-rebuild",
+    "slug": "header-include-rebuild",
+    "title": "헤더 한 줄 바꿨는데 왜 C++ 파일 200개를 다시 컴파일할까요?",
+    "description": "C++ 헤더 하나를 수정했는데 왜 관련 없어 보이는 소스도 다시 컴파일할까요? 네 번역 단위로 include 의존성을 세고, Ninja·GCC 기록과 헤더 분리를 통해 범위를 줄여 봅니다.",
+    "question": "사용하지도 않는 함수를 담은 헤더를 고치면 왜 다른 C++ 소스까지 다시 컴파일될까요?",
+    "summary": "전처리기의 간접 include는 번역 단위의 입력 의존성이 됩니다. 네 소스의 변경 전 3개, 정리 후 1개 재컴파일 예제를 따라 GCC 의존성 기록과 Ninja 증분 빌드, PCH의 손익을 살펴봅니다.",
+    "date": "2026-11-14",
+    "status": "scheduled",
+    "publishAt": "2026-11-14T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-14-header-include-rebuild.md",
+    "assetDirectory": "assets/issues/note-2026-11-14-header-include-rebuild",
+    "coverImage": "header-dependency-graph.svg",
+    "format": "기술 해설",
+    "tags": [
+      "tools",
+      "incremental-compilation",
+      "cpp",
+      "technical-explainer"
+    ]
   }
 ]

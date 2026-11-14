@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" role="img" aria-labelledby="title desc">
+<title id="title">헤더 포함 의존성 구조</title>
+<desc id="desc">debug_overlay.hpp가 core.hpp에 포함되고, core.hpp는 player.cpp, enemy.cpp, ui.cpp에 포함됩니다. audio.cpp는 연결되지 않습니다.</desc>
+<rect width="960" height="460" rx="22" fill="#080f17"/>
+<text x="44" y="42" font-family="sans-serif" font-weight="bold" font-size="24" fill="#f3f0e8">헤더 변경이 퍼지는 경로</text>
+<text x="44" y="72" font-family="sans-serif" font-size="15" fill="#a2afab">화살표: 포함된 헤더 → 해당 헤더를 읽는 소스</text>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#d9eea6"/></marker></defs>
+<rect x="352" y="104" width="256" height="62" rx="10" fill="#13202c" stroke="#d9eea6" stroke-width="2"/>
+<text x="480" y="141" text-anchor="middle" font-family="monospace" font-size="19" fill="#f3f0e8">debug_overlay.hpp</text>
+<path d="M480 166 V215" stroke="#d9eea6" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="352" y="220" width="256" height="62" rx="10" fill="#13202c" stroke="#d9eea6" stroke-width="2"/>
+<text x="480" y="258" text-anchor="middle" font-family="monospace" font-size="20" fill="#f3f0e8">core.hpp</text>
+<path d="M480 282 V307 H142 V338" fill="none" stroke="#d9eea6" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M480 282 V338" fill="none" stroke="#d9eea6" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M480 282 V307 H710 V338" fill="none" stroke="#d9eea6" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="44" y="344" width="196" height="60" rx="9" fill="#13202c" stroke="#d9eea6" stroke-width="2"/>
+<text x="142" y="380" text-anchor="middle" font-family="monospace" font-size="19" fill="#f3f0e8">player.cpp</text>
+<rect x="382" y="344" width="196" height="60" rx="9" fill="#13202c" stroke="#d9eea6" stroke-width="2"/>
+<text x="480" y="380" text-anchor="middle" font-family="monospace" font-size="19" fill="#f3f0e8">enemy.cpp</text>
+<rect x="612" y="344" width="196" height="60" rx="9" fill="#13202c" stroke="#d9eea6" stroke-width="2"/>
+<text x="710" y="380" text-anchor="middle" font-family="monospace" font-size="19" fill="#f3f0e8">ui.cpp</text>
+<rect x="820" y="344" width="106" height="60" rx="9" fill="#13202c" stroke="#a2afab" stroke-width="1.5"/>
+<text x="873" y="379" text-anchor="middle" font-family="monospace" font-size="14" fill="#a2afab">audio.cpp</text>
+<text x="46" y="438" font-family="sans-serif" font-size="15" fill="#a2afab">주어진 예제에서 연결된 번역 단위 3개 · 독립 번역 단위 1개</text>
+</svg>

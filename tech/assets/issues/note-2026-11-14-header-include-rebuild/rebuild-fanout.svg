@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+<title id="title">리팩터링 전후 재컴파일 대상</title>
+<desc id="desc">debug_overlay.hpp를 수정할 때 정리 전에는 player, enemy, ui 세 파일이 다시 컴파일되고, 정리 후에는 ui 한 파일만 다시 컴파일됩니다. audio는 두 경우 모두 대상이 아닙니다.</desc>
+<rect width="960" height="420" rx="22" fill="#080f17"/>
+<text x="46" y="46" font-family="sans-serif" font-weight="bold" font-size="24" fill="#f3f0e8">같은 헤더 변경, 다른 재컴파일 범위</text>
+<text x="46" y="77" font-family="sans-serif" font-size="16" fill="#a2afab">실제 시간 측정이 아닌 예제 의존성 그래프의 결과입니다</text>
+<text x="46" y="139" font-family="sans-serif" font-weight="bold" font-size="21" fill="#f3f0e8">정리 전</text>
+<text x="840" y="139" font-family="sans-serif" font-weight="bold" font-size="23" fill="#d9eea6">3 / 4</text>
+<rect x="46" y="162" width="198" height="62" rx="9" fill="#d9eea6"/><text x="145" y="199" text-anchor="middle" font-family="monospace" font-size="20" fill="#080f17">player</text>
+<rect x="262" y="162" width="198" height="62" rx="9" fill="#d9eea6"/><text x="361" y="199" text-anchor="middle" font-family="monospace" font-size="20" fill="#080f17">enemy</text>
+<rect x="478" y="162" width="198" height="62" rx="9" fill="#d9eea6"/><text x="577" y="199" text-anchor="middle" font-family="monospace" font-size="20" fill="#080f17">ui</text>
+<rect x="694" y="162" width="198" height="62" rx="9" fill="#13202c" stroke="#a2afab"/><text x="793" y="199" text-anchor="middle" font-family="monospace" font-size="20" fill="#a2afab">audio</text>
+<text x="46" y="278" font-family="sans-serif" font-weight="bold" font-size="21" fill="#f3f0e8">정리 후</text>
+<text x="840" y="278" font-family="sans-serif" font-weight="bold" font-size="23" fill="#d9eea6">1 / 4</text>
+<rect x="46" y="298" width="198" height="62" rx="9" fill="#13202c" stroke="#a2afab"/><text x="145" y="335" text-anchor="middle" font-family="monospace" font-size="20" fill="#a2afab">player</text>
+<rect x="262" y="298" width="198" height="62" rx="9" fill="#13202c" stroke="#a2afab"/><text x="361" y="335" text-anchor="middle" font-family="monospace" font-size="20" fill="#a2afab">enemy</text>
+<rect x="478" y="298" width="198" height="62" rx="9" fill="#d9eea6"/><text x="577" y="335" text-anchor="middle" font-family="monospace" font-size="20" fill="#080f17">ui</text>
+<rect x="694" y="298" width="198" height="62" rx="9" fill="#13202c" stroke="#a2afab"/><text x="793" y="335" text-anchor="middle" font-family="monospace" font-size="20" fill="#a2afab">audio</text>
+<rect x="46" y="380" width="16" height="16" rx="3" fill="#d9eea6"/><text x="72" y="394" font-family="sans-serif" font-size="15" fill="#a2afab">재컴파일 대상</text>
+<rect x="245" y="380" width="16" height="16" rx="3" fill="#13202c" stroke="#a2afab"/><text x="272" y="394" font-family="sans-serif" font-size="15" fill="#a2afab">영향 없음</text>
+</svg>

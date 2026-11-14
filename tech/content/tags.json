@@ -484,5 +484,18 @@
       "texture LOD",
       "texture level of detail"
     ]
+  },
+  {
+    "id": "incremental-compilation",
+    "group": "기법·원리",
+    "ko": "증분 컴파일",
+    "en": "Incremental Compilation",
+    "aliases": [
+      "증분 빌드",
+      "헤더 의존성",
+      "incremental build",
+      "header dependencies",
+      "rebuild fan-out"
+    ]
   }
 ]
