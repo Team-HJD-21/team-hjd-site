@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261114-110137-74273473d6b6",
-  "date": "2026-11-14",
-  "issueId": "note-2026-11-14-header-include-rebuild",
-  "reason": "The November 14 C++ header dependency note passed Validate newsletter. Pre-arm the existing 11:57 KST publication worker for this scheduled issue once.",
-  "requestedAt": "2026-11-14T11:01:37+09:00",
-  "expiresAt": "2026-11-14T12:01:37+09:00",
+  "requestId": "daily-20261115-110130-01667429e3dd",
+  "date": "2026-11-15",
+  "issueId": "note-2026-11-15-gpu-instancing-draw-calls",
+  "reason": "The November 15 GPU instancing note passed Validate newsletter. Pre-arm the existing 11:57 KST worker for this scheduled issue once.",
+  "requestedAt": "2026-11-15T11:01:30+09:00",
+  "expiresAt": "2026-11-15T12:01:30+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "74273473d6b6fe34183d31b8922e7ff47f46ec26"
+  "expectedBaseSha": "01667429e3dd5a99519534b971ab3a1425c3ed08"
 }
