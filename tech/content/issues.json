@@ -283,5 +283,28 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-14T02:57:00.059Z"
+  },
+  {
+    "id": "note-2026-11-15-gpu-instancing-draw-calls",
+    "slug": "gpu-instancing-draw-calls",
+    "title": "같은 적 열 명인데 왜 그리기 명령도 열 번 보낼까요?",
+    "description": "같은 메시를 그리는 적 열 명인데 CPU도 열 번 그리기 명령을 내야 할까요? GPU 인스턴싱과 머티리얼 그룹을 숫자 예제·Unity C#·프로파일링으로 살펴봅니다.",
+    "question": "같은 메시와 머티리얼을 사용하는 적 열 명을 왜 열 번 따로 그리게 될까요?",
+    "summary": "10개 개별 제출과 1개 인스턴싱 제출을 비교하고 변환 행렬 640바이트 계산, 머티리얼별 그룹 분리, Unity 6.0 RenderMeshInstanced의 컬링·SRP Batcher와 측정의 손익을 설명합니다.",
+    "date": "2026-11-15",
+    "status": "scheduled",
+    "publishAt": "2026-11-15T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-15-gpu-instancing-draw-calls.md",
+    "assetDirectory": "assets/issues/note-2026-11-15-gpu-instancing-draw-calls",
+    "coverImage": "instancing-submissions.svg",
+    "format": "기술 해설",
+    "tags": [
+      "rendering",
+      "optimization",
+      "gpu-instancing",
+      "unity",
+      "csharp",
+      "technical-explainer"
+    ]
   }
 ]

@@ -497,5 +497,17 @@
       "header dependencies",
       "rebuild fan-out"
     ]
+  },
+  {
+    "id": "gpu-instancing",
+    "group": "기법·원리",
+    "ko": "GPU 인스턴싱",
+    "en": "GPU Instancing",
+    "aliases": [
+      "인스턴싱",
+      "인스턴스 렌더링",
+      "instanced rendering",
+      "draw call instancing"
+    ]
   }
 ]
