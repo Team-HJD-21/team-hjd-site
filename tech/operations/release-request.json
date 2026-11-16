@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261115-110130-01667429e3dd",
-  "date": "2026-11-15",
-  "issueId": "note-2026-11-15-gpu-instancing-draw-calls",
-  "reason": "The November 15 GPU instancing note passed Validate newsletter. Pre-arm the existing 11:57 KST worker for this scheduled issue once.",
-  "requestedAt": "2026-11-15T11:01:30+09:00",
-  "expiresAt": "2026-11-15T12:01:30+09:00",
+  "requestId": "daily-20261116-20261116021121-f240a32714",
+  "date": "2026-11-16",
+  "issueId": "note-2026-11-16-generational-handles",
+  "reason": "The November 16 generational handles note passed Validate newsletter. Pre-arm the existing 11:57 KST worker for this scheduled issue once.",
+  "requestedAt": "2026-11-16T11:11:21.566+09:00",
+  "expiresAt": "2026-11-16T12:11:21.566+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "01667429e3dd5a99519534b971ab3a1425c3ed08"
+  "expectedBaseSha": "f240a32714fea861ac0a31d8439b12b64db76bb8"
 }
