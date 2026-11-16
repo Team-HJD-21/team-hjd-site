@@ -509,5 +509,18 @@
       "instanced rendering",
       "draw call instancing"
     ]
+  },
+  {
+    "id": "generational-handles",
+    "group": "기법·원리",
+    "ko": "세대 핸들",
+    "en": "Generational Handles",
+    "aliases": [
+      "세대 식별자",
+      "버전 핸들",
+      "generation handle",
+      "generational index",
+      "versioned entity id"
+    ]
   }
 ]

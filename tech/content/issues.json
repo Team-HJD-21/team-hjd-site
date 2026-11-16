@@ -307,5 +307,25 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-15T02:57:00.087Z"
+  },
+  {
+    "id": "note-2026-11-16-generational-handles",
+    "slug": "generational-handles",
+    "title": "몬스터를 지웠는데 왜 예전 ID가 새 몬스터를 가리킬까요?",
+    "description": "빈 슬롯을 재사용해도 오래된 참조가 새 객체를 건드리지 않도록 만드는 세대 핸들의 원리와 C++17 구현을 살펴봅니다.",
+    "question": "같은 배열 인덱스를 재사용하는데 어떻게 이전 몬스터와 새 몬스터를 구분할까요?",
+    "summary": "인덱스와 세대를 함께 저장하는 핸들을 만들고 세 마리의 예제, 유효성 검사, C++17 코드와 재사용의 경계를 따라갑니다.",
+    "date": "2026-11-16",
+    "status": "scheduled",
+    "publishAt": "2026-11-16T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-16-generational-handles.md",
+    "assetDirectory": "assets/issues/note-2026-11-16-generational-handles",
+    "format": "기술 해설",
+    "tags": [
+      "engine-internals",
+      "generational-handles",
+      "cpp",
+      "technical-explainer"
+    ]
   }
 ]
