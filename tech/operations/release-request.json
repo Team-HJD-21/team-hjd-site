@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261116-20261116021121-f240a32714",
-  "date": "2026-11-16",
-  "issueId": "note-2026-11-16-generational-handles",
-  "reason": "The November 16 generational handles note passed Validate newsletter. Pre-arm the existing 11:57 KST worker for this scheduled issue once.",
-  "requestedAt": "2026-11-16T11:11:21.566+09:00",
-  "expiresAt": "2026-11-16T12:11:21.566+09:00",
+  "requestId": "daily-20261117-20261117020702586-33ca5e44",
+  "date": "2026-11-17",
+  "issueId": "note-2026-11-17-snapshot-interpolation",
+  "reason": "The November 17 snapshot interpolation note passed Validate newsletter. Pre-arm the existing 11:57 KST worker for this scheduled issue once.",
+  "requestedAt": "2026-11-17T11:07:02.586+09:00",
+  "expiresAt": "2026-11-17T12:07:02.586+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "f240a32714fea861ac0a31d8439b12b64db76bb8"
+  "expectedBaseSha": "33ca5e44514dd28fdf30e0ab14a965083ceb7657"
 }
