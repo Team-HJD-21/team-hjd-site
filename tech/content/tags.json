@@ -522,5 +522,28 @@
       "generational index",
       "versioned entity id"
     ]
+  },
+  {
+    "id": "snapshot-interpolation",
+    "group": "기법·원리",
+    "ko": "스냅샷 보간",
+    "en": "Snapshot Interpolation",
+    "aliases": [
+      "상태 스냅샷 보간",
+      "snapshot rendering",
+      "network snapshot interpolation"
+    ]
+  },
+  {
+    "id": "interpolation-buffer",
+    "group": "기법·원리",
+    "ko": "보간 버퍼",
+    "en": "Interpolation Buffer",
+    "aliases": [
+      "네트워크 보간 버퍼",
+      "jitter buffer",
+      "snapshot buffer",
+      "interpolation delay"
+    ]
   }
 ]

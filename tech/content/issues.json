@@ -328,5 +328,27 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-16T02:57:00.056Z"
+  },
+  {
+    "id": "note-2026-11-17-snapshot-interpolation",
+    "slug": "snapshot-interpolation",
+    "title": "서버는 20번 보내는데 화면은 60번, 왜 움직임이 끊기지 않을까요?",
+    "description": "서버가 50ms 간격으로 좌표를 보내도 화면을 매끄럽게 그리는 이유를 스냅샷 보간의 100ms 지연과 C++17 수치 예제로 알아봅니다.",
+    "question": "서버가 초당 20번만 위치를 보낼 때, 초당 60번 그리는 화면은 사이 프레임의 위치를 어떻게 정할까요?",
+    "summary": "서버 시각의 스냅샷을 짧게 저장하고 100ms 과거에서 두 상태를 찾아 보간합니다. 150ms·200ms 좌표 사이의 175ms 위치를 계산하고 지터·패킷 손실·지연의 손익을 구현으로 확인합니다.",
+    "date": "2026-11-17",
+    "status": "scheduled",
+    "publishAt": "2026-11-17T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-17-snapshot-interpolation.md",
+    "assetDirectory": "assets/issues/note-2026-11-17-snapshot-interpolation",
+    "coverImage": "snapshot-timeline.svg",
+    "format": "기술 해설",
+    "tags": [
+      "game-networking",
+      "snapshot-interpolation",
+      "interpolation-buffer",
+      "cpp",
+      "technical-explainer"
+    ]
   }
 ]

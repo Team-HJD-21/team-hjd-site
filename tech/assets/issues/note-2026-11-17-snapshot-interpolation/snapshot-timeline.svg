@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="380" viewBox="0 0 1000 380">
+<rect width="1000" height="380" fill="#080f17"/>
+<rect x="24" y="22" width="952" height="336" rx="16" fill="#13202c"/>
+<text x="52" y="66" font-family="sans-serif" font-size="24" font-weight="bold" fill="#f3f0e8">과거 두 점 사이를 화면에 그립니다</text>
+<text x="52" y="97" font-family="sans-serif" font-size="15" fill="#a2afab">시간축: 서버 시각과 동기화했다고 가정한 예제 (ms)</text>
+<line x1="140" y1="175" x2="660" y2="175" stroke="#a2afab" stroke-width="3"/>
+<path d="M650 169 L662 175 L650 181" fill="none" stroke="#a2afab" stroke-width="2"/>
+<line x1="280" y1="160" x2="400" y2="160" stroke="#d9eea6" stroke-width="7" stroke-linecap="round"/>
+<g font-family="sans-serif" font-size="16" text-anchor="middle" fill="#f3f0e8">
+<circle cx="160" cy="175" r="5" fill="#a2afab"/><text x="160" y="205">100</text>
+<circle cx="280" cy="175" r="9" fill="#d9eea6"/><text x="280" y="205">150</text>
+<circle cx="340" cy="175" r="8" fill="#f3f0e8"/><text x="340" y="205">175</text>
+<circle cx="400" cy="175" r="9" fill="#d9eea6"/><text x="400" y="205">200</text>
+<circle cx="520" cy="175" r="5" fill="#a2afab"/><text x="520" y="205">250</text>
+<circle cx="580" cy="175" r="8" fill="#f3f0e8"/><text x="580" y="205">275</text>
+</g>
+<line x1="340" y1="116" x2="340" y2="153" stroke="#f3f0e8" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="340" y="111" font-family="sans-serif" font-size="16" fill="#f3f0e8" text-anchor="middle">표시 시각</text>
+<line x1="580" y1="116" x2="580" y2="164" stroke="#f3f0e8" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="580" y="111" font-family="sans-serif" font-size="16" fill="#f3f0e8" text-anchor="middle">현재 기준</text>
+<line x1="340" y1="240" x2="580" y2="240" stroke="#d9eea6" stroke-width="3"/>
+<path d="M351 234 L340 240 L351 246 M569 234 L580 240 L569 246" fill="none" stroke="#d9eea6" stroke-width="3"/>
+<text x="460" y="262" font-family="sans-serif" font-size="17" fill="#d9eea6" text-anchor="middle">100ms 표시 지연</text>
+<rect x="706" y="119" width="238" height="142" rx="12" fill="#080f17"/>
+<text x="724" y="153" font-family="sans-serif" font-size="18" fill="#d9eea6">사용할 스냅샷</text>
+<text x="724" y="184" font-family="sans-serif" font-size="17" fill="#f3f0e8">150ms : 위치 3</text>
+<text x="724" y="215" font-family="sans-serif" font-size="17" fill="#f3f0e8">200ms : 위치 4</text>
+<text x="724" y="244" font-family="sans-serif" font-size="15" fill="#a2afab">175ms는 두 기록 사이</text>
+<text x="52" y="321" font-family="sans-serif" font-size="15" fill="#a2afab">직접 제작한 설명용 도식 · 실제 네트워크 측정값이 아닙니다</text>
+</svg>
