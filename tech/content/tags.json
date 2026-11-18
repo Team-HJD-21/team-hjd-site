@@ -545,5 +545,17 @@
       "snapshot buffer",
       "interpolation delay"
     ]
+  },
+  {
+    "id": "boxing",
+    "group": "기법·원리",
+    "ko": "박싱",
+    "en": "Boxing",
+    "aliases": [
+      "값 형식 박싱",
+      "C# boxing",
+      "boxing conversion",
+      "박싱 변환"
+    ]
   }
 ]
