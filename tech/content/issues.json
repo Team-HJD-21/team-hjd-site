@@ -360,7 +360,7 @@
     "question": "정수나 구조체를 읽기만 하는 루프에서 왜 관리 힙 할당이 생길까요?",
     "summary": "값 형식이 인터페이스 참조로 변환될 때 발생하는 박싱을 구조 그림으로 확인하고, 1만 번 호출의 제네릭 ref 경로와 Unity GC Alloc 계측을 비교합니다.",
     "date": "2026-11-18",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-18T11:57:00+09:00",
     "source": "content/issues/note-2026-11-18-csharp-boxing-gc.md",
     "assetDirectory": "assets/issues/note-2026-11-18-csharp-boxing-gc",
@@ -374,6 +374,7 @@
       "csharp",
       "unity",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-18T02:57:00.069Z"
   }
 ]
