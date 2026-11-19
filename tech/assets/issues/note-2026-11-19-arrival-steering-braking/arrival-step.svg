@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="390" viewBox="0 0 900 390" role="img" aria-labelledby="title desc">
+<title id="title">Arrival 한 스텝 이동 수치 도식</title>
+<desc id="desc">적의 처음 위치 x=6미터, 초기 속도 4미터 매초, 적용 가속도 -3미터 매초제곱, 0.1초 뒤 속도 3.7미터 매초, 새 위치 x=6.37미터, 목표 x=10미터입니다.</desc>
+<rect width="900" height="390" fill="#080f17"/><rect x="24" y="22" width="852" height="345" rx="18" fill="#13202c"/>
+<text x="60" y="67" font-family="sans-serif" font-size="26" font-weight="bold" fill="#f3f0e8">0.1초 후: 속도는 줄고, 위치는 앞으로</text>
+<text x="60" y="99" font-family="sans-serif" font-size="17" fill="#a2afab">현재 x=6m, 목표 x=10m · maxAcceleration = 3m/s²</text>
+<line x1="115" y1="205" x2="815" y2="205" stroke="#a2afab" stroke-width="3"/>
+<g stroke="#687988" stroke-width="2"><line x1="145" y1="192" x2="145" y2="218"/><line x1="204" y1="192" x2="204" y2="218"/><line x1="780" y1="187" x2="780" y2="223"/></g>
+<circle cx="145" cy="205" r="12" fill="#f3f0e8"/><circle cx="204" cy="205" r="12" fill="#d9eea6"/><circle cx="780" cy="205" r="12" fill="#83b8e0"/>
+<g font-family="sans-serif" font-size="18" fill="#f3f0e8">
+<text x="105" y="171">x = 6.00</text><text x="181" y="248" fill="#d9eea6">x = 6.37</text><text x="739" y="171">목표 10.00</text>
+</g>
+<path d="M145 143 L204 143" fill="none" stroke="#d9eea6" stroke-width="4"/>
+<path d="M195 135 L206 143 L195 151" fill="none" stroke="#d9eea6" stroke-width="3"/>
+<text x="270" y="149" font-family="sans-serif" font-size="18" fill="#d9eea6">이동 +0.37m = 3.7m/s × 0.1s</text>
+<text x="60" y="293" font-family="sans-serif" font-size="19" fill="#f3f0e8">희망 2.0m/s → 제한 가속도 -3.0m/s² → 실제 3.7m/s</text>
+<text x="60" y="335" font-family="sans-serif" font-size="15" fill="#a2afab">거리 배치는 x좌표 차이에 비례 · 화살표 길이는 속도·가속도 크기를 의미하지 않습니다</text>
+</svg>

@@ -557,5 +557,17 @@
       "boxing conversion",
       "박싱 변환"
     ]
+  },
+  {
+    "id": "arrival-steering",
+    "group": "기법·원리",
+    "ko": "도착 조향",
+    "en": "Arrival Steering",
+    "aliases": [
+      "도착 행동",
+      "감속 조향",
+      "arrival behavior",
+      "arrival steering behavior"
+    ]
   }
 ]

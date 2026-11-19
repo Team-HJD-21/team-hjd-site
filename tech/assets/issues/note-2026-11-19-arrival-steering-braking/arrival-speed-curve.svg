@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470" role="img" aria-labelledby="title desc">
+<title id="title">Arrival steering 희망 속도 그래프</title>
+<desc id="desc">가로축 목표까지 거리 0, 2, 4, 8, 10미터. 세로축 희망 속도 0, 2, 4미터 매초. 거리 8미터까지 선형으로 증가한 후 최대 속도 4로 유지합니다.</desc>
+<rect width="900" height="470" fill="#080f17"/>
+<rect x="28" y="24" width="844" height="424" rx="18" fill="#13202c"/>
+<text x="68" y="69" font-family="sans-serif" font-size="28" font-weight="bold" fill="#f3f0e8">Arrival | 목표까지 거리와 희망 속도</text>
+<text x="68" y="103" font-family="sans-serif" font-size="17" fill="#a2afab">maxSpeed = 4 m/s · slowingDistance = 8 m</text>
+<g stroke="#425362" stroke-width="1"><line x1="125" y1="335" x2="765" y2="335"/><line x1="125" y1="95" x2="125" y2="335"/><line x1="125" y1="215" x2="765" y2="215" stroke-dasharray="5 7"/><line x1="125" y1="95" x2="765" y2="95" stroke-dasharray="5 7"/><line x1="605" y1="95" x2="605" y2="335" stroke-dasharray="5 7"/></g>
+<polyline points="125,335 605,95 725,95" fill="none" stroke="#d9eea6" stroke-width="5" stroke-linejoin="round"/>
+<g fill="#d9eea6"><circle cx="365" cy="215" r="7"/><circle cx="605" cy="95" r="7"/></g>
+<g fill="#f3f0e8" font-family="sans-serif" font-size="18">
+<text x="110" y="362">0</text><text x="237" y="362">2</text><text x="357" y="362">4</text><text x="597" y="362">8</text><text x="708" y="362">10</text>
+<text x="94" y="340">0</text><text x="94" y="220">2</text><text x="94" y="101">4</text>
+<text x="336" y="199" fill="#d9eea6">4m → 2m/s</text>
+<text x="620" y="145" fill="#d9eea6">감속 구간 끝</text>
+<text x="530" y="401">목표까지 거리 (m)</text>
+</g>
+<text x="79" y="148" font-family="sans-serif" fill="#a2afab" font-size="16">희망 속도</text>
+<text x="82" y="168" font-family="sans-serif" fill="#a2afab" font-size="16">(m/s)</text>
+<text x="68" y="432" font-family="sans-serif" fill="#a2afab" font-size="14">직접 제작 · 희망 속도 함수이며 실제 측정 속도가 아닙니다</text>
+</svg>

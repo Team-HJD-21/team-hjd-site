@@ -376,5 +376,26 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-18T02:57:00.069Z"
+  },
+  {
+    "id": "note-2026-11-19-arrival-steering-braking",
+    "slug": "arrival-steering-braking",
+    "title": "적이 목표에 도착했는데 왜 다시 뒤로 돌아갈까요?",
+    "description": "목표에 도착한 적이 계속 지나쳤다가 되돌아오는 이유는 무엇일까요? Arrival 조향의 거리별 희망 속도와 가속도 제한을 수치 예제·C++17로 살펴봅니다.",
+    "question": "목표 좌표를 정확히 알고 있는 적은 왜 목표를 지나쳐 다시 돌아올까요?",
+    "summary": "Reynolds의 Arrival 조향으로 목표 4m 전에서 희망 속도 2m/s를 구하고, 최대 감속과 0.1초 갱신을 적용해 실제 위치 6.37m·속도 3.7m/s를 계산합니다.",
+    "date": "2026-11-19",
+    "status": "scheduled",
+    "publishAt": "2026-11-19T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-19-arrival-steering-braking.md",
+    "assetDirectory": "assets/issues/note-2026-11-19-arrival-steering-braking",
+    "coverImage": "arrival-speed-curve.svg",
+    "format": "기술 해설",
+    "tags": [
+      "game-ai",
+      "arrival-steering",
+      "cpp",
+      "technical-explainer"
+    ]
   }
 ]
