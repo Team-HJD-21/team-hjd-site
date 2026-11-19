@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261118-20261118020704920-5c60c646",
-  "date": "2026-11-18",
-  "issueId": "note-2026-11-18-csharp-boxing-gc",
-  "reason": "The November 18 C# boxing note passed Validate newsletter. Pre-arm the existing 11:57 KST publish worker for this scheduled issue once.",
-  "requestedAt": "2026-11-18T11:07:04.920+09:00",
-  "expiresAt": "2026-11-18T12:07:04.920+09:00",
+  "requestId": "recovery-20261119-110408-228e4366",
+  "date": "2026-11-19",
+  "issueId": "note-2026-11-19-arrival-steering-braking",
+  "reason": "검증된 당일 정식 원고의 11:57 발행 작업을 사전 기동하는 승인 요청입니다.",
+  "requestedAt": "2026-11-19T11:04:08+09:00",
+  "expiresAt": "2026-11-19T12:04:08+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "5c60c646530637a50cc952a44fe81694e2b77dcd"
+  "expectedBaseSha": "228e4366ee7489fc8768c8bdff4c4ccef8c7d5b8"
 }
