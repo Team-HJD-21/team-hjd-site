@@ -385,7 +385,7 @@
     "question": "목표 좌표를 정확히 알고 있는 적은 왜 목표를 지나쳐 다시 돌아올까요?",
     "summary": "Reynolds의 Arrival 조향으로 목표 4m 전에서 희망 속도 2m/s를 구하고, 최대 감속과 0.1초 갱신을 적용해 실제 위치 6.37m·속도 3.7m/s를 계산합니다.",
     "date": "2026-11-19",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-19T11:57:00+09:00",
     "source": "content/issues/note-2026-11-19-arrival-steering-braking.md",
     "assetDirectory": "assets/issues/note-2026-11-19-arrival-steering-braking",
@@ -396,6 +396,7 @@
       "arrival-steering",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-19T02:57:00.076Z"
   }
 ]
