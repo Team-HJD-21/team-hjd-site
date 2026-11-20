@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "recovery-20261119-110408-228e4366",
-  "date": "2026-11-19",
-  "issueId": "note-2026-11-19-arrival-steering-braking",
+  "requestId": "recovery-20261120-111038-ba2ab26b",
+  "date": "2026-11-20",
+  "issueId": "note-2026-11-20-animation-budget-throttling",
   "reason": "검증된 당일 정식 원고의 11:57 발행 작업을 사전 기동하는 승인 요청입니다.",
-  "requestedAt": "2026-11-19T11:04:08+09:00",
-  "expiresAt": "2026-11-19T12:04:08+09:00",
+  "requestedAt": "2026-11-20T11:10:38+09:00",
+  "expiresAt": "2026-11-20T12:10:38+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "228e4366ee7489fc8768c8bdff4c4ccef8c7d5b8"
+  "expectedBaseSha": "ba2ab26b54ad813e1b1ded59999c93b7157f1287"
 }
