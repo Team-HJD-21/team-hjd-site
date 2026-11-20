@@ -18,14 +18,14 @@ Unreal Engine의 **애니메이션 예산 할당기(Animation Budget Allocator)*
 
 예를 들어, 실제 측정값이 아닌 **계산을 위한 가상 조건**을 놓겠습니다. 적이 열두 명이고 각 적의 애니메이션 평가가 정확히 **0.20ms** 걸린다고 가정합니다. 모두 매 프레임 갱신한다면 아래와 같습니다.
 
-\$\$
+$$
 12 \times 0.20\,\mathrm{ms} = 2.40\,\mathrm{ms}
-\$\$
+$$
 
 이제 목표 예산을 **1.20ms/프레임**으로 설정했다고 해 보겠습니다. 적 네 명은 전투상 중요한 근접 캐릭터, 나머지 여덟 명은 먼 캐릭터입니다.
 
-- 근접 네 명을 매 프레임 갱신하면 \`4 × 0.20 = 0.80ms\`입니다.
-- 남은 예산은 \`1.20 - 0.80 = 0.40ms\`입니다.
+- 근접 네 명을 매 프레임 갱신하면 `4 × 0.20 = 0.80ms`입니다.
+- 남은 예산은 `1.20 - 0.80 = 0.40ms`입니다.
 - 따라서 이 단순 모델에서는 먼 적 두 명을 한 프레임에 추가로 평가할 수 있습니다.
 
 한 프레임에서 평가할 총 대상은 **6명**, 계산 비용은 **1.20ms**입니다. 이것은 평균과 상한이 일정하다는 가정의 *산수 예제*이지 Unreal이 항상 정확히 여섯 명을 선택한다거나 실측 1.20ms를 보장한다는 뜻은 아닙니다.
@@ -50,7 +50,7 @@ Unreal의 공식 설명에서도 시스템이 중요도(Significance)에 따라 
 
 아래는 예제 숫자를 재현하는 **엔진 독립 실행 코드**입니다. Unreal 내부 알고리즘을 복제한 코드가 아니라 비용 계산을 검증하는 학습용 스케줄러입니다.
 
-\`\`\`cpp
+```cpp
 #include <iostream>
 
 int main() {
@@ -79,9 +79,9 @@ int main() {
     }
     return 0;
 }
-\`\`\`
+```
 
-각 프레임 출력은 \`evaluated=6, cost=1.2ms\`입니다. 먼 적 여덟 명 모두 4프레임 동안 정확히 한 번 계산했다는 것도 확인합니다. 실제 게임에서는 평가 시간이 일정하지 않고 우선순위가 변하며, 보간·애니메이션 노티파이(Animation Notify)·루트 모션(Root Motion) 같은 기능의 정확성을 고려해야 합니다. 따라서 이런 순환표를 그대로 엔진에 이식하지는 않습니다.
+각 프레임 출력은 `evaluated=6, cost=1.2ms`입니다. 먼 적 여덟 명 모두 4프레임 동안 정확히 한 번 계산했다는 것도 확인합니다. 실제 게임에서는 평가 시간이 일정하지 않고 우선순위가 변하며, 보간·애니메이션 노티파이(Animation Notify)·루트 모션(Root Motion) 같은 기능의 정확성을 고려해야 합니다. 따라서 이런 순환표를 그대로 엔진에 이식하지는 않습니다.
 
 ## Unreal에서 설정하고 측정하는 순서
 
@@ -92,15 +92,15 @@ Unreal Engine **5.9 공식 문서 기준**으로는 다음 순서로 실험할 �
 3. 캐릭터 블루프린트의 **Begin Play**에서 **Enable Animation Budget** 노드를 연결해 활성화합니다.
 4. Play In Editor에서 아래 **실제 엔진 콘솔 명령**을 이용해 적용 전후를 비교합니다.
 
-\`\`\`text
+```text
 a.Budget.Enabled 1
 a.Budget.Debug.Enabled 1
 a.Budget.BudgetMs 1.2
-\`\`\`
+```
 
-마지막 \`1.2\`는 프로젝트를 위한 **실험 입력값**입니다. 실제 권장 예산이 아닙니다. 5.9 문서는 플랫폼별 \`DefaultScalability.ini\`에서 \`a.Budget.BudgetMs\`를 다르게 지정하는 방법도 소개합니다. 특정 캐릭터만 적용하지 않고 전체 시스템의 비용과 표현 품질을 함께 보아야 합니다.
+마지막 `1.2`는 프로젝트를 위한 **실험 입력값**입니다. 실제 권장 예산이 아닙니다. 5.9 문서는 플랫폼별 `DefaultScalability.ini`에서 `a.Budget.BudgetMs`를 다르게 지정하는 방법도 소개합니다. 특정 캐릭터만 적용하지 않고 전체 시스템의 비용과 표현 품질을 함께 보아야 합니다.
 
-디버그 오버레이에서는 **Budget**과 실제 **Performance**, **Num Ticked Components**, **Throttled**, **Interpolated** 등의 항목을 관찰합니다. 캐릭터 위의 숫자 \`1\`은 매 프레임 평가, \`5\`는 다섯 프레임에 한 번 평가한다는 의미입니다. 표시되는 \`Hi\`·\`Lo\`·\`I\`는 각각 높은 작업 수준·축소된 작업 수준·보간 상태를 뜻합니다. [Epic 5.9 디버그 설명](https://dev.epicgames.com/documentation/unreal-engine/animation-budget-allocator-in-unreal-engine)
+디버그 오버레이에서는 **Budget**과 실제 **Performance**, **Num Ticked Components**, **Throttled**, **Interpolated** 등의 항목을 관찰합니다. 캐릭터 위의 숫자 `1`은 매 프레임 평가, `5`는 다섯 프레임에 한 번 평가한다는 의미입니다. 표시되는 `Hi`·`Lo`·`I`는 각각 높은 작업 수준·축소된 작업 수준·보간 상태를 뜻합니다. [Epic 5.9 디버그 설명](https://dev.epicgames.com/documentation/unreal-engine/animation-budget-allocator-in-unreal-engine)
 
 **트레이드오프를 확인할 지점**도 중요합니다. 카메라에 가까운 캐릭터의 공격 모션이 끊기는지, 루트 모션에 기대는 이동·노티파이 처리에 영향이 있는지, 보간 작업이 오히려 비용을 늘리는지 확인해 보세요. Unreal 공식 [애니메이션 최적화 문서](https://dev.epicgames.com/documentation/en-us/unreal-engine/animation-optimization-in-unreal-engine)는 게임 스레드에 남는 작업과 Animation Insights에서의 분석을 별도로 설명합니다. 이것은 렌더링 드로우 콜 감소와 다른 종류의 CPU 최적화입니다.
 
