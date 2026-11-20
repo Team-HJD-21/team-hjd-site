@@ -407,7 +407,7 @@
     "question": "60FPS 게임에서 캐릭터 12명의 애니메이션을 매 프레임 전부 계산해야 할까요?",
     "summary": "근접 네 명을 매 프레임, 먼 적 여덟 명을 네 프레임에 한 번 평가하는 수치 예제와 C++17 검증 코드로 갱신 빈도·보간·엔진 예산 설정의 손익을 설명합니다.",
     "date": "2026-11-20",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-20T11:57:00+09:00",
     "source": "content/issues/note-2026-11-20-animation-budget-throttling.md",
     "assetDirectory": "assets/issues/note-2026-11-20-animation-budget-throttling",
@@ -422,6 +422,7 @@
       "cpp",
       "profiling",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-20T02:57:00.087Z"
   }
 ]
