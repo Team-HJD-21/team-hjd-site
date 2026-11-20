@@ -569,5 +569,29 @@
       "arrival behavior",
       "arrival steering behavior"
     ]
+  },
+  {
+    "id": "animation-budgeting",
+    "group": "기법·원리",
+    "ko": "애니메이션 예산 관리",
+    "en": "Animation Budgeting",
+    "aliases": [
+      "애니메이션 예산",
+      "animation budget",
+      "animation budget allocator",
+      "animation throttling"
+    ]
+  },
+  {
+    "id": "animation-update-rate",
+    "group": "기법·원리",
+    "ko": "애니메이션 갱신 빈도",
+    "en": "Animation Update Rate",
+    "aliases": [
+      "애니메이션 틱 빈도",
+      "animation tick rate",
+      "update rate optimization",
+      "애니메이션 저빈도 갱신"
+    ]
   }
 ]
