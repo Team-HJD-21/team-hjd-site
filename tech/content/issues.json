@@ -433,7 +433,7 @@
     "question": "물리 갱신의 시작과 끝에서는 총알이 벽에 닿지 않았는데 실제 경로에서 충돌을 어떻게 찾을까요?",
     "summary": "반지름 0.05m 총알이 20ms 동안 0.80m에서 1.20m로 이동하는 예제로 5ms의 첫 접촉을 계산하고, sweep 검사와 Unity·Box2D의 구현 선택을 비교합니다.",
     "date": "2026-11-21",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-21T11:57:00+09:00",
     "source": "content/issues/note-2026-11-21-fast-projectile-tunneling.md",
     "assetDirectory": "assets/issues/note-2026-11-21-fast-projectile-tunneling",
@@ -446,6 +446,7 @@
       "unity",
       "csharp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-21T02:57:00.056Z"
   }
 ]
