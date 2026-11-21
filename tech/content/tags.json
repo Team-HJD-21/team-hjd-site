@@ -593,5 +593,19 @@
       "update rate optimization",
       "애니메이션 저빈도 갱신"
     ]
+  },
+  {
+    "id": "continuous-collision-detection",
+    "group": "기법·원리",
+    "ko": "연속 충돌 판정",
+    "en": "Continuous Collision Detection",
+    "aliases": [
+      "연속 충돌 검사",
+      "CCD",
+      "sweep collision detection",
+      "time of impact",
+      "TOI",
+      "터널링 방지"
+    ]
   }
 ]

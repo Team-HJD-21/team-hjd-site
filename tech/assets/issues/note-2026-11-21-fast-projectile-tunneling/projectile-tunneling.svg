@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="568" viewBox="0 0 1000 568" role="img" aria-label="이산 판정과 연속 판정 비교. 시작 총알 중심 0.80미터, 벽 0.95부터 1.05미터, 끝 중심 1.20미터, 최초 접촉 중심 0.90미터">
+<rect width="1000" height="568" fill="#080f17"/>
+<text x="48" y="51" fill="#f3f0e8" font-family="sans-serif" font-size="28" font-weight="700">빠른 투사체의 터널링: 20ms에 0.40m</text>
+<text x="48" y="83" fill="#a2afab" font-family="sans-serif" font-size="17">반지름 0.05m · 벽 구간 0.95~1.05m · 같은 가로 축 비율</text>
+<rect x="38" y="105" width="924" height="191" rx="16" fill="#13202c"/>
+<rect x="38" y="314" width="924" height="210" rx="16" fill="#13202c"/>
+<text x="63" y="143" fill="#f3f0e8" font-family="sans-serif" font-size="22" font-weight="700">① 이산 판정: 시작과 끝만 확인</text>
+<text x="63" y="351" fill="#f3f0e8" font-family="sans-serif" font-size="22" font-weight="700">② 연속 판정: 중간 경로에서 최초 접촉</text>
+<line x1="180" y1="223" x2="850" y2="223" stroke="#a2afab" stroke-width="3"/>
+<line x1="180" y1="451" x2="850" y2="451" stroke="#a2afab" stroke-width="3"/>
+<rect x="445" y="160" width="110" height="109" rx="4" fill="#a2afab" fill-opacity="0.55"/>
+<rect x="445" y="380" width="110" height="113" rx="4" fill="#a2afab" fill-opacity="0.55"/>
+<text x="500" y="154" fill="#f3f0e8" font-family="sans-serif" font-size="18" text-anchor="middle">벽</text>
+<text x="500" y="374" fill="#f3f0e8" font-family="sans-serif" font-size="18" text-anchor="middle">벽</text>
+<circle cx="280" cy="223" r="55" fill="#d9eea6" fill-opacity="0.14" stroke="#d9eea6" stroke-width="3"/>
+<circle cx="720" cy="223" r="55" fill="#d9eea6" fill-opacity="0.14" stroke="#d9eea6" stroke-width="3"/>
+<circle cx="280" cy="451" r="55" fill="#d9eea6" fill-opacity="0.13" stroke="#d9eea6" stroke-width="3"/>
+<circle cx="390" cy="451" r="55" fill="#d9eea6" fill-opacity="0.17" stroke="#d9eea6" stroke-width="3"/>
+<circle cx="280" cy="223" r="4" fill="#d9eea6"/>
+<circle cx="720" cy="223" r="4" fill="#d9eea6"/>
+<circle cx="280" cy="451" r="4" fill="#d9eea6"/>
+<circle cx="390" cy="451" r="4" fill="#d9eea6"/>
+<line x1="346" y1="222" x2="643" y2="222" stroke="#d9eea6" stroke-width="3" stroke-dasharray="8 7"/>
+<polygon points="644,222 630,214 630,230" fill="#d9eea6"/>
+<line x1="345" y1="450" x2="328" y2="450" stroke="#d9eea6" stroke-width="3"/>
+<text x="280" y="293" fill="#f3f0e8" font-family="sans-serif" font-size="17" text-anchor="middle">0.80m</text>
+<text x="720" y="293" fill="#f3f0e8" font-family="sans-serif" font-size="17" text-anchor="middle">1.20m</text>
+<text x="280" y="514" fill="#f3f0e8" font-family="sans-serif" font-size="17" text-anchor="middle">시작 0.80m</text>
+<text x="390" y="514" fill="#d9eea6" font-family="sans-serif" font-size="17" font-weight="700" text-anchor="middle">접촉 0.90m</text>
+<text x="760" y="406" fill="#a2afab" font-family="sans-serif" font-size="18" text-anchor="middle">앞쪽 끝이</text>
+<text x="760" y="432" fill="#a2afab" font-family="sans-serif" font-size="18" text-anchor="middle">벽에 닿음</text>
+<text x="48" y="553" fill="#a2afab" font-family="sans-serif" font-size="15">자체 제작 · 1차원 원형 충돌체와 정적 벽의 학습용 수치 예제</text>
+</svg>
