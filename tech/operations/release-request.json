@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "recovery-20261120-111038-ba2ab26b",
-  "date": "2026-11-20",
-  "issueId": "note-2026-11-20-animation-budget-throttling",
-  "reason": "검증된 당일 정식 원고의 11:57 발행 작업을 사전 기동하는 승인 요청입니다.",
-  "requestedAt": "2026-11-20T11:10:38+09:00",
-  "expiresAt": "2026-11-20T12:10:38+09:00",
+  "requestId": "recovery-20261121-110024-371-bb1d5e8f",
+  "date": "2026-11-21",
+  "issueId": "note-2026-11-21-fast-projectile-tunneling",
+  "reason": "검증된 11월 21일 정식 원고의 11:57 웹 공개 및 기존 구독자 발송 작업을 미리 기동합니다.",
+  "requestedAt": "2026-11-21T11:00:24+09:00",
+  "expiresAt": "2026-11-21T12:00:24+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "ba2ab26b54ad813e1b1ded59999c93b7157f1287"
+  "expectedBaseSha": "bb1d5e8f357f5f2e8f21f64dc297921842c762e9"
 }
