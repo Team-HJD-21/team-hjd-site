@@ -448,5 +448,28 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-21T02:57:00.056Z"
+  },
+  {
+    "id": "note-2026-11-22-gpu-wave-divergence",
+    "slug": "gpu-wave-divergence",
+    "title": "조건문 하나로 줄였는데 왜 GPU는 두 경로를 모두 지나갈까요?",
+    "description": "셰이더의 if 문으로 계산을 줄였는데 왜 GPU 시간이 줄지 않을까요? 32레인 워프 두 개의 분기 배치를 비교하고 HLSL·프로파일링으로 확인합니다.",
+    "question": "GPU의 같은 실행 묶음에서 절반씩 다른 분기를 고르면 왜 양쪽 경로가 비용에 나타날까요?",
+    "summary": "H 32개, L 32개라는 동일한 작업을 두 워프에 섞거나 분리하는 가상 예제로 분기 발산을 계산합니다. HLSL 코드와 Nsight Graphics의 활성 레인 지표, 데이터 재정렬의 손익으로 연결합니다.",
+    "date": "2026-11-22",
+    "status": "scheduled",
+    "publishAt": "2026-11-22T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-22-gpu-wave-divergence.md",
+    "assetDirectory": "assets/issues/note-2026-11-22-gpu-wave-divergence",
+    "coverImage": "wave-lane-layout.svg",
+    "format": "기술 해설",
+    "tags": [
+      "rendering",
+      "shaders",
+      "optimization",
+      "profiling",
+      "wave-divergence",
+      "technical-explainer"
+    ]
   }
 ]

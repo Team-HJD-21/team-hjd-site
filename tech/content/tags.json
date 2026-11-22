@@ -607,5 +607,18 @@
       "TOI",
       "터널링 방지"
     ]
+  },
+  {
+    "id": "wave-divergence",
+    "group": "기법·원리",
+    "ko": "분기 발산",
+    "en": "Branch Divergence",
+    "aliases": [
+      "워프 발산",
+      "웨이브 발산",
+      "warp divergence",
+      "wave divergence",
+      "SIMT divergence"
+    ]
   }
 ]
