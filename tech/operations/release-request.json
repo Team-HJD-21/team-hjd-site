@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261122-110325-a8dc368f",
-  "date": "2026-11-22",
-  "issueId": "note-2026-11-22-gpu-wave-divergence",
-  "reason": "검증된 11월 22일 정식 원고의 11:57 웹 공개 및 기존 구독자 발송 작업을 미리 기동합니다.",
-  "requestedAt": "2026-11-22T11:03:25+09:00",
-  "expiresAt": "2026-11-22T12:03:25+09:00",
+  "requestId": "daily-20261123-efe479bc-110440",
+  "date": "2026-11-23",
+  "issueId": "note-2026-11-23-random-stream-replay",
+  "reason": "당일 scheduled 호의 콘텐츠 검증과 CI 성공 후 기존 11:57 발행 작업을 사전 기동합니다.",
+  "requestedAt": "2026-11-23T11:04:40+09:00",
+  "expiresAt": "2026-11-23T12:04:40+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "a8dc368f7aef271842a535f989842b6d69d7b99a"
+  "expectedBaseSha": "efe479bc199913b15b33ffa4d092edacbde4c094"
 }
