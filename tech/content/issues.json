@@ -481,7 +481,7 @@
     "question": "같은 초기 시드를 넣고도 왜 작은 연출 변경으로 몬스터 등장 순서가 달라질까요?",
     "summary": "장난감 PRNG의 0→1→6→15 수열에서 이펙트가 호출 하나를 소비하면 게임 결과가 밀리는 과정을 검산하고, 별도 스트림과 상태 저장으로 재현성을 확보하는 방법을 알아봅니다.",
     "date": "2026-11-23",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-23T11:57:00+09:00",
     "source": "content/issues/note-2026-11-23-random-stream-replay.md",
     "assetDirectory": "assets/issues/note-2026-11-23-random-stream-replay",
@@ -493,6 +493,7 @@
       "determinism",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-23T02:57:00.063Z"
   }
 ]
