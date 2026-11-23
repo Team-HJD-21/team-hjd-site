@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-label="게임플레이와 연출 스트림이 서로 다른 상태를 유지함"><rect width="1200" height="420" fill="#080f17"/><style>text{font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;fill:#f3f0e8} .muted{fill:#a2afab} .accent{fill:#d9eea6;font-weight:700} .block{fill:#13202c;stroke:#52646a;stroke-width:2} .arrow{stroke:#d9eea6;stroke-width:3;fill:none;stroke-linecap:round}</style><text x="42" y="55" font-size="30" font-weight="700">독립 스트림: 이펙트가 늘어나도 게임 값은 유지됩니다</text>
+<rect x="45" y="108" width="260" height="108" rx="14" class="block"/><text x="65" y="149" font-size="22">게임플레이</text><text x="65" y="183" font-size="19" class="accent">초기 상태 3</text>
+<rect x="352" y="108" width="230" height="108" rx="14" class="block"/><text x="375" y="149" font-size="20">몬스터 1</text><text x="375" y="183" font-size="25" class="accent">0</text>
+<rect x="620" y="108" width="230" height="108" rx="14" class="block"/><text x="643" y="149" font-size="20">전리품</text><text x="643" y="183" font-size="25" class="accent">1</text>
+<rect x="888" y="108" width="262" height="108" rx="14" class="block"/><text x="909" y="149" font-size="20">몬스터 2</text><text x="909" y="183" font-size="25" class="accent">6</text>
+<path class="arrow" d="M305 164 H347 M582 164 H615 M850 164 H883"/>
+<rect x="45" y="247" width="260" height="108" rx="14" class="block"/><text x="65" y="290" font-size="22">연출</text><text x="65" y="324" font-size="19" class="accent">초기 상태 7</text>
+<rect x="352" y="247" width="230" height="108" rx="14" class="block"/><text x="375" y="287" font-size="20">이펙트 1</text><text x="375" y="324" font-size="25" class="accent">4</text>
+<rect x="620" y="247" width="230" height="108" rx="14" class="block"/><text x="643" y="287" font-size="20">이펙트 2</text><text x="643" y="324" font-size="25" class="accent">5</text>
+<path class="arrow" d="M305 301 H347 M582 301 H615"/>
+<text x="905" y="298" font-size="18" class="muted">연출 호출은</text><text x="905" y="328" font-size="18" class="muted">게임플레이에 영향 없음</text></svg>

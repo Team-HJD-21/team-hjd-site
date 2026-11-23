@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" role="img" aria-label="하나의 생성기에서 호출 하나 추가 시 값 배정이 이동함"><rect width="1200" height="470" fill="#080f17"/><style>text{font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;fill:#f3f0e8} .muted{fill:#a2afab} .accent{fill:#d9eea6;font-weight:700} .block{fill:#13202c;stroke:#52646a;stroke-width:2} .arrow{stroke:#d9eea6;stroke-width:3;fill:none;stroke-linecap:round}</style><text x="42" y="53" font-size="29" font-weight="700">한 스트림을 공유하면 호출 하나가 뒤의 배정을 밀어냅니다</text><text x="42" y="87" font-size="18" class="muted">설명용 계산: next = (5 × state + 1) mod 16, 초기 상태 3</text>
+<text x="42" y="147" font-size="21" class="accent">변경 전</text>
+<rect x="185" y="115" width="220" height="91" rx="13" class="block"/><text x="208" y="149" font-size="21">몬스터 1</text><text x="208" y="183" font-size="26" class="accent">0</text>
+<rect x="442" y="115" width="220" height="91" rx="13" class="block"/><text x="466" y="149" font-size="21">전리품</text><text x="466" y="183" font-size="26" class="accent">1</text>
+<rect x="699" y="115" width="220" height="91" rx="13" class="block"/><text x="724" y="149" font-size="21">몬스터 2</text><text x="724" y="183" font-size="26" class="accent">6</text>
+<path class="arrow" d="M405 161 H437 M662 161 H694"/>
+<text x="42" y="285" font-size="21" class="accent">이펙트 추가 후</text>
+<rect x="185" y="244" width="210" height="100" rx="13" class="block"/><text x="207" y="280" font-size="20">몬스터 1</text><text x="207" y="318" font-size="26" class="accent">0</text>
+<rect x="414" y="244" width="210" height="100" rx="13" class="block"/><text x="434" y="280" font-size="20">이펙트 추가</text><text x="434" y="318" font-size="26" class="accent">1</text>
+<rect x="643" y="244" width="210" height="100" rx="13" class="block"/><text x="664" y="280" font-size="20">전리품</text><text x="664" y="318" font-size="26" class="accent">6</text>
+<rect x="872" y="244" width="280" height="100" rx="13" class="block"/><text x="894" y="280" font-size="20">몬스터 2</text><text x="894" y="318" font-size="26" class="accent">15</text>
+<path class="arrow" d="M395 293 H409 M624 293 H638 M853 293 H867"/>
+<text x="42" y="409" font-size="20" class="muted">핵심: 생성기는 몬스터·이펙트의 의미를 모르고 호출 순서대로 수열을 소비합니다.</text></svg>
