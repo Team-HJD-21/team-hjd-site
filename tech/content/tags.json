@@ -620,5 +620,17 @@
       "wave divergence",
       "SIMT divergence"
     ]
+  },
+  {
+    "id": "ui-canvas-rebuild",
+    "group": "기법·원리",
+    "ko": "UI 캔버스 재구축",
+    "en": "UI Canvas Rebuild",
+    "aliases": [
+      "캔버스 배치 재구성",
+      "uGUI Canvas rebuild",
+      "canvas batching",
+      "UI rebuild"
+    ]
   }
 ]
