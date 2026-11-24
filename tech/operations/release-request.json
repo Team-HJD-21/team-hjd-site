@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "requestId": "daily-20261123-efe479bc-110440",
-  "date": "2026-11-23",
-  "issueId": "note-2026-11-23-random-stream-replay",
+  "requestId": "daily-20261124-5e440ff2-110458",
+  "date": "2026-11-24",
+  "issueId": "note-2026-11-24-ui-canvas-rebuild",
   "reason": "당일 scheduled 호의 콘텐츠 검증과 CI 성공 후 기존 11:57 발행 작업을 사전 기동합니다.",
-  "requestedAt": "2026-11-23T11:04:40+09:00",
-  "expiresAt": "2026-11-23T12:04:40+09:00",
+  "requestedAt": "2026-11-24T11:04:58+09:00",
+  "expiresAt": "2026-11-24T12:04:58+09:00",
   "allowLate": false,
   "dryRun": false,
   "confirm": "publish-and-send-once",
-  "expectedBaseSha": "efe479bc199913b15b33ffa4d092edacbde4c094"
+  "expectedBaseSha": "5e440ff2930bd6f225f982acdd26159b691de262"
 }
