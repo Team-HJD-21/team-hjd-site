@@ -632,5 +632,39 @@
       "canvas batching",
       "UI rebuild"
     ]
+  },
+  {
+    "id": "resource-barriers",
+    "group": "기법·원리",
+    "ko": "리소스 배리어",
+    "en": "Resource Barriers",
+    "aliases": [
+      "리소스 상태 전환",
+      "resource barrier",
+      "transition barrier",
+      "UAV barrier"
+    ]
+  },
+  {
+    "id": "indirect-drawing",
+    "group": "기법·원리",
+    "ko": "간접 그리기",
+    "en": "Indirect Drawing",
+    "aliases": [
+      "간접 렌더링",
+      "indirect draw",
+      "ExecuteIndirect"
+    ]
+  },
+  {
+    "id": "direct3d-12",
+    "group": "엔진·언어",
+    "ko": "Direct3D 12",
+    "en": "Direct3D 12",
+    "aliases": [
+      "D3D12",
+      "DX12",
+      "DirectX 12"
+    ]
   }
 ]
