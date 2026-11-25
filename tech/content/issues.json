@@ -528,7 +528,7 @@
     "question": "GPU가 그릴 개수를 계산했는데 왜 바로 그리면 안 될까요?",
     "summary": "8개 입자 중 가시 입자 5개를 16바이트 간접 인자로 기록하고, UAV 쓰기에서 간접 인자 읽기로 전환하는 배리어와 PIX 검증을 살펴봅니다.",
     "date": "2026-11-25",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-25T11:57:00+09:00",
     "source": "content/issues/note-2026-11-25-gpu-resource-barriers.md",
     "assetDirectory": "assets/issues/note-2026-11-25-gpu-resource-barriers",
@@ -542,6 +542,7 @@
       "direct3d-12",
       "cpp",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-25T02:57:00.061Z"
   }
 ]
