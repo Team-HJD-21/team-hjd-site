@@ -553,7 +553,7 @@
     "question": "최단 경로를 찾았는데 왜 캐릭터가 지그재그로 걸을까요?",
     "summary": "세 포털의 기울기 범위를 좁히는 깔때기 알고리즘으로 10.13m 중점 경로와 8.94m 통로 내 최단 경로를 비교하고 Godot 4.5 API로 연결합니다.",
     "date": "2026-11-26",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-26T11:57:00+09:00",
     "source": "content/issues/note-2026-11-26-navmesh-funnel-path.md",
     "assetDirectory": "assets/issues/note-2026-11-26-navmesh-funnel-path",
@@ -565,6 +565,7 @@
       "funnel-algorithm",
       "technical-explainer",
       "godot"
-    ]
+    ],
+    "publishedAt": "2026-11-26T14:29:07.114Z"
   }
 ]
