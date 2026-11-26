@@ -666,5 +666,40 @@
       "DX12",
       "DirectX 12"
     ]
+  },
+  {
+    "id": "navmesh",
+    "group": "기법·원리",
+    "ko": "내비게이션 메시",
+    "en": "Navigation Mesh",
+    "aliases": [
+      "네비게이션 메시",
+      "NavMesh",
+      "navigation mesh",
+      "경로 탐색 메시"
+    ]
+  },
+  {
+    "id": "funnel-algorithm",
+    "group": "기법·원리",
+    "ko": "깔때기 알고리즘",
+    "en": "Funnel Algorithm",
+    "aliases": [
+      "퍼널 알고리즘",
+      "경로 깔때기",
+      "string pulling",
+      "corridor funnel"
+    ]
+  },
+  {
+    "id": "godot",
+    "group": "엔진·언어",
+    "ko": "Godot",
+    "en": "Godot Engine",
+    "aliases": [
+      "고도 엔진",
+      "고닷",
+      "Godot 4"
+    ]
   }
 ]
