@@ -1,10 +1,16 @@
 name: Publish newsletter at noon KST
 
 on:
+  workflow_run:
+    workflows: ['Validate newsletter']
+    types: [completed]
+    branches: [main]
   schedule:
-    # Seoul backup attempts; the primary path is an early approved main push.
+    # Successful main validation starts the primary worker; cron is a fallback.
     - cron: '57 2 * * *'
     - cron: '3,9,17,23 3 * * *'
+    - cron: '47 3-13 * * *'
+    - cron: '17,37,47 14 * * *'
   push:
     branches: [main]
     paths:
@@ -16,7 +22,7 @@ on:
         type: boolean
         default: true
       allow_late:
-        description: 'Explicit same-day recovery after 12:30 KST (requires issue, date and reason)'
+        description: 'Legacy recovery compatibility flag; validated current-day issues retry until midnight'
         type: boolean
         default: false
       confirm_recovery:
@@ -46,7 +52,13 @@ concurrency:
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     permissions:

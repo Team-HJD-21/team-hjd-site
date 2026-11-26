@@ -1,6 +1,6 @@
 # 매일 원고를 반영하는 계약
 
-기준: 2026-11-11, Asia/Seoul. 저장소 `Team-HJD-21/team-hjd-site`, 소스 루트 `tech/`.
+기준: 2026-11-26, Asia/Seoul. 저장소 `Team-HJD-21/team-hjd-site`, 소스 루트 `tech/`.
 
 먼저 [EDITORIAL.md](EDITORIAL.md)를 읽어 주세요. 독자에게 친숙한 ‘~입니다’, ‘~까요?’ 말투를 사용합니다. 초기 원고의 난이도 10을 기준으로 약 8을 목표로 하며, 작은 예제와 필요한 순서의 용어 설명으로 핵심 원리를 전달합니다. 직접 제작하는 그림은 다크 모드가 기준입니다. 공개 원고는 모두 정식 글이며 sample 상태의 새 글은 만들지 않습니다. 아래 상태 목록의 sample은 이전 자료 호환 용도입니다.
 
@@ -37,7 +37,7 @@ ID와 slug는 소문자 영문·숫자·단어 사이 하이픈을 사용합니�
 
 상태는 `draft`, `scheduled`, `sample`, `published` 중 하나다. draft와 scheduled는 검증하지만 웹·다운로드·공개 자산에 포함하지 않습니다. sample은 샘플 표시와 함께 웹에만 공개하며 RSS·발행 매니페스트에서 제외합니다. published만 실제 발행 기록에 들어갑니다. 공개 Git의 draft/scheduled는 비공개 저장이 아니다. 민감한 초안은 이 저장소에 넣지 않습니다.
 
-ChatGPT는 매일 11:00 Asia/Seoul에 원고를 준비하고, 일일 원고는 `status: "scheduled"`, `publishAt: "YYYY-MM-DDT11:57:00+09:00"`로 반영합니다. 날짜와 timestamp의 날짜가 일치해야 합니다. 원고·그림·태그 커밋과 CI 성공 후 DAILY_RELIABILITY.md 및 RECOVERY.md의 별도 release-request.json 승인 push로 worker를 사전 기동합니다. 이 운영 파일 하나만 콘텐츠 쓰기 범위에 추가되며, 요청과 원고를 한 커밋에 섞지 않습니다. 이미 scheduled인 호도 사전 기동 확인을 생략하지 않습니다. runner는 자체 시계로 11:57까지 기다립니다. 11:57·12:03·12:09·12:17·12:23 GitHub cron은 보조이며 12:07에는 기존 ChatGPT 점검 예약이 동작합니다. 한국 시간 11:57 이후의 GitHub Actions가 당일 한 호만 published로 바꾸고, Cloudflare Git 연결이 main의 변경을 빌드·배포합니다. 운영 publication.json에 해당 호가 나타난 뒤 실제 메일 발송을 요청합니다. 같은 날 이미 published가 있으면 재발행하지 않습니다. 12:03에는 같은 호의 미시도 대상을 재점검하며, 같은 호·구독자 조합에 receipt가 있으면 재발송하지 않습니다. 불명확한 기록도 지우거나 자동 재전송하지 않습니다. 새 공개의 마감은 12:30이며, 그때까지 준비되지 않거나 유효하지 않으면 지난 호를 대신 발행하지 않고 실패를 남깁니다. 목표는 정오까지 하루 한 호를 한 번 수신하는 것이며, GitHub·배포·메일 큐 지연으로 도착 시각을 절대 보장하지는 않습니다.
+ChatGPT는 매일 11:00 Asia/Seoul에 원고를 준비하고, 일일 원고는 `status: "scheduled"`, `publishAt: "YYYY-MM-DDT11:57:00+09:00"`로 반영합니다. 날짜와 timestamp의 날짜가 일치해야 합니다. main의 Validate newsletter 성공은 발행 workflow를 자동으로 기동합니다. 이 저장소 main push의 성공한 검사 SHA와 checkout SHA가 일치해야 하며 PR·fork·실패·오래된 검사는 사용할 수 없습니다. 별도 release-request.json 작성은 자동 기동의 필수 조건에서 제거했습니다. runner는 자체 시계로 11:57까지 최대 1시간 기다립니다. 정오 예비 cron과 오후 매시 47분, 23:17·37·47 KST 재점검을 유지합니다. 12:07에는 기존 ChatGPT 점검 예약도 결과를 확인합니다. 같은 날 유효한 원고는 12:30을 지나도 계속 처리합니다. 원래 ID·date·slug를 보존하고 당일 한 호만 published로 바꾼 뒤 Cloudflare가 배포합니다. 운영 publication.json과 기사에 해당 호가 확인된 뒤 실제 메일 발송을 요청합니다. 같은 날 이미 published가 있으면 재발행하지 않으며 같은 호·구독자 receipt가 있으면 재발송하지 않습니다. 불명확한 기록도 지우거나 자동 재전송하지 않습니다. 유효한 원고가 없거나 한국 날짜가 바뀌면 지난 호를 오늘 호로 바꾸지 않고 실패를 보고합니다. 정오 목표보다 당일 발행을 우선하지만 GitHub·배포·메일 제공자 장애까지 제거한 것은 아닙니다.
 
 ## Markdown
 

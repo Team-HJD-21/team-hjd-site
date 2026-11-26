@@ -12,7 +12,7 @@ Node.js 22.16 이상과 Pandoc을 사용합니다. npm run validate, npm run tes
 
 ## 발행과 구독
 
-ChatGPT의 기존 클라우드 예약은 매일 11:00 Asia/Seoul에 scheduled 원고를 준비합니다. 승인된 발행 요청으로 미리 기동한 GitHub Actions worker가 11:57에 당일 한 호만 published로 전환하고 Cloudflare Git integration이 검사·배포합니다. 정오 발송을 목표로 하며 cron 예비 점검도 유지합니다. 운영 매니페스트 반영을 확인한 뒤 동의·이메일 확인을 완료한 구독자에게 Resend로 안내 메일을 보냅니다. 중복 방지 기록은 비공개 D1에 저장합니다. API 수락과 실제 이메일 수신은 구분합니다.
+ChatGPT의 기존 클라우드 예약은 매일 11:00 Asia/Seoul에 scheduled 원고를 준비합니다. main의 Validate newsletter가 성공하면 발행 worker가 자동으로 기동해 11:57까지 기다립니다. 별도 사전 기동 요청 커밋은 필수가 아닙니다. 당일 한 호만 published로 전환하고 Cloudflare Git integration이 검사·배포합니다. 정오를 놓쳐도 낮 12:30에 포기하지 않고 당일 23시대까지 예비 예약으로 재시도합니다. 운영 매니페스트 반영을 확인한 뒤 동의·이메일 확인을 완료한 구독자에게 Resend로 안내 메일을 보냅니다. 중복 방지 기록은 비공개 D1에 저장합니다. API 수락과 실제 이메일 수신은 구분합니다.
 
 구독은 개인정보 수집·이용, 이메일 수신, 국외 이전 동의를 각각 받습니다. 인증 링크는 24시간 유효하고, 해지 시 이메일 주소를 삭제합니다. 키·개인 주소·수신자 목록·발송 기록을 공개 Git이나 정적 산출물에 넣지 않습니다. 자세한 설정은 [구독 운영](docs/SUBSCRIPTIONS.md), [배포 안내](deploy/DEPLOY.md)를 확인해 주세요. integrations/는 이전 영구 디스크용 도구이며 현재 공개 구독 서버의 경로가 아닙니다.
 
