@@ -1,6 +1,6 @@
 # ChatGPT 인계 — 겜붕이의 노트
 
-운영 시작 기준일은 2026년 11월 3일이며, 실행·검사 안내는 11월 11일 갱신했습니다. 시간대는 Asia/Seoul입니다. 이 문서는 이전의 미배포·샘플·Direct Upload·파일 기반 메일 CLI 인계를 대체합니다. 비밀값과 개인 수신 주소는 포함하지 않습니다.
+운영 시작 기준일은 2026년 11월 3일이며, 실행·검사 안내는 11월 26일 갱신했습니다. 시간대는 Asia/Seoul입니다. 이 문서는 이전의 미배포·샘플·Direct Upload·파일 기반 메일 CLI 인계를 대체합니다. 비밀값과 개인 수신 주소는 포함하지 않습니다.
 
 ## 운영 주소와 구조
 
@@ -32,7 +32,7 @@ ChatGPT의 **기존 클라우드 예약을 매일 11:00 Asia/Seoul**에 실행�
 
 ChatGPT는 CONTENT_CONTRACT.md에 맞춰 당일 호를 status=scheduled, publishAt=YYYY-MM-DDT11:57:00+09:00으로 반영합니다. 이 상태는 웹·다운로드·RSS에서 제외합니다. 공개 Git의 scheduled는 비공개 초안 저장이 아니므로 민감한 내용을 넣지 않습니다.
 
-Publish newsletter at noon KST가 11:57에 첫 공개·발송 절차를 시작하고 12:03에 재점검합니다. 검증된 당일 호 하나만 published로 바꾸고 실제 공개 시각 publishedAt을 기록한 뒤 main에 커밋합니다. Cloudflare가 빌드·배포합니다. 같은 날 이미 발행한 호가 있으면 다시 공개하지 않습니다. 원고가 없거나 검사가 실패하면 지난 호로 대체하지 않습니다. 새 공개의 마감은 12:30이며, 그 이후 준비되지 않은 글은 자동 지연 공개하지 않습니다.
+main의 Validate newsletter가 성공하면 Publish newsletter at noon KST가 자동으로 시작해 11:57까지 기다립니다. 성공한 이 저장소 main push의 정확한 검사 SHA만 이 경로를 사용할 수 있습니다. GPT의 별도 사전 기동 요청 작성은 필수가 아닙니다. 검증된 당일 호 하나만 published로 바꾸고 실제 공개 시각 publishedAt을 기록한 뒤 main에 커밋합니다. Cloudflare가 빌드·배포합니다. 정오를 놓쳐도 같은 날 오후·밤까지 예약 재시도를 계속하며 12:30 중단 규칙은 제거했습니다. 원고가 없거나 검사가 실패하면 지난 호로 대체하지 않고 실패를 보고합니다.
 
 메일 단계는 운영 publication.json에 해당 ID가 나타날 때까지 기다린 후 실제 발송을 요청합니다. 12:03에는 같은 당일 호에서 아직 발송을 시도하지 않은 대상만 점검합니다. 같은 호·구독자 조합에 receipt가 있으면 재발송하지 않으며, 응답 유실 등 불명확한 기록도 지우거나 자동 재전송하지 않습니다. 재점검은 두 번째 뉴스레터를 보내는 절차가 아닙니다.
 
@@ -51,7 +51,7 @@ Publish newsletter at noon KST가 11:57에 첫 공개·발송 절차를 시작�
 
 ## GitHub 콘텐츠 반영 범위
 
-원고 준비 후 사전 기동은 DAILY_RELIABILITY.md 및 RECOVERY.md가 우선합니다. tech/operations/release-request.json 하나만 별도 커밋으로 추가 허용하며 실제 run ID를 확인합니다. 이미 scheduled여도 기동 확인을 생략하지 않습니다. GitHub cron은 보조입니다.
+원고 준비 후 자동 기동은 DAILY_RELIABILITY.md 및 RECOVERY.md가 우선합니다. main 검사 성공으로 worker가 시작되므로 실제 workflow_run ID를 확인합니다. 이미 진행 중이거나 발송 완료라면 추가 요청을 만들지 않습니다. 자동 기동이 누락된 경우에만 tech/operations/release-request.json 하나를 별도 커밋으로 허용합니다. GitHub cron은 당일 저녁까지 재시도하는 보조 경로입니다.
 
 허용된 콘텐츠 변경은 tech/content/issues.json, tech/content/tags.json, 이번 호의 tech/content/issues/<id>.md와 tech/assets/issues/<id>/입니다. 기존 배열·호·타인의 변경을 보존하고 최신 HEAD를 기준으로 일관된 커밋 하나를 만들어 주세요. 가능하면 GitHub의 blob → tree(base 지정) → commit(parent 지정) → update_ref(expected SHA, force=false) 흐름을 사용합니다. 실제 도구가 제공되는지는 실행 때 확인합니다.
 

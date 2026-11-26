@@ -4,10 +4,10 @@ import { mkdtemp, mkdir, writeFile, readFile, readdir, rm } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { release, planRelease, validateRecovery, validateRecoveryPush, contextFromEvent, REQUEST_PATH } from './release.mjs';
+import { release, planRelease, validateRecovery, validateRecoveryPush, validateValidatedRun, contextFromEvent, REQUEST_PATH } from './release.mjs';
 
 const scheduled = { id: 'note-2026-11-03-example', date: '2026-11-03', status: 'scheduled', publishAt: '2026-11-03T11:57:00+09:00' };
-const evening = new Date('2026-11-03T12:30:00Z'); // 21:30 KST, after the ordinary cutoff.
+const evening = new Date('2026-11-03T12:30:00Z'); // 21:30 KST, still the same publication date.
 const approval = changes => ({ version: 1, requestId: 'recovery-20261103-001', date: scheduled.date, issueId: scheduled.id,
   reason: 'Owner approved recovery of the missed issue.', requestedAt: '2026-11-03T12:25:00Z', expiresAt: '2026-11-03T13:25:00Z',
   allowLate: true, dryRun: false, confirm: 'publish-and-send-once', expectedBaseSha: 'a'.repeat(40), ...changes });
@@ -27,18 +27,48 @@ test('published issue suppresses repeat publication and ambiguous schedules fail
   assert.equal(planRelease([{ ...scheduled, status: 'published' }, scheduled], new Date('2026-11-03T03:03:00Z')).state, 'already_published');
   assert.throws(() => planRelease([scheduled, { ...scheduled, id: 'other' }], new Date('2026-11-03T03:00:00Z')), /Multiple/);
 });
-test('delayed automatic jobs still have the original bounded window', () => {
-  assert.equal(planRelease([scheduled], new Date('2026-11-03T03:30:00Z')).state, 'ready');
-  assert.throws(() => planRelease([scheduled], new Date('2026-11-03T03:31:00Z')), /window ended/);
-  assert.throws(() => planRelease([scheduled], evening), /explicit same-day manual recovery/);
+test('automatic retries keep the original issue eligible from noon through the final Seoul second', () => {
+  for (const time of ['2026-11-03T03:30:00Z','2026-11-03T03:31:00Z',evening,'2026-11-03T14:59:59.999Z']) {
+    assert.deepEqual(planRelease([scheduled], new Date(time)).ids, [scheduled.id]);
+  }
+  assert.deepEqual(planRelease([scheduled], new Date('2026-11-03T15:00:00Z')).ids, []);
+  assert.equal(planRelease([scheduled], new Date('2026-11-04T03:00:00Z')).state, 'not_ready');
 });
-test('explicit unexpired same-day recovery selects the original issue after cutoff without mutation', () => {
+test('explicit unexpired same-day recovery selects the original issue without mutation', () => {
   const before = JSON.stringify(scheduled);
   assert.deepEqual(planRelease([scheduled], evening, { recovery: approval() }).ids, [scheduled.id]);
   assert.equal(JSON.stringify(scheduled), before);
 });
-test('a noon retry approval without allowLate cannot turn into an evening release', () => {
-  assert.throws(() => planRelease([scheduled], evening, { recovery: approval({ allowLate: false }) }), /window ended/);
+test('the legacy allowLate flag no longer prevents a valid same-day evening release', () => {
+  assert.deepEqual(planRelease([scheduled], evening, { recovery: approval({ allowLate: false }) }).ids, [scheduled.id]);
+});
+
+test('only successful validation of the exact main commit can authorize automatic arming', () => {
+  const env={GITHUB_EVENT_NAME:'workflow_run',GITHUB_REPOSITORY:'Team-HJD-21/team-hjd-site',GITHUB_REF:'refs/heads/main'};
+  const run={name:'Validate newsletter',conclusion:'success',event:'push',head_branch:'main',head_repository:{full_name:env.GITHUB_REPOSITORY},head_sha:'a'.repeat(40)};
+  const context={env,event:{workflow_run:run},head:run.head_sha};
+  assert.deepEqual(validateValidatedRun(context),{write:true,recovery:null,validatedRun:true});
+  for(const change of [{conclusion:'failure'},{event:'pull_request'},{head_branch:'feature'},{head_repository:{full_name:'untrusted/fork'}},{head_sha:'bad'},{name:'Another workflow'}]) {
+    assert.throws(()=>validateValidatedRun({...context,event:{workflow_run:{...run,...change}}}));
+  }
+  assert.throws(()=>validateValidatedRun({...context,head:'b'.repeat(40)}),/advanced/);
+  for(const change of [{GITHUB_REF:'refs/heads/other'},{GITHUB_REPOSITORY:'untrusted/fork'},{GITHUB_EVENT_NAME:'pull_request'}])assert.throws(()=>validateValidatedRun({...context,env:{...env,...change}}));
+});
+
+test('a real successful workflow event needs no second approval file and refuses stale main', async t=>{
+  const root=await mkdtemp(join(tmpdir(),'validated-release-'));
+  t.after(()=>rm(root,{recursive:true,force:true}));
+  const project=join(root,'tech');await mkdir(project);
+  const git=args=>execFileSync('git',args,{cwd:root,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
+  git(['init','-b','main']);git(['config','user.name','Release test']);git(['config','user.email','test@example.test']);
+  await writeFile(join(root,'README.md'),'validated main\n');git(['add','.']);git(['commit','-m','validated']);
+  const head=git(['rev-parse','HEAD']);
+  const eventPath=join(root,'event.json');
+  await writeFile(eventPath,JSON.stringify({workflow_run:{name:'Validate newsletter',conclusion:'success',event:'push',head_branch:'main',head_repository:{full_name:'Team-HJD-21/team-hjd-site'},head_sha:head}}));
+  const env={GITHUB_EVENT_NAME:'workflow_run',GITHUB_REPOSITORY:'Team-HJD-21/team-hjd-site',GITHUB_REF:'refs/heads/main',GITHUB_EVENT_PATH:eventPath};
+  assert.deepEqual(await contextFromEvent(project,env),{write:true,recovery:null,validatedRun:true});
+  await writeFile(join(root,'README.md'),'newer main\n');git(['add','README.md']);git(['commit','-m','newer']);
+  await assert.rejects(contextFromEvent(project,env),/advanced/);
 });
 test('recovery never defeats the earliest publish time', () => {
   const early = new Date('2026-11-03T02:56:00Z');

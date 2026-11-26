@@ -46,6 +46,16 @@ export function validateRecoveryPush({ env, event, request, head, changedPaths }
   return approved;
 }
 
+// Only successful validation of this repository's exact main commit can arm the
+// primary worker. PR/fork/failed/stale runs cannot authorize privileged work.
+export function validateValidatedRun({ env, event, head }) {
+  const run = event.workflow_run;
+  if (env.GITHUB_EVENT_NAME !== 'workflow_run' || env.GITHUB_REPOSITORY !== REPOSITORY || env.GITHUB_REF !== 'refs/heads/main') fail('Validated release requires this repository main branch.');
+  if (run?.name !== 'Validate newsletter' || run.conclusion !== 'success' || run.event !== 'push' || run.head_branch !== 'main' || run.head_repository?.full_name !== REPOSITORY) fail('Release requires successful main push validation from this repository.');
+  if (!SHA.test(run.head_sha || '') || head !== run.head_sha) fail('Validated main has advanced; a same-day retry must revalidate the latest source.');
+  return { write: true, recovery: null, validatedRun: true };
+}
+
 export function planRelease(issues, now = new Date(), { recovery = null } = {}) {
   if (!Number.isFinite(now.getTime())) fail('Invalid release clock.');
   const parts = seoulParts(now), today = `${parts.year}-${parts.month}-${parts.day}`;
@@ -62,7 +72,7 @@ export function planRelease(issues, now = new Date(), { recovery = null } = {}) 
   if (minutes < 11 * 60 + 57) return { state: 'before_release_time', today, ids: [] };
   // Repeating delivery uses exactly the original issue ID and existing server-side receipts.
   if (published.length) return { state: 'already_published', today, ids: published.map(issue => issue.id) };
-  if (minutes > 750 && !approval?.allowLate) fail(`Release window ended for ${today}; explicit same-day manual recovery is required. No previous issue is republished.`);
+  // Retry a valid issue for the entire Seoul date. Never substitute another day.
   const ready = issues.filter(issue => issue.status === 'scheduled' && issue.date === today && Date.parse(issue.publishAt) <= now.getTime());
   if (ready.length > 1) fail(`Multiple scheduled issues for ${today}; select one issue containing the day's articles.`);
   if (approval && ready.length && ready[0].id !== approval.issueId) fail('Prepared issue does not match the recovery approval.');
@@ -91,6 +101,10 @@ export async function contextFromEvent(project, env = process.env, now = new Dat
   if (env.GITHUB_REPOSITORY !== REPOSITORY || env.GITHUB_REF !== 'refs/heads/main') fail('Publishing is limited to this repository main branch.');
   const event = JSON.parse(await readFile(env.GITHUB_EVENT_PATH, 'utf8'));
   if (env.GITHUB_EVENT_NAME === 'schedule') return { write: true, recovery: null }; // Never load recovery approvals from cron.
+  if (env.GITHUB_EVENT_NAME === 'workflow_run') {
+    const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: resolve(project, '..'), encoding: 'utf8' }).trim();
+    return validateValidatedRun({ env, event, head });
+  }
   if (env.GITHUB_EVENT_NAME === 'workflow_dispatch') {
     const inputs = event.inputs || {};
     const bool = (value, fallback) => value === undefined ? fallback : value === true || value === 'true' ? true : value === false || value === 'false' ? false : fail('Invalid boolean workflow input.');
@@ -103,10 +117,10 @@ export async function contextFromEvent(project, env = process.env, now = new Dat
     return { write: !dryRun, recovery };
   }
   if (env.GITHUB_EVENT_NAME === 'push') {
-    const raw = await readFile(join(project, 'operations/release-request.json'), 'utf8');
-    if (Buffer.byteLength(raw, 'utf8') > 4096) fail('Recovery request exceeds 4 KiB.');
     const git = args => execFileSync('git', args, { cwd: resolve(project, '..'), encoding: 'utf8', maxBuffer: 1024 * 1024 }).trim();
     if (!SHA.test(event.before || '') || !SHA.test(event.after || '')) fail('Invalid push commit SHA.');
+    const raw = await readFile(join(project, 'operations/release-request.json'), 'utf8');
+    if (Buffer.byteLength(raw, 'utf8') > 4096) fail('Recovery request exceeds 4 KiB.');
     const recovery = validateRecoveryPush({ env, event, request: JSON.parse(raw), head: git(['rev-parse', 'HEAD']),
       changedPaths: git(['diff', '--name-only', event.before, event.after, '--']).split('\n').filter(Boolean) }, now);
     return { write: !recovery.dryRun, recovery };
