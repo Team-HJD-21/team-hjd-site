@@ -576,7 +576,7 @@
     "question": "흰색을 절반만 섞었는데 왜 회색이 너무 어두울까요?",
     "summary": "흰색 알파 0.5를 검은 배경에 섞어 sRGB 코드 128과 선형 합성 후 188을 비교하고 Unity 6.0과 Direct3D의 색 변환 경계를 확인합니다.",
     "date": "2026-11-27",
-    "status": "scheduled",
+    "status": "published",
     "publishAt": "2026-11-27T11:57:00+09:00",
     "source": "content/issues/note-2026-11-27-linear-light-blending.md",
     "assetDirectory": "assets/issues/note-2026-11-27-linear-light-blending",
@@ -589,6 +589,7 @@
       "cpp",
       "unity",
       "technical-explainer"
-    ]
+    ],
+    "publishedAt": "2026-11-27T02:57:00.056Z"
   }
 ]
