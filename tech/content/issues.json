@@ -567,5 +567,28 @@
       "godot"
     ],
     "publishedAt": "2026-11-26T14:29:07.114Z"
+  },
+  {
+    "id": "note-2026-11-27-linear-light-blending",
+    "slug": "linear-light-blending",
+    "title": "흰색을 절반만 섞었는데 왜 회색이 너무 어두울까요?",
+    "description": "동일한 알파 블렌딩 수식이 sRGB와 선형 광량에서 다른 회색을 만드는 이유를 전달 함수와 실제 렌더 타깃으로 설명합니다.",
+    "question": "흰색을 절반만 섞었는데 왜 회색이 너무 어두울까요?",
+    "summary": "흰색 알파 0.5를 검은 배경에 섞어 sRGB 코드 128과 선형 합성 후 188을 비교하고 Unity 6.0과 Direct3D의 색 변환 경계를 확인합니다.",
+    "date": "2026-11-27",
+    "status": "scheduled",
+    "publishAt": "2026-11-27T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-27-linear-light-blending.md",
+    "assetDirectory": "assets/issues/note-2026-11-27-linear-light-blending",
+    "coverImage": "blend-comparison.svg",
+    "format": "기술 해설",
+    "tags": [
+      "rendering",
+      "linear-light-blending",
+      "srgb",
+      "cpp",
+      "unity",
+      "technical-explainer"
+    ]
   }
 ]

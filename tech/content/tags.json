@@ -701,5 +701,27 @@
       "고닷",
       "Godot 4"
     ]
+  },
+  {
+    "id": "linear-light-blending",
+    "group": "기법·원리",
+    "ko": "선형 광량 블렌딩",
+    "en": "Linear-light Blending",
+    "aliases": [
+      "선형 색상 합성",
+      "linear blending",
+      "alpha blending"
+    ]
+  },
+  {
+    "id": "srgb",
+    "group": "기법·원리",
+    "ko": "sRGB 색 공간",
+    "en": "sRGB Color Space",
+    "aliases": [
+      "sRGB",
+      "감마 인코딩",
+      "sRGB transfer function"
+    ]
   }
 ]
