@@ -723,5 +723,29 @@
       "감마 인코딩",
       "sRGB transfer function"
     ]
+  },
+  {
+    "id": "head-of-line-blocking",
+    "group": "기법·원리",
+    "ko": "선두 차단",
+    "en": "Head-of-line Blocking",
+    "aliases": [
+      "HOL Blocking",
+      "HOL 차단",
+      "헤드 오브 라인 블로킹",
+      "순서 대기"
+    ]
+  },
+  {
+    "id": "reliable-ordered-messages",
+    "group": "기법·원리",
+    "ko": "신뢰성·순서 보장 메시지",
+    "en": "Reliable Ordered Messages",
+    "aliases": [
+      "신뢰성 전송",
+      "reliable ordered",
+      "reliable channels",
+      "메시지 순서 보장"
+    ]
   }
 ]

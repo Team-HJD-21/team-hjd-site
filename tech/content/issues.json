@@ -591,5 +591,29 @@
       "technical-explainer"
     ],
     "publishedAt": "2026-11-27T02:57:00.056Z"
+  },
+  {
+    "id": "note-2026-11-28-reliable-channel-hol-blocking",
+    "slug": "reliable-channel-hol-blocking",
+    "title": "체력 갱신은 도착했는데 왜 채팅을 기다릴까요?",
+    "description": "신뢰성 있는 메시지가 이미 수신됐는데도 다른 메시지의 손실 때문에 전달되지 않는 이유와 채널 분리의 손익을 설명합니다.",
+    "question": "체력 갱신은 도착했는데 왜 채팅을 기다릴까요?",
+    "summary": "채팅 복구 120ms와 체력 도착 40·60ms를 비교해 순서 대기 80·60ms를 계산하고 C++ 수신 버퍼와 Godot RPC 채널로 연결합니다.",
+    "date": "2026-11-28",
+    "status": "scheduled",
+    "publishAt": "2026-11-28T11:57:00+09:00",
+    "source": "content/issues/note-2026-11-28-reliable-channel-hol-blocking.md",
+    "assetDirectory": "assets/issues/note-2026-11-28-reliable-channel-hol-blocking",
+    "coverImage": "ordered-timeline.svg",
+    "format": "기술 해설",
+    "tags": [
+      "game-networking",
+      "head-of-line-blocking",
+      "reliable-ordered-messages",
+      "cpp",
+      "csharp",
+      "godot",
+      "technical-explainer"
+    ]
   }
 ]
